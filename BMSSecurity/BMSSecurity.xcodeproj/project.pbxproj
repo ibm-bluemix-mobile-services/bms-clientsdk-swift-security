@@ -12,7 +12,9 @@
 		DB2BCFA31C22FB2F0063A673 /* BMSSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
-		FDBDF70D1C2AD9FB00185039 /* BMSAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */; };
+		FDBDF7141C2C541D00185039 /* BMSAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */; };
+		FDBDF7191C2C548200185039 /* AuthenticationListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7181C2C548200185039 /* AuthenticationListener.swift */; };
+		FDBDF71B1C2C54D000185039 /* AuthenticationContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF71A1C2C54D000185039 /* AuthenticationContextProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +35,9 @@
 		DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMSSecurityTests.swift; sourceTree = "<group>"; };
 		DB2BCFA41C22FB2F0063A673 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
-		FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSAuthorizationManager.swift; sourceTree = "<group>"; };
+		FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BMSAuthorizationManager.swift; path = api/BMSAuthorizationManager.swift; sourceTree = "<group>"; };
+		FDBDF7181C2C548200185039 /* AuthenticationListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthenticationListener.swift; path = api/AuthenticationListener.swift; sourceTree = "<group>"; };
+		FDBDF71A1C2C54D000185039 /* AuthenticationContextProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthenticationContextProtocol.swift; path = api/AuthenticationContextProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,9 +82,9 @@
 		DB2BCF951C22FB2E0063A673 /* BMSSecurity */ = {
 			isa = PBXGroup;
 			children = (
+				FDBDF7151C2C542500185039 /* api */,
 				DB2BCF961C22FB2E0063A673 /* BMSSecurity.h */,
 				DB2BCF981C22FB2E0063A673 /* Info.plist */,
-				FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */,
 			);
 			path = BMSSecurity;
 			sourceTree = "<group>";
@@ -92,6 +96,16 @@
 				DB2BCFA41C22FB2F0063A673 /* Info.plist */,
 			);
 			path = BMSSecurityTests;
+			sourceTree = "<group>";
+		};
+		FDBDF7151C2C542500185039 /* api */ = {
+			isa = PBXGroup;
+			children = (
+				FDBDF71A1C2C54D000185039 /* AuthenticationContextProtocol.swift */,
+				FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */,
+				FDBDF7181C2C548200185039 /* AuthenticationListener.swift */,
+			);
+			name = api;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,8 +216,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDBDF7141C2C541D00185039 /* BMSAuthorizationManager.swift in Sources */,
+				FDBDF71B1C2C54D000185039 /* AuthenticationContextProtocol.swift in Sources */,
+				FDBDF7191C2C548200185039 /* AuthenticationListener.swift in Sources */,
 				FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */,
-				FDBDF70D1C2AD9FB00185039 /* BMSAuthorizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
