@@ -10,6 +10,9 @@
 		DB2BCF971C22FB2E0063A673 /* BMSSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = DB2BCF961C22FB2E0063A673 /* BMSSecurity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
 		DB2BCFA31C22FB2F0063A673 /* BMSSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */; };
+		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
+		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
+		FDBDF70D1C2AD9FB00185039 /* BMSAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +32,8 @@
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMSSecurityTests.swift; sourceTree = "<group>"; };
 		DB2BCFA41C22FB2F0063A673 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
+		FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSAuthorizationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,6 +59,7 @@
 		DB2BCF891C22FB2E0063A673 = {
 			isa = PBXGroup;
 			children = (
+				FDBDF7091C2AD81100185039 /* BMSCore.framework */,
 				DB2BCF951C22FB2E0063A673 /* BMSSecurity */,
 				DB2BCFA11C22FB2F0063A673 /* BMSSecurityTests */,
 				DB2BCF941C22FB2E0063A673 /* Products */,
@@ -73,6 +80,7 @@
 			children = (
 				DB2BCF961C22FB2E0063A673 /* BMSSecurity.h */,
 				DB2BCF981C22FB2E0063A673 /* Info.plist */,
+				FDBDF70C1C2AD9FB00185039 /* BMSAuthorizationManager.swift */,
 			);
 			path = BMSSecurity;
 			sourceTree = "<group>";
@@ -105,8 +113,8 @@
 			buildConfigurationList = DB2BCFA71C22FB2F0063A673 /* Build configuration list for PBXNativeTarget "BMSSecurity" */;
 			buildPhases = (
 				DB2BCF8E1C22FB2E0063A673 /* Sources */,
-				DB2BCF8F1C22FB2E0063A673 /* Frameworks */,
 				DB2BCF901C22FB2E0063A673 /* Headers */,
+				DB2BCF8F1C22FB2E0063A673 /* Frameworks */,
 				DB2BCF911C22FB2E0063A673 /* Resources */,
 			);
 			buildRules = (
@@ -142,7 +150,7 @@
 		DB2BCF8A1C22FB2E0063A673 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = IBM;
 				TargetAttributes = {
@@ -194,6 +202,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */,
+				FDBDF70D1C2AD9FB00185039 /* BMSAuthorizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +318,7 @@
 		DB2BCFA81C22FB2F0063A673 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -319,12 +330,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.mobilefirstplatform.clientsdk.swift.BMSSecurity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		DB2BCFA91C22FB2F0063A673 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -378,6 +391,7 @@
 				DB2BCFA91C22FB2F0063A673 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB2BCFAA1C22FB2F0063A673 /* Build configuration list for PBXNativeTarget "BMSSecurityTests" */ = {
 			isa = XCConfigurationList;
@@ -386,6 +400,7 @@
 				DB2BCFAC1C22FB2F0063A673 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
