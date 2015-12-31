@@ -9,7 +9,7 @@
 import Foundation
 import BMSCore
 
-public class BMSAuthorizationManager : AuthorizationManagerProtocol {
+public class BMSAuthorizationManager : AuthorizationManager {
    
     static let BEARER = "Bearer"
     static let AUTHORIZATION_HEADER = "Authorization"
@@ -18,13 +18,8 @@ public class BMSAuthorizationManager : AuthorizationManagerProtocol {
     public static let sharedInstance = BMSAuthorizationManager()
     
     internal init() {
-//        super.init()
-//        BMSClient.sharedInstance.sharedAuthorizationManager = self;
+        BMSClient.sharedInstance.sharedAuthorizationManager = self;
     }
-    
-//    public func register(){
-//        BMSClient.sharedInstance.sharedAuthorizationManager = self
-//    }
     
     public func isAuthorizationRequired(httpResponse: NSHTTPURLResponse) -> Bool {
         if let header = httpResponse.allHeaderFields[BMSAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
@@ -45,5 +40,46 @@ public class BMSAuthorizationManager : AuthorizationManagerProtocol {
             }
         
         return false;
+    }
+    
+    
+    public func isOAuthError(response: Response?) -> Bool {
+        return false;
+    }
+    
+    public func clearAuthorizationData() {
+        
+    }
+    
+    public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
+        
+    }
+    
+    public func getCachedAuthorizationHeader() -> String? {
+        return nil;
+    }
+    
+    public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler) {
+        completionHandler(nil, nil)
+    }
+    
+    public func getUserIdentity() -> AnyObject? {
+        return nil;
+    }
+    
+    public func getDeviceIdentity() -> AnyObject? {
+        return nil;
+    }
+    
+    public func getAppIdentity() -> AnyObject? {
+        return nil;
+    }
+    
+    public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
+        return PersistencePolicy.NEVER
+    }
+    
+    public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
+        
     }
 }

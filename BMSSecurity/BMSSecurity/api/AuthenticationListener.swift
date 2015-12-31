@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import BMSCore
 
 protocol AuthenticationListener{
     /**
@@ -19,7 +20,7 @@ protocol AuthenticationListener{
     * {@link Request#send(Context, ResponseListener)}, which triggered the
     * authentication challenge.
     */
-    func onAuthenticationChallengeReceived(authContext : AuthenticationContextProtocol, challenge : AnyObject?)
+    func onAuthenticationChallengeReceived(authContext : AuthorizationManager, challenge : AnyObject?)
     
     /**
     * Called when authentication succeeded.
