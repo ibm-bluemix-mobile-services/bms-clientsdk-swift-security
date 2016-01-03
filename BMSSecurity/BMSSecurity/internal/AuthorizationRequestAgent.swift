@@ -55,13 +55,79 @@ public class AuthorizationRequestAgent {
     var requestPath : String?
     var requestOptions : RequestOptions?
     
-    var answers = [String : String]()
+    var answers = [String : String]?()
     
     init() {
         
     }
     
-    public func initialize(listener:ResponseListener) { }
+    public func send(path:String , options:RequestOptions, withListener: ResponseListener?) {
+        
+        var rootUrl : String = ""
+        
+        if path.hasPrefix(BMSClient.HTTP_SCHEME) && path.characters.indexOf(":") != nil {
+            let url = NSURL(string: path)
+            if let path = url?.path {
+                rootUrl = (path as NSString).stringByReplacingOccurrencesOfString(path, withString: "")
+            }
+            else {
+               rootUrl = ""
+            }
+        }
+        else {
+            //path is relative
+            var backendRoute = BMSClient.sharedInstance.bluemixAppRoute!
+            if backendRoute.hasSuffix("/") == false {
+                backendRoute += "/"
+            }
+            
+            rootUrl += backendRoute + AuthorizationRequestAgent.AUTH_SERVER_NAME
+            
+            let pathWithTenantId = AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+            rootUrl += "/" + pathWithTenantId
+            
+            print(rootUrl)
+            
+        }
+        
+        if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
+                rootUrl = BMSClient.defaultProtocol
+                    + "://" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "/" + AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+        }
+        
+        sendInternal(rootUrl, path: path, options: options)
+    }
     
-    public func sendRequest(path:String , options:RequestOptions ) throws {}
+    
+    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) {
+        if let unWrappedOptions = options {
+            self.requestOptions = unWrappedOptions
+        }
+        else {
+            self.requestOptions = RequestOptions()
+        }
+        
+        requestPath = Utils.concatenateUrls(rootUrl, path: path)
+        
+        var request = AuthorizationRequest(url:rootUrl, method:self.requestOptions!.requestMethod)
+        
+        if requestOptions!.timeout != 0 {
+            request.timeout = requestOptions!.timeout
+        } else {
+            request.timeout = BMSClient.sharedInstance.defaultRequestTimeout
+        }
+        
+        if let unwrappedHeaders = options?.headers {
+            request.addHeaders(unwrappedHeaders)
+        }
+        
+        if let unwrappedAnswers = answers {
+//            let authorizationHeaderValue = "Bearer \(answerr)"
+//            String authorizationHeaderValue = String.format("Bearer %s", answer.replace("\n", ""));
+//            request.addHeaders(["authorization" : authorizationHeaderValue])
+//            logger.debug("Added authorization header to request: " + authorizationHeaderValue);
+        }
+        
+    }
+
 }

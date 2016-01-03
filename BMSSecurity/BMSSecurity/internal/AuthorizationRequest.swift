@@ -15,14 +15,41 @@ public class AuthorizationRequest : MFPRequest {
     static var networkSessionInternal: NSURLSession!
     
     //Do not allow redirects
-    public override var allowRedirects : Bool{
-        get{
-            return false
-        }
-    }
+//    public override var allowRedirects : Bool{
+//        get{
+//            return false
+//        }
+//    }
+    
     
     public override func getNetworkSession() -> NSURLSession {
         return AuthorizationRequest.networkSessionInternal
+    }
+    
+    public func send(listener: ResponseListener) {
+        
+        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
+            if error != nil {
+                if let response = response {
+                    if response.isSuccessful {
+                        listener.onSuccess(response);
+                    } else {
+//                        listener.
+                    }
+                }
+            }
+            else {
+                //call on failure
+                
+            }
+        }
+      
+        super.sendWithCompletionHandler(callback)
+    }
+    
+    public init(url:String, method:HttpMethod) {
+        super.init(url: url, headers: nil, queryParameters: nil, method: method, timeout: 0);
+        allowRedirects = false
     }
 
     public func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {

@@ -20,7 +20,7 @@ internal class AuthorizationProcessManager {
     private var sessionId:String = ""
     
     
-    private func handleAuthorizationSuccess(response:Response) {
+    private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {
             let next:ResponseListener = authorizationQueue.remove()!
             next.onSuccess(response)
@@ -81,11 +81,15 @@ internal class AuthorizationProcessManager {
         options.parameters = createRegistrationParams();
         options.headers = createRegistrationHeaders();
         options.requestMethod = HttpMethod.POST
-        var listener:InnerAuthorizationResponseListener = InnerAuthorizationResponseListener( function: { response in
+        
+        var listener:AuthorizationResponseListener = AuthorizationResponseListener( callback: {
+            (response: Response?, error: NSError?) in
             self.saveCertificateFromResponse(response);
             self.invokeAuthorizationRequest();
         })
-        authorizationRequestSend("clients/instance", options: options, listener: listener);
+        
+        //TODO:ilan fix callback
+        authorizationRequestSend("clients/instance", options: options, listener: nil);
     }
     
     private  func createTokenRequestHeaders(grantCode:String) -> [String:String]{
@@ -135,14 +139,15 @@ internal class AuthorizationProcessManager {
         options.headers = [String:String]();
         addSessionIdHeader(&options.headers);
         options.requestMethod = HttpMethod.GET
-        var listener:InnerAuthorizationResponseListener = InnerAuthorizationResponseListener( function: { response in
-            var location:String? = self.extractLocationHeader(response);
+        var listener:AuthorizationResponseListener = AuthorizationResponseListener( callback: { (response: Response?, error: NSError?) in
+            var location:String? = self.extractLocationHeader(response!);
             var grantCode:String? = self.extractGrantCode(location);
             self.invokeTokenRequest(grantCode);
         })
-        authorizationRequestSend("authorization", options: options, listener: listener);
+        
+        
+        authorizationRequestSend("authorization", options: options, listener: nil);
     }
-    
     
     private func invokeTokenRequest(grantCode:String?) {
         if let grantCode = grantCode {
@@ -153,22 +158,27 @@ internal class AuthorizationProcessManager {
             addSessionIdHeader(&options.headers);
             options.requestMethod = HttpMethod.POST;
             
-            var listener:InnerAuthorizationResponseListener = InnerAuthorizationResponseListener( function: { response in
-                self.saveTokenFromResponse(response);
-                self.handleAuthorizationSuccess(response);
+            var listener:AuthorizationResponseListener = AuthorizationResponseListener( callback: { (response: Response?, error: NSError?) in
+                self.saveTokenFromResponse(response!);
+                self.handleAuthorizationSuccess(response!, error: error);
             })
+            
+            //TODO:ilan - fix listener
             authorizationRequestSend("token", options: options, listener: listener);
         } else {
             //TODO: handle error
         }
     }
     
-    private func authorizationRequestSend(path:String, options:RequestOptions ,listener:ResponseListener) {
+    private func authorizationRequestSend(path:String, options:RequestOptions ,listener: ResponseListener?) {
         
         do {
             let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
-            authorizationRequestManager.initialize(listener);
-            try authorizationRequestManager.sendRequest(path, options: options);
+            //            authorizationRequestManager.initialize(listener);
+            //            try authorizationRequestManager.sendRequest(path, options: options);
+            
+            authorizationRequestManager.send(path, options: options, withListener: listener)
+            
         } catch  {
             //            TODO: handle exception
         }
@@ -277,9 +287,9 @@ internal class AuthorizationProcessManager {
         
     }
     
-    private func saveCertificateFromResponse(response:Response) {
+    private func saveCertificateFromResponse(response:Response?) {
         do {
-            var responseBody:String? = response.responseText
+            var responseBody:String? = response?.responseText
             if let data = responseBody?.dataUsingEncoding(NSUTF8StringEncoding), jsonResponse = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject] {
                 //handle certificate
                 if let certificateString = jsonResponse["certificate"] as? String {
@@ -309,14 +319,17 @@ internal class AuthorizationProcessManager {
         headers["X-WL-Session"] =  self.sessionId //TODO: is this the right assignment
     }
     
-    internal class InnerAuthorizationResponseListener:ResponseListener {
-        init(function:(Response)->()) {
-            self.handleAuthorizationSuccessResponseFunction = function
-        }
-        private var handleAuthorizationSuccessResponseFunction:(Response) -> ()
-        internal func handleAuthorizationSuccessResponse(response:Response) {}
+    internal class AuthorizationResponseListener: ResponseListener {
         
-        internal func onSuccess(response:Response ) {
+        init(callback: MfpCompletionHandler?) {
+            //in case of success call the callback
+            self.handleAuthorizationSuccessResponseFunction = callback
+        }
+        
+        private var handleAuthorizationSuccessResponseFunction: MfpCompletionHandler?
+        internal func handleAuthorizationSuccessResponse(response: Response) {}
+        
+        internal func onSuccess(response: Response ) {
             do {
                 try handleAuthorizationSuccessResponse(response);
             } catch {

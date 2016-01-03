@@ -9,7 +9,7 @@
 import Foundation
 import BMSCore
 
-protocol AuthenticationListener{
+protocol AuthenticationDelegate{
     /**
     * Called when authentication challenge was received. The implementor should handle the challenge and call
     * {@link com.ibm.mobilefirstplatform.clientsdk.android.security.api.AuthenticationContext#submitAuthenticationChallengeAnswer(JSONObject)}

@@ -17,8 +17,13 @@ public class BMSAuthorizationManager : AuthorizationManager {
 
     public static let sharedInstance = BMSAuthorizationManager()
     
+    var processManager : AuthorizationProcessManager
+    var preferences : AuthorizationManagerPreferences
+    
     internal init() {
-        BMSClient.sharedInstance.sharedAuthorizationManager = self;
+        preferences = AuthorizationManagerPreferences()
+        processManager = AuthorizationProcessManager(preferences: preferences)
+        BMSClient.sharedInstance.sharedAuthorizationManager = self;        
     }
     
     public func isAuthorizationRequired(httpResponse: NSHTTPURLResponse) -> Bool {
@@ -59,8 +64,10 @@ public class BMSAuthorizationManager : AuthorizationManager {
         return nil;
     }
     
-    public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler) {
-        completionHandler(nil, nil)
+    public func obtainAuthorizationHeader(listener: ResponseListener) {
+        
+        processManager.startAuthorizationProcess(listener)
+//        completionHandler(nil, nil)
     }
     
     public func getUserIdentity() -> AnyObject? {
