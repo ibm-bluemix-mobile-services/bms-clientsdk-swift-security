@@ -55,13 +55,13 @@ public class AuthorizationRequestAgent {
     var requestPath : String?
     var requestOptions : RequestOptions?
     
-    var answers = [String : String]?()
+    var answers = [String : AnyObject]?()
     
     init() {
         
     }
     
-    public func send(path:String , options:RequestOptions, withListener: ResponseListener?) {
+    public func send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
         var rootUrl : String = ""
         
@@ -72,6 +72,11 @@ public class AuthorizationRequestAgent {
             }
             else {
                rootUrl = ""
+            }
+            
+            if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
+                rootUrl = BMSClient.defaultProtocol
+                    + "://" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "/" + AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
             }
         }
         else {
@@ -89,17 +94,16 @@ public class AuthorizationRequestAgent {
             print(rootUrl)
             
         }
-        
-        if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
-                rootUrl = BMSClient.defaultProtocol
-                    + "://" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "/" + AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+        do {
+            try sendInternal(rootUrl, path: path, options: options)
+        }
+        catch {
+            print("something wrong")
         }
         
-        sendInternal(rootUrl, path: path, options: options)
     }
     
-    
-    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) {
+    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) throws {
         if let unWrappedOptions = options {
             self.requestOptions = unWrappedOptions
         }
@@ -122,12 +126,104 @@ public class AuthorizationRequestAgent {
         }
         
         if let unwrappedAnswers = answers {
-//            let authorizationHeaderValue = "Bearer \(answerr)"
-//            String authorizationHeaderValue = String.format("Bearer %s", answer.replace("\n", ""));
-//            request.addHeaders(["authorization" : authorizationHeaderValue])
-//            logger.debug("Added authorization header to request: " + authorizationHeaderValue);
+                let ans = Utils.JSONStringify(unwrappedAnswers)
+                let authorizationHeaderValue = "Bearer \(ans)"
+                request.addHeader("Authorization", val: authorizationHeaderValue)
         }
         
-    }
+        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
+            let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
+            
+            if error != nil || !isRedirect {
+                self.processRepponse(response)
+            }
+            else {
+                do {
+                    try self.processRedirectResponse(response!, callback: nil)
+                } catch {
+                    print("something wrong 2")
+                }
 
+            }
+            
+        }
+        
+        if let method = options?.requestMethod where method == HttpMethod.GET{
+            request.queryParameters = options?.parameters
+            request.send(callback)
+        } else {
+//            request.sendWithCompletionHandler(options?.parameters)
+        }
+    }
+    
+    enum ResponseError: ErrorType {
+        case NoLocation
+    }
+    
+    internal func processRepponse(response: Response?) {
+        // at this point a server response should contain a secure JSON with challenges
+        
+    }
+    
+//    /**
+//    * Process a response from the server.
+//    *
+//    * @param response Server response.
+//    */
+//    private void processResponse(Response response) {
+//    // at this point a server response should contain a secure JSON with challenges
+//    JSONObject jsonResponse = Utils.extractSecureJson(response);
+//    JSONObject jsonChallenges = (jsonResponse == null) ? null : jsonResponse.optJSONObject(CHALLENGES_VALUE_NAME);
+//    
+//    if (jsonChallenges != null) {
+//    startHandleChallenges(jsonChallenges, response);
+//    } else {
+//    listener.onSuccess(response);
+//    }
+//    }
+    
+    internal func processRedirectResponse(response:Response, callback:MfpCompletionHandler?) throws {
+        
+        func getLocationString(obj:AnyObject?) throws -> String? {
+            guard obj != nil else {
+                throw ResponseError.NoLocation
+            }
+            
+            if case let myObj as String = obj![0] {
+                return myObj
+            }
+            else if case let str as String = obj{
+                return str
+            }
+            
+            throw ResponseError.NoLocation
+        }
+        
+        let location = try getLocationString(response.headers?[AuthorizationRequestAgent.LOCATION_HEADER_NAME])
+        
+        let url:NSURL = NSURL(string: location!)!
+        let query = url.query
+        let results = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestAgent.WL_RESULT)
+        
+        //TODO:Ilan hadle succuss,and fail here
+        //    // process failures if any
+        //    JSONObject jsonFailures = jsonResult.optJSONObject(AUTH_FAILURE_VALUE_NAME);
+        //
+        //    if (jsonFailures != null) {
+        //    processFailures(jsonFailures);
+        //    listener.onFailure(response, null, null);
+        //    return;
+        //    }
+        //
+        //    // process successes if any
+        //    JSONObject jsonSuccesses = jsonResult.optJSONObject(AUTH_SUCCESS_VALUE_NAME);
+        //
+        //    if (jsonSuccesses != null) {
+        //    processSuccesses(jsonSuccesses);
+        //    }
+        //    }
+        
+        
+        callback?(response, nil)
+    }
 }

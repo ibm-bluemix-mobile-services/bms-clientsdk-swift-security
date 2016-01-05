@@ -64,9 +64,9 @@ public class BMSAuthorizationManager : AuthorizationManager {
         return nil;
     }
     
-    public func obtainAuthorizationHeader(listener: ResponseListener) {
+    public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler?) {
         
-        processManager.startAuthorizationProcess(listener)
+        processManager.startAuthorizationProcess(completionHandler)
 //        completionHandler(nil, nil)
     }
     

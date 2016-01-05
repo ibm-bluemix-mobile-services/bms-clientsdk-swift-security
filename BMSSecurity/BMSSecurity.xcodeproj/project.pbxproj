@@ -25,6 +25,10 @@
 		FDE9130E1C39615D00D7CF26 /* StringEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE9130B1C39615D00D7CF26 /* StringEncryption.swift */; };
 		FDE913101C3961F500D7CF26 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE9130F1C3961F500D7CF26 /* Utils.swift */; };
 		FDE913121C39631400D7CF26 /* RequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE913111C39631400D7CF26 /* RequestOptions.swift */; };
+		FDE913141C3A71E500D7CF26 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE913131C3A71E500D7CF26 /* SecurityUtils.swift */; };
+		FDE913171C3C10A200D7CF26 /* AppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE913161C3C10A200D7CF26 /* AppIdentity.swift */; };
+		FDE9131E1C3C110B00D7CF26 /* DeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE9131C1C3C110B00D7CF26 /* DeviceIdentity.swift */; };
+		FDE9131F1C3C110B00D7CF26 /* UserIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE9131D1C3C110B00D7CF26 /* UserIdentity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +70,10 @@
 		FDE9130B1C39615D00D7CF26 /* StringEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringEncryption.swift; sourceTree = "<group>"; };
 		FDE9130F1C3961F500D7CF26 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = internal/Utils.swift; sourceTree = "<group>"; };
 		FDE913111C39631400D7CF26 /* RequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RequestOptions.swift; path = internal/RequestOptions.swift; sourceTree = "<group>"; };
+		FDE913131C3A71E500D7CF26 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
+		FDE913161C3C10A200D7CF26 /* AppIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppIdentity.swift; path = api/identity/AppIdentity.swift; sourceTree = "<group>"; };
+		FDE9131C1C3C110B00D7CF26 /* DeviceIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DeviceIdentity.swift; path = api/identity/DeviceIdentity.swift; sourceTree = "<group>"; };
+		FDE9131D1C3C110B00D7CF26 /* UserIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserIdentity.swift; path = api/identity/UserIdentity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +156,7 @@
 		FD1CDA901C32B33000DBBA4E /* certificate */ = {
 			isa = PBXGroup;
 			children = (
+				FDE913131C3A71E500D7CF26 /* SecurityUtils.swift */,
 			);
 			path = certificate;
 			sourceTree = "<group>";
@@ -155,6 +164,7 @@
 		FDBDF7151C2C542500185039 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				FDE913151C3C108000D7CF26 /* identity */,
 				FDBDF7181C2C548200185039 /* AuthenticationDelegate.swift */,
 				FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */,
 			);
@@ -185,6 +195,16 @@
 				FDE9130B1C39615D00D7CF26 /* StringEncryption.swift */,
 			);
 			path = Encryption;
+			sourceTree = "<group>";
+		};
+		FDE913151C3C108000D7CF26 /* identity */ = {
+			isa = PBXGroup;
+			children = (
+				FDE913161C3C10A200D7CF26 /* AppIdentity.swift */,
+				FDE9131C1C3C110B00D7CF26 /* DeviceIdentity.swift */,
+				FDE9131D1C3C110B00D7CF26 /* UserIdentity.swift */,
+			);
+			name = identity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -318,12 +338,16 @@
 				FDE913121C39631400D7CF26 /* RequestOptions.swift in Sources */,
 				FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestAgent.swift in Sources */,
 				FDE913101C3961F500D7CF26 /* Utils.swift in Sources */,
+				FDE913171C3C10A200D7CF26 /* AppIdentity.swift in Sources */,
+				FDE9131E1C3C110B00D7CF26 /* DeviceIdentity.swift in Sources */,
 				FD1CDA921C32B35E00DBBA4E /* AuthorizationRequest.swift in Sources */,
 				FD1CDAA61C3517A800DBBA4E /* AuthorizationProcessManager.swift in Sources */,
 				FDE9130E1C39615D00D7CF26 /* StringEncryption.swift in Sources */,
+				FDE9131F1C3C110B00D7CF26 /* UserIdentity.swift in Sources */,
 				FDE9130C1C39615D00D7CF26 /* AESStringEncryption.swift in Sources */,
 				FDE9130D1C39615D00D7CF26 /* BMSSecurityError.swift in Sources */,
 				FD1CDAA51C3517A800DBBA4E /* AuthorizationManagerPreferences.swift in Sources */,
+				FDE913141C3A71E500D7CF26 /* SecurityUtils.swift in Sources */,
 				FDE913071C39610F00D7CF26 /* UserDataUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

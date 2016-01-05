@@ -59,12 +59,8 @@ internal class AuthorizationProcessManager {
         sessionId = NSUUID().UUIDString
     }
     
-    internal func startAuthorizationProcess(callback:MfpCompletionHandler?) {
-        
-        //TODO:ILAN should this be check or should we NOT allow nil callback here?
-        if let tempCallback = callback {
-            authorizationQueue.add(tempCallback);
-        }
+    internal func startAuthorizationProcess(callback:MfpCompletionHandler) {
+        authorizationQueue.add(callback);
         
         //start the authorization process only if this is the first time we ask for authorization
         if (authorizationQueue.size == 1) {
@@ -103,7 +99,7 @@ internal class AuthorizationProcessManager {
             }
         }
         //TODO:ilan fix callback
-        authorizationRequestSend("clients/instance", options: options, completionHandler: callBack);
+        authorizationRequestSend("clients/instance", options: options, callback: callBack);
     }
     
     private  func createTokenRequestHeaders(grantCode:String) -> [String:String]{
@@ -167,7 +163,7 @@ internal class AuthorizationProcessManager {
             }
         }
         
-        authorizationRequestSend("authorization", options: options,completionHandler: callBack)
+        authorizationRequestSend("authorization", options: options, callback: callBack);
     }
     
     private func invokeTokenRequest(grantCode:String?) {
@@ -179,7 +175,7 @@ internal class AuthorizationProcessManager {
             addSessionIdHeader(&options.headers);
             options.requestMethod = HttpMethod.POST;
             
-            var callback:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+            var callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
                 if error == nil {
                     if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                         self.saveTokenFromResponse(response!);
@@ -192,20 +188,20 @@ internal class AuthorizationProcessManager {
             }
             
             //TODO:ilan - fix listener
-            authorizationRequestSend("token", options: options, completionHandler: callback)
+            authorizationRequestSend("token", options: options, callback: callBack);
         } else {
             //TODO: handle error
         }
     }
     
-    private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?) {
+    private func authorizationRequestSend(path:String, options:RequestOptions ,callback: MfpCompletionHandler?) {
         
         do {
             let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
 //                    authorizationRequestManager.initialize(listener);
 //                        try authorizationRequestManager.sendRequest(path, options: options);
             
-            authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
+            authorizationRequestManager.send(path, options: options, withListener: callback)
             
         } catch  {
             //            TODO: handle exception

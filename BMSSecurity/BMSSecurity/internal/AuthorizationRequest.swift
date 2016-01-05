@@ -26,25 +26,30 @@ public class AuthorizationRequest : MFPRequest {
         return AuthorizationRequest.networkSessionInternal
     }
     
-    public func send(listener: ResponseListener) {
+    public func send(completionHandler: MfpCompletionHandler?) {
         
-        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
-            if error != nil {
-                if let response = response {
-                    if response.isSuccessful {
-                        listener.onSuccess(response);
-                    } else {
-//                        listener.
-                    }
-                }
-            }
-            else {
-                //call on failure
-                
-            }
-        }
+//        if let tempCompletionHandler = completionHandler {
+//            if error == nil {
+//                let
+//            }
+//        }
+////        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
+////            if error == nil {
+////                if let response = response {
+////                    if response.isSuccessful {
+////                        listener.onSuccess(response);
+////                    } else {
+//////                        listener.
+////                    }
+////                }
+////            }
+////            else {
+////                //call on failure
+////                
+////            }
+////        }
       
-        super.sendWithCompletionHandler(callback)
+        super.sendWithCompletionHandler(completionHandler)
     }
     
     public init(url:String, method:HttpMethod) {
