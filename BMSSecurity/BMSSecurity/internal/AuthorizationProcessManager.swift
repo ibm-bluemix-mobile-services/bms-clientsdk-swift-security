@@ -45,7 +45,7 @@ internal class AuthorizationProcessManager {
         if let _ = preferences.clientId!.get() {
             
         } else {
-            if let certificate = self.securityUtils.certificate {
+            if let certificate = self.securityUtils.getCertificateFromKeyChain() {
                 do {
                     
                     try      preferences.clientId!.set(self.securityUtils.getClientIdFromCertificate(certificate));
@@ -324,7 +324,7 @@ internal class AuthorizationProcessManager {
                         
                     }
                     
-                    //                    certificateStore.saveCertificate(registrationKeyPair, certificate);
+//                        certificateStore.saveCertificate(registrationKeyPair, certificate);
                     
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
