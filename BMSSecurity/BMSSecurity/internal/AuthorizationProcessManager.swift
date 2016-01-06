@@ -45,7 +45,7 @@ internal class AuthorizationProcessManager {
         if let _ = preferences.clientId!.get() {
             
         } else {
-            if let certificate = self.securityUtils.getCertificateFromKeyChain() {
+            if let certificate = self.securityUtils.getCertificateFromKeyChain("AuthorizationProcessManagerCertificate") {
                 do {
                     
                     try      preferences.clientId!.set(self.securityUtils.getClientIdFromCertificate(certificate));
@@ -111,7 +111,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = self.securityUtils.storedKeyPair
+            var keyPair = self.securityUtils.getKeyPair("AuthorizationProcessManagerPublicKey", privateTag: "AuthorizationProcessManagerPrivateKey")
             var jws:String = "" //TODO: delete this line
             //            var jws:String = jsonSigner.sign(keyPair, payload)
             
@@ -202,8 +202,8 @@ internal class AuthorizationProcessManager {
         
         do {
             let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
-//                    authorizationRequestManager.initialize(listener);
-//                        try authorizationRequestManager.sendRequest(path, options: options);
+            //                    authorizationRequestManager.initialize(listener);
+            //                        try authorizationRequestManager.sendRequest(path, options: options);
             
             authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
             
@@ -241,7 +241,8 @@ internal class AuthorizationProcessManager {
     }
     
     private func createRegistrationParams() -> [String:String]{
-        var registrationKeyPair = securityUtils.generateKeyPair(512)
+        var registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: "AuthorizationProcessManagerPublicKey", privateTag: "AuthorizationProcessManagerPrivateKey")
+        
         var csrJSON = [String:String]()
         var params = [String:String]()
         
@@ -321,11 +322,10 @@ internal class AuthorizationProcessManager {
                 if let certificateString = jsonResponse["certificate"] as? String {
                     var certificate:SecCertificate? = securityUtils.getCertificateFromString(certificateString)
                     if  securityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair.publicKey) {
-                        
+                        self.securityUtils.saveCertificateToKeyChain(certificate!, certificateTag: "AuthorizationProcessManagerCertificate")
+                       
                     }
-                    
-//                        certificateStore.saveCertificate(registrationKeyPair, certificate);
-                    
+
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
                         preferences.clientId!.set(id)

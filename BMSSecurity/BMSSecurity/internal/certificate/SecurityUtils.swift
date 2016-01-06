@@ -9,9 +9,8 @@
 import Foundation
 
 public class SecurityUtils {
-    public private(set) var storedKeyPair:(publicKey:SecKey?,privateKey:SecKey?)?
-    //    public private(set) var certificate:SecCertificate?
-    public  func generateKeyPair(keySize:Int) -> (publicKey: SecKey?, privateKey: SecKey?){
+    
+    public  func generateKeyPair(keySize:Int, publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
         var status:OSStatus = noErr
         var privateKey:SecKey?
         var publicKey:SecKey?
@@ -20,25 +19,72 @@ public class SecurityUtils {
         //TODO : should I save it to keychain? how?
         status = SecKeyGeneratePair(keyPair, &publicKey, &privateKey)
         
+        
+        
+        
         if (status != errSecSuccess) {
-            self.storedKeyPair = (nil,nil)
-            //TODO : handle error to logger
+            return (nil,nil)
+            //TODO : handle error to logger . throw exception?
         } else {
-            self.storedKeyPair = (publicKey,privateKey)
+            //TODO : currently deleting current keys for tags. is it ok?
+            var delQuery = [String:AnyObject]()
+            delQuery[kSecClass as String] = kSecClassKey
+            delQuery[kSecAttrKeyType as String] = kSecAttrKeyTypeRSA
+            delQuery[kSecAttrApplicationTag as String] =  privateTag
+            SecItemDelete(delQuery)
+            delQuery[kSecClass as String] = kSecClassKey
+            delQuery[kSecAttrKeyType as String] = kSecAttrKeyTypeRSA
+            delQuery[kSecAttrApplicationTag as String] =  publicTag
+            SecItemDelete(delQuery)
+            
+            var setQueryPrivateKey = [String:AnyObject]()
+            setQueryPrivateKey[kSecAttrKeyType as String] = kSecAttrKeyTypeRSA
+            setQueryPrivateKey[kSecAttrKeySizeInBits as String] = keySize
+            setQueryPrivateKey[kSecAttrApplicationTag as String] =  privateTag
+            setQueryPrivateKey[kSecValueRef as String] = privateKey
+            
+            
+            var setQueryPublicKey = [String:AnyObject]()
+            setQueryPublicKey[kSecAttrKeyType as String] = kSecAttrKeyTypeRSA
+            setQueryPublicKey[kSecAttrKeySizeInBits as String] = keySize
+            setQueryPublicKey[kSecAttrApplicationTag as String] =  publicTag
+            setQueryPublicKey[kSecValueRef as String] = publicKey
+            
+            
+            var addStatus:OSStatus = SecItemAdd(setQueryPrivateKey, nil)
+            addStatus = SecItemAdd(setQueryPublicKey, nil)
+            
+            //TODO : treat failure in add and delete
+            return (publicKey,privateKey)
             //TODO : write success to logger
         }
-        return self.storedKeyPair!
     }
     
+    public func getKeyPair(publicTag:String, privateTag:String) -> (SecKey?,SecKey?){
+        var getQuery =  [String: AnyObject]()
+        getQuery[kSecClass as String] = kSecClassKey
+        getQuery[kSecAttrKeyType as String] = kSecAttrKeyTypeRSA
+        getQuery[kSecAttrApplicationTag as String] =  publicTag
+        getQuery[kSecReturnRef as String] = true
+        var resultPublic: AnyObject?
+        var resultPrivate: AnyObject?
+        var getStatus = SecItemCopyMatching(getQuery, &resultPublic)
+        var publicKey = resultPublic! as! SecKey
+        getQuery[kSecAttrApplicationTag as String] =  privateTag
+        getStatus = SecItemCopyMatching(getQuery, &resultPrivate)
+        var privateKey = resultPrivate! as! SecKey
+        return (publicKey,privateKey)
+        //TODO : handle failure status
+    }
     
-    public func getCertificateFromKeyChain() -> SecCertificate?{
+    public func getCertificateFromKeyChain(certificateTag:String) -> SecCertificate?{
         var getQuery =  [String: AnyObject]()
         getQuery[kSecClass as String] = kSecClassCertificate
         getQuery[kSecReturnRef as String] = true
+        getQuery[kSecAttrLabel as String] = certificateTag
         var result: AnyObject?
         let getStatus = SecItemCopyMatching(getQuery, &result)
-        print(getStatus)
-        print(result!)
+        
         //TODO : check type of result?
         if result != nil {
             return result as! SecCertificate
@@ -48,21 +94,23 @@ public class SecurityUtils {
         }
     }
     
-    public func saveCertificateToKeyChain(data:NSData){
+    public func saveCertificateToKeyChain(certificate:SecCertificate, certificateTag:String){
         
         //TODO : oded : unsure about the ignoreUnknownCharacters
-        if let cert = SecCertificateCreateWithData(kCFAllocatorDefault, data) {
-            //make sure certificate is deleted
-            var delQuery = [String:AnyObject]()
-            delQuery[kSecClass as String] = kSecClassCertificate
-            SecItemDelete(delQuery)
-            //set certificate in key chain
-            var setQuery = [String:AnyObject]()
-            setQuery[kSecClass as String] = kSecClassCertificate
-            setQuery[kSecValueRef as String] = cert
-            var addStatus:OSStatus = SecItemAdd(setQuery, nil)
-            //TODO : handle bad status
-        }
+        
+        //make sure certificate is deleted
+        var delQuery = [String:AnyObject]()
+        delQuery[kSecClass as String] = kSecClassCertificate
+        delQuery[kSecAttrLabel as String] = certificateTag
+        SecItemDelete(delQuery)
+        //set certificate in key chain
+        var setQuery = [String:AnyObject]()
+        setQuery[kSecClass as String] = kSecClassCertificate
+        setQuery[kSecValueRef as String] = certificate
+        setQuery[kSecAttrLabel as String] = certificateTag
+        var addStatus:OSStatus = SecItemAdd(setQuery, nil)
+        //TODO : handle bad status
+        
         //TODO : handle errors
         
     }
@@ -72,7 +120,6 @@ public class SecurityUtils {
         //TODO : oded : unsure about the ignoreUnknownCharacters
         if let data:NSData = NSData(base64EncodedString: stringData, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)  {
             var certificate = SecCertificateCreateWithData(kCFAllocatorDefault, data)
-            saveCertificateToKeyChain(data)
             return certificate
         }
         return nil
