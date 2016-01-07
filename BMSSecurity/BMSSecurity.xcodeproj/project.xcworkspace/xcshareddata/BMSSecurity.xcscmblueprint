@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D3FED2D36134D1180A9AEE2A1899BD66741F995C",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "33766FF7B82BFC0263ED0B33750043C27D578F85" : 0,
+    "D3FED2D36134D1180A9AEE2A1899BD66741F995C" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "D39DC0D5-77BD-4F7E-95E3-8545B6426DBC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "33766FF7B82BFC0263ED0B33750043C27D578F85" : "bms-clientsdk-swift-core\/",
+    "D3FED2D36134D1180A9AEE2A1899BD66741F995C" : "bms-clientsdk-swift-security\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "BMSSecurity",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "BMSSecurity\/BMSSecurity.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ibm-bluemix-mobile-services\/bms-clientsdk-swift-core.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "33766FF7B82BFC0263ED0B33750043C27D578F85"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ibm-bluemix-mobile-services\/bms-clientsdk-swift-security.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D3FED2D36134D1180A9AEE2A1899BD66741F995C"
+    }
+  ]
+}
