@@ -11,8 +11,8 @@ import Foundation
 
 public class AppIdentity{
     
-    static let ID = "id";
-    static let VERSION = "version";
+    static let ID = "id"
+    static let VERSION = "version"
     
     var jsonData : Dictionary<String, String>? = ([:])
     
@@ -31,7 +31,7 @@ public class AppIdentity{
         return jsonData![AppIdentity.ID]!
     }
     
-    
+    //@return get application version
     public func getVersion() -> String {
         return jsonData![AppIdentity.VERSION]!
     }

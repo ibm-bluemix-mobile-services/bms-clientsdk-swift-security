@@ -45,7 +45,7 @@ internal class AuthorizationProcessManager {
         if let _ = preferences.clientId!.get() {
             
         } else {
-            if let certificate = self.securityUtils.certificate {
+            if let certificate = self.securityUtils.getCertificateFromKeyChain("sad") {
                 do {
                     
                     try      preferences.clientId!.set(self.securityUtils.getClientIdFromCertificate(certificate));
@@ -111,7 +111,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = self.securityUtils.storedKeyPair
+            var keyPair = self.securityUtils.getKeyPair("fff", privateTag: "fff")
             var jws:String = "" //TODO: delete this line
             //            var jws:String = jsonSigner.sign(keyPair, payload)
             
@@ -172,6 +172,7 @@ internal class AuthorizationProcessManager {
     
     private func invokeTokenRequest(grantCode:String?) {
         if let grantCode = grantCode {
+            
             var options:RequestOptions  = RequestOptions();
             
             options.parameters = createTokenRequestParams(grantCode);
@@ -241,7 +242,7 @@ internal class AuthorizationProcessManager {
     }
     
     private func createRegistrationParams() -> [String:String]{
-        var registrationKeyPair = securityUtils.generateKeyPair(512)
+        var registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: "Ppp", privateTag: "ss")
         var csrJSON = [String:String]()
         var params = [String:String]()
         

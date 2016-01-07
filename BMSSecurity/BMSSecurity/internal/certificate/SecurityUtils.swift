@@ -8,47 +8,151 @@
 
 import Foundation
 
-//TODO : should these methods be static?
-
 public class SecurityUtils {
-    public private(set) var storedKeyPair:(publicKey:SecKey?,privateKey:SecKey?)?
-    public private(set) var certificate:SecCertificate?
-    public  func generateKeyPair(keySize:Int) -> (publicKey: SecKey?, privateKey: SecKey?){
+    
+    public  func generateKeyPair(keySize:Int, publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
         var status:OSStatus = noErr
         var privateKey:SecKey?
         var publicKey:SecKey?
         
-        let keyPair:[String:AnyObject] = [ kSecAttrKeyType as String : kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits as String : keySize]
+        let privateKeyAttr : [NSString:AnyObject] = [
+            kSecAttrIsPermanent : true,
+            kSecAttrApplicationTag : privateTag,
+            kSecAttrKeyClass : kSecAttrKeyClassPrivate
+        ]
         
-        status = SecKeyGeneratePair(keyPair, &publicKey, &privateKey)
+        let publicKeyAttr : [NSString:AnyObject] = [
+            kSecAttrIsPermanent : true,
+            kSecAttrApplicationTag : publicTag,
+            kSecAttrKeyClass : kSecAttrKeyClassPublic,
+        ]
+        
+        let keyPairAttr : [NSString:AnyObject] = [
+            kSecAttrKeyType : kSecAttrKeyTypeRSA,
+            kSecAttrKeySizeInBits : keySize,
+            kSecPublicKeyAttrs : publicKeyAttr,
+            kSecPrivateKeyAttrs : privateKeyAttr
+        ]
+        
+        status = SecKeyGeneratePair(keyPairAttr, &publicKey, &privateKey)
         
         if (status != errSecSuccess) {
-            self.storedKeyPair = (nil,nil)
-            //TODO : handle error to logger
+            return (nil,nil)
+            //TODO : handle error to logger . throw exception?
         } else {
-            self.storedKeyPair = (publicKey,privateKey)
+            return (publicKey,privateKey)
             //TODO : write success to logger
         }
-        return self.storedKeyPair!
+    }
+    
+    public  func getKeyPair(publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
+        var privateKey:SecKey?
+        var publicKey:SecKey?
+        
+        let privateKeyAttr : [NSString:AnyObject] = [
+            kSecClass : kSecClassKey,
+            kSecAttrApplicationTag: privateTag,
+            kSecAttrKeyType : kSecAttrKeyTypeRSA,
+            kSecReturnData : true
+        ]
+        let publicKeyAttr : [NSString:AnyObject] = [
+            kSecClass : kSecClassKey,
+            kSecAttrApplicationTag: publicTag,
+            kSecAttrKeyType : kSecAttrKeyTypeRSA,
+            kSecReturnData : true
+        ]
+        var resultPublic: AnyObject?
+        var resultPrivate: AnyObject?
+        let getPublicStatus = SecItemCopyMatching(privateKeyAttr, &resultPublic)
+        if (getPublicStatus == errSecSuccess) {
+            publicKey = resultPublic! as! SecKey
+        } else {
+            //TODO : throw exception
+        }
+        let getPrivateStatus = SecItemCopyMatching(publicKeyAttr, &resultPrivate)
+        if (getPrivateStatus == errSecSuccess) {
+            privateKey = resultPrivate! as! SecKey
+        } else {
+            //TODO : throw exception
+        }
+        return (publicKey,privateKey)
+    }
+    
+    public func getCertificateFromKeyChain(certificateLabel:String) -> SecCertificate?{
+        var getQuery =  [String: AnyObject]()
+        getQuery[kSecClass as String] = kSecClassCertificate
+        getQuery[kSecReturnRef as String] = true
+        getQuery[kSecAttrLabel as String] = certificateLabel
+        var result: AnyObject?
+        let getStatus = SecItemCopyMatching(getQuery, &result)
+        if getStatus == errSecSuccess && result != nil {
+            return result as! SecCertificate
+        } else {
+            //TODO : throw exception?
+            return nil
+        }
+    }
+    
+    public static func saveStringParameterToKeyChain(data:String, label:String) {
+        var saveQuery =  [String: AnyObject]()
+        
+        saveQuery[kSecClass as String] = kSecClassGenericPassword
+        saveQuery[kSecAttrGeneric as String] = data
+        saveQuery[kSecAttrLabel as String] = label
+
         
     }
+//    public func getStringParamaterFromKeyChain(label:String){
+//        var getQuery =  [String: AnyObject]()
+////        getQuery[kSecClass as String] = ksec
+//        getQuery[kSecReturnRef as String] = true
+//        getQuery[kSecAttrLabel as String] = label
+//
+//    }
+    
+    
+    
     
     public func getCertificateFromString(stringData:String) -> SecCertificate?{
         
         //TODO : oded : unsure about the ignoreUnknownCharacters
         if let data:NSData = NSData(base64EncodedString: stringData, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)  {
-            self.certificate = SecCertificateCreateWithData(kCFAllocatorDefault, data)
-            
-            return self.certificate
+            let certificate = SecCertificateCreateWithData(kCFAllocatorDefault, data)
+            return certificate
         }
         return nil
+    }
+    public func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String){
+        
+        //make sure certificate is deleted
+        let delQuery : [NSString:AnyObject] = [
+            kSecClass: kSecClassCertificate,
+            kSecAttrLabel: certificateLabel
+        ]
+        let delStatus:OSStatus = SecItemDelete(delQuery)
+        //set certificate in key chain
+        //    var setQuery = [String:AnyObject]()
+        let setQuery: [NSString: AnyObject] = [
+            kSecClass: kSecClassCertificate,
+            kSecValueRef: certificate,
+            kSecAttrLabel: certificateLabel,
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+        ]
+        let addStatus:OSStatus = SecItemAdd(setQuery, nil)
+        if addStatus != errSecSuccess  {
+            //TODO : throw exception?
+        }
+        //TODO : handle bad status
+        
+        //TODO : handle errors
+        
     }
     public func checkCertificatePublicKeyValidity(certificate:SecCertificate?, publicKey:SecKey?) -> Bool{
         if let unWrappedCertificate = certificate, unWrappedPublicKey = publicKey {
             let policy = SecPolicyCreateBasicX509()
             var trust: SecTrust?
             let status = SecTrustCreateWithCertificates(unWrappedCertificate, policy, &trust)
-          //TODO : read documentation and decide if secTrustEvaluate is needed here
+            //TODO : read documentation and decide if secTrustEvaluate is needed here
             if let unWrappedTrust = trust where status == errSecSuccess {
                 let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust)
                 if(String(certificatePublicKey) == String(unWrappedPublicKey)){
@@ -60,7 +164,7 @@ public class SecurityUtils {
     }
     
     public func getClientIdFromCertificate(certificate:SecCertificate?) throws -> String{
-    
+        
         if let unWrappedCertificate = certificate {
             
         } else {
@@ -68,21 +172,21 @@ public class SecurityUtils {
         }
         return ""
     }
-
-//    //subjectDN is of the form: "UID=<clientId>, DC=<some other value>" or "DC=<some other value>, UID=<clientId>"
-//    String clientId = null;
-//    
-//    String subjectDN = certificate.getSubjectDN().getName();
-//    String[] parts = subjectDN.split(Pattern.quote(","));
-//    for (String part: parts){
-//    if (part.contains("UID=")){
-//    String uid=part.substring(part.indexOf("UID="));
-//    clientId = uid.split(Pattern.quote("="))[1];
-//    }
-//    }
-//    
-//    return clientId;
-//    }
+    
+    //    //subjectDN is of the form: "UID=<clientId>, DC=<some other value>" or "DC=<some other value>, UID=<clientId>"
+    //    String clientId = null;
+    //
+    //    String subjectDN = certificate.getSubjectDN().getName();
+    //    String[] parts = subjectDN.split(Pattern.quote(","));
+    //    for (String part: parts){
+    //    if (part.contains("UID=")){
+    //    String uid=part.substring(part.indexOf("UID="));
+    //    clientId = uid.split(Pattern.quote("="))[1];
+    //    }
+    //    }
+    //
+    //    return clientId;
+    //    }
     
     
 }

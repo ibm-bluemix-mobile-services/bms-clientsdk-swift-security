@@ -10,9 +10,9 @@ import Foundation
 
 public class DeviceIdentity{
     
-    static let ID = "id";
-    static let OS = "platform";
-    static let MODEL = "model";
+    static let ID = "id"
+    static let OS = "platform"
+    static let MODEL = "model"
     
     var jsonData : Dictionary<String, String>? = ([:])
     
