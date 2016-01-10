@@ -93,7 +93,7 @@ public class SecurityUtils {
         }
     }
     
-    func get(lable:String) ->  String? {
+    func getDataForLable(lable:String) ->  String? {
         //query
         let query: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
@@ -113,7 +113,8 @@ public class SecurityUtils {
         
         return nil
     }
-    func add(data:String, label: String) {
+    
+    func addDataForLabel(data:String, label: String) {
         //create
         let key: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
@@ -123,11 +124,7 @@ public class SecurityUtils {
         ]
         let status = SecItemAdd(key, nil)
     }
-    
-    
-    
-    
-    
+        
     public func getCertificateFromString(stringData:String) -> SecCertificate?{
         
         //TODO : oded : unsure about the ignoreUnknownCharacters
