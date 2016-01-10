@@ -79,10 +79,11 @@ public class SecurityUtils {
     }
     
     public func getCertificateFromKeyChain(certificateLabel:String) -> SecCertificate?{
-        var getQuery =  [String: AnyObject]()
-        getQuery[kSecClass as String] = kSecClassCertificate
-        getQuery[kSecReturnRef as String] = true
-        getQuery[kSecAttrLabel as String] = certificateLabel
+        let getQuery :  [NSString: AnyObject] = [
+            kSecClass : kSecClassCertificate,
+            kSecReturnRef : true,
+            kSecAttrLabel : certificateLabel
+        ]
         var result: AnyObject?
         let getStatus = SecItemCopyMatching(getQuery, &result)
         if getStatus == errSecSuccess && result != nil {
@@ -114,6 +115,27 @@ public class SecurityUtils {
         return nil
     }
     
+    func signData(payload:String) -> NSData? {
+        var data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+        var privateKey = getKeyPair("publicTag", privateTag: "privateTag").privateKey
+        var a:AnyObject
+        
+        var b:AnyObject
+        //        var o  = NSMutableData(length: <#T##Int#>)
+        let digest = NSMutableData(length: 32)
+        let stringData: NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+        //       CC_SHA256(stringData.bytes, CC_LONG(stringData.length), UnsafeMutablePointer<UInt8>(digest.mutableBytes))
+        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey!))!
+        var signedDataLength: Int = signedData.length
+        var s:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1, UnsafePointer((digest?.bytes)!), (digest?.length)!, UnsafeMutablePointer(signedData.mutableBytes), &signedDataLength)
+        //        _:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1,  digest., digest!.length,
+        //            UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
+        //            &signedDataLength
+        //        )
+        return signedData
+    }
+    
+    
     func addDataForLabel(data:String, label: String) {
         //create
         let key: [NSString: AnyObject] = [
@@ -124,7 +146,7 @@ public class SecurityUtils {
         ]
         let status = SecItemAdd(key, nil)
     }
-        
+    
     public func getCertificateFromString(stringData:String) -> SecCertificate?{
         
         //TODO : oded : unsure about the ignoreUnknownCharacters
@@ -134,14 +156,17 @@ public class SecurityUtils {
         }
         return nil
     }
-    public func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String){
-        
-        //make sure certificate is deleted
+    public func deleteCertificateFromKeyChain(certificateLabel:String){
         let delQuery : [NSString:AnyObject] = [
             kSecClass: kSecClassCertificate,
             kSecAttrLabel: certificateLabel
         ]
         let delStatus:OSStatus = SecItemDelete(delQuery)
+        
+    }
+    public func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String){
+        deleteCertificateFromKeyChain(certificateLabel)
+        //make sure certificate is deleted
         //set certificate in key chain
         //    var setQuery = [String:AnyObject]()
         let setQuery: [NSString: AnyObject] = [
@@ -159,6 +184,7 @@ public class SecurityUtils {
         //TODO : handle errors
         
     }
+
     public func checkCertificatePublicKeyValidity(certificate:SecCertificate?, publicKey:SecKey?) -> Bool{
         if let unWrappedCertificate = certificate, unWrappedPublicKey = publicKey {
             let policy = SecPolicyCreateBasicX509()
@@ -174,7 +200,13 @@ public class SecurityUtils {
         }
         return false
     }
-    
+    public func clearKeyChain()  {
+        let availableKSecClasses = [kSecClassCertificate, kSecClassGenericPassword, kSecClassIdentity, kSecClassInternetPassword, kSecClassKey]
+        for availableKSecClass in availableKSecClasses {
+            let query = [ kSecClass as String : availableKSecClass ]
+            SecItemDelete(query)
+        }
+    }
     public func getClientIdFromCertificate(certificate:SecCertificate?) throws -> String{
         
         if let unWrappedCertificate = certificate {

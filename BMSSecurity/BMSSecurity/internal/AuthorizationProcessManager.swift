@@ -14,9 +14,6 @@ internal class AuthorizationProcessManager {
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
     private var registrationKeyPair:(privateKey : SecKey?,publicKey : SecKey?)
     private var securityUtils:SecurityUtils
-    //    private var jsonSigner:DefaultJSONSigner
-    
-    //    private var certificateStore:CertificateStore
     private var logger:Logger
     private var sessionId:String = ""
     
@@ -35,17 +32,14 @@ internal class AuthorizationProcessManager {
         self.preferences = preferences;
         self.authorizationQueue = Queue<MfpCompletionHandler>();
         self.securityUtils = SecurityUtils()
-        //   this.jsonSigner = new DefaultJSONSigner();
-        
-        //     File keyStoreFile = new File(context.getFilesDir().getAbsolutePath(), "mfp.keystore");
         //    String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        //    certificateStore = new CertificateStore(keyStoreFile, uuid);
         
         //case where the shared preferences were deleted but the certificate is saved in the keystore
         if let _ = preferences.clientId!.get() {
             
         } else {
-            if let certificate = self.securityUtils.getCertificateFromKeyChain("sad") {
+            //TODO : maybe change this label
+            if let certificate = self.securityUtils.getCertificateFromKeyChain("certificateLabel") {
                 do {
                     
                     try      preferences.clientId!.set(self.securityUtils.getClientIdFromCertificate(certificate));
@@ -203,8 +197,8 @@ internal class AuthorizationProcessManager {
         
         do {
             let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
-//                    authorizationRequestManager.initialize(listener);
-//                        try authorizationRequestManager.sendRequest(path, options: options);
+            //                    authorizationRequestManager.initialize(listener);
+            //                        try authorizationRequestManager.sendRequest(path, options: options);
             
             authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
             
@@ -322,11 +316,11 @@ internal class AuthorizationProcessManager {
                 if let certificateString = jsonResponse["certificate"] as? String {
                     var certificate:SecCertificate? = securityUtils.getCertificateFromString(certificateString)
                     if  securityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair.publicKey) {
-                        
+                        //TODO : maybe change label name
+                        securityUtils.saveCertificateToKeyChain(certificate!, certificateLabel: "certificateLabel")
+                    } else {
+                        // handle error
                     }
-                    
-                    //                    certificateStore.saveCertificate(registrationKeyPair, certificate);
-                    
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
                         preferences.clientId!.set(id)
