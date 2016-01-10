@@ -93,22 +93,37 @@ public class SecurityUtils {
         }
     }
     
-    public static func saveStringParameterToKeyChain(data:String, label:String) {
-        var saveQuery =  [String: AnyObject]()
+    func get(lable:String) ->  String? {
+        //query
+        let query: [NSString: AnyObject] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: lable,
+            //        kSecAttrAccount: "",
+            kSecReturnData: kCFBooleanTrue,
+            //        kSecMatchLimit: kSecMatchLimitOne,
+        ]
+        var results: AnyObject?
+        let status2 = SecItemCopyMatching(query, &results)
+        if status2 == errSecSuccess {
+            let data = results as! NSData
+            let password = String(data: data, encoding: NSUTF8StringEncoding)!
+            
+            return password
+        }
         
-        saveQuery[kSecClass as String] = kSecClassGenericPassword
-        saveQuery[kSecAttrGeneric as String] = data
-        saveQuery[kSecAttrLabel as String] = label
-
-        
+        return nil
     }
-//    public func getStringParamaterFromKeyChain(label:String){
-//        var getQuery =  [String: AnyObject]()
-////        getQuery[kSecClass as String] = ksec
-//        getQuery[kSecReturnRef as String] = true
-//        getQuery[kSecAttrLabel as String] = label
-//
-//    }
+    func add(data:String, label: String) {
+        //create
+        let key: [NSString: AnyObject] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: label,
+            //        kSecAttrAccount: "",
+            kSecValueData: data.dataUsingEncoding(NSUTF8StringEncoding)!,
+        ]
+        let status = SecItemAdd(key, nil)
+    }
+    
     
     
     

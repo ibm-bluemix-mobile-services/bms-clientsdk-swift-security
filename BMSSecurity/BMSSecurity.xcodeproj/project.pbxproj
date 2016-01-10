@@ -18,7 +18,7 @@
 		FD5C41C81C3D351D004FEB59 /* WLDeviceAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41C71C3D351D004FEB59 /* WLDeviceAuthManager.swift */; };
 		FD5C41D01C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5C41CE1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD5C41D11C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */; };
-		FD5C41D61C3E928F004FEB59 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41D51C3E928F004FEB59 /* SecurityUtils.swift */; };
+		FD5C41E01C3EBD78004FEB59 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41DF1C3EBD78004FEB59 /* SecurityUtils.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF7141C2C541D00185039 /* BMSAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */; };
@@ -66,7 +66,7 @@
 		FD5C41C71C3D351D004FEB59 /* WLDeviceAuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WLDeviceAuthManager.swift; path = api/identity/WLDeviceAuthManager.swift; sourceTree = "<group>"; };
 		FD5C41CE1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFKeychainItemWrapper.h; sourceTree = "<group>"; };
 		FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFKeychainItemWrapper.m; sourceTree = "<group>"; };
-		FD5C41D51C3E928F004FEB59 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
+		FD5C41DF1C3EBD78004FEB59 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
 		FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BMSAuthorizationManager.swift; path = api/BMSAuthorizationManager.swift; sourceTree = "<group>"; };
 		FDBDF7181C2C548200185039 /* AuthenticationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthenticationDelegate.swift; path = api/AuthenticationDelegate.swift; sourceTree = "<group>"; };
@@ -162,7 +162,7 @@
 		FD1CDA901C32B33000DBBA4E /* certificate */ = {
 			isa = PBXGroup;
 			children = (
-				FD5C41D51C3E928F004FEB59 /* SecurityUtils.swift */,
+				FD5C41DF1C3EBD78004FEB59 /* SecurityUtils.swift */,
 				FD5C41CE1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h */,
 				FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */,
 			);
@@ -344,7 +344,7 @@
 				FDBDF7141C2C541D00185039 /* BMSAuthorizationManager.swift in Sources */,
 				FDBDF7191C2C548200185039 /* AuthenticationDelegate.swift in Sources */,
 				FD1CDAA71C3517A800DBBA4E /* BMSSecurityConstants.swift in Sources */,
-				FD5C41D61C3E928F004FEB59 /* SecurityUtils.swift in Sources */,
+				FD5C41E01C3EBD78004FEB59 /* SecurityUtils.swift in Sources */,
 				FD5C41D11C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m in Sources */,
 				FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */,
 				FDE913121C39631400D7CF26 /* RequestOptions.swift in Sources */,
