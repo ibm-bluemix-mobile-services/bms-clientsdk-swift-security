@@ -20,6 +20,7 @@
 		FD5C41D11C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */; };
 		FD5C41E01C3EBD78004FEB59 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41DF1C3EBD78004FEB59 /* SecurityUtils.swift */; };
 		FD99D6021C424EDD00AC605A /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD99D6011C424EDD00AC605A /* Queue.swift */; };
+		FD99D6051C438DF400AC605A /* WLConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD99D6041C438DF400AC605A /* WLConfig.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF7141C2C541D00185039 /* BMSAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */; };
@@ -69,6 +70,7 @@
 		FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFKeychainItemWrapper.m; sourceTree = "<group>"; };
 		FD5C41DF1C3EBD78004FEB59 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
 		FD99D6011C424EDD00AC605A /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		FD99D6041C438DF400AC605A /* WLConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLConfig.swift; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
 		FDBDF7131C2C541D00185039 /* BMSAuthorizationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BMSAuthorizationManager.swift; path = api/BMSAuthorizationManager.swift; sourceTree = "<group>"; };
 		FDBDF7181C2C548200185039 /* AuthenticationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthenticationDelegate.swift; path = api/AuthenticationDelegate.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */,
 				FD1CDA911C32B35E00DBBA4E /* AuthorizationRequest.swift */,
 				FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestAgent.swift */,
+				FD99D6041C438DF400AC605A /* WLConfig.swift */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				FDE913121C39631400D7CF26 /* RequestOptions.swift in Sources */,
 				FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestAgent.swift in Sources */,
 				FDE913101C3961F500D7CF26 /* Utils.swift in Sources */,
+				FD99D6051C438DF400AC605A /* WLConfig.swift in Sources */,
 				FDE913171C3C10A200D7CF26 /* AppIdentity.swift in Sources */,
 				FD5C41C81C3D351D004FEB59 /* WLDeviceAuthManager.swift in Sources */,
 				FDE9131E1C3C110B00D7CF26 /* DeviceIdentity.swift in Sources */,

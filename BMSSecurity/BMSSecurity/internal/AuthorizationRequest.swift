@@ -55,14 +55,14 @@ public class AuthorizationRequest : MFPRequest {
     public init(url:String, method:HttpMethod) {
         super.init(url: url, headers: nil, queryParameters: nil, method: method, timeout: 0);
         allowRedirects = false
+        
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.timeoutIntervalForRequest = timeout
+        AuthorizationRequest.networkSessionInternal = NSURLSession(configuration: configuration)
     }
 
     public func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {
-        for (key, val) in formParamaters.enumerate() {
-            
-        }
-        
-        
+        super.sendString(String(formParamaters), withCompletionHandler: callback);
 //
 //        let authManager: AuthorizationManager = BMSClient.sharedInstance.sharedAuthorizationManager
 //        

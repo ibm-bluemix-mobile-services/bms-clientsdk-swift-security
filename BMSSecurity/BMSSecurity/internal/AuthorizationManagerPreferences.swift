@@ -35,6 +35,9 @@ internal class AuthorizationManagerPreferences:UserDataUtils {
     internal var deviceIdentity:JSONPreference?
     internal var appIdentity:JSONPreference?
     
+//    public appName:String
+//    public
+    
     internal override init() {
         super.init()
         persistencePolicy = PolicyPreference(prefName: "persistencePolicy", defaultValue: PersistencePolicy.ALWAYS, authorizationManagerPreferences: self)

@@ -80,7 +80,9 @@ internal class AuthorizationProcessManager {
     }
     
     private func invokeInstanceRegistrationRequest() {
-        var options:RequestOptions = RequestOptions();
+        securityUtils.deleteCertificateFromKeyChain("certificateLabel")
+        
+        let options:RequestOptions = RequestOptions();
         options.parameters = createRegistrationParams();
         options.headers = createRegistrationHeaders();
         options.requestMethod = HttpMethod.POST
@@ -236,33 +238,31 @@ internal class AuthorizationProcessManager {
     }
     
     private func createRegistrationParams() -> [String:String]{
-        var registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: "Ppp", privateTag: "ss")
-        var csrJSON = [String:String]()
+        let nameAndVer = WLConfig.getApplicationDetails()
+        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+        let registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: publicTag, privateTag: privateTag)
         var params = [String:String]()
-        
-        
         do {
-            //TODO: do we really need this classes or just make them a dictionary
-            //            DeviceIdentity deviceData =  DeviceIdentity(preferences.deviceIdentity.getAsMap());
-            //            AppIdentity applicationData =  AppIdentity(preferences.appIdentity.getAsMap());
-            //
-            //            csrJSON["deviceId"] =  deviceData.getId()
-            //            csrJSON["deviceOs"] =  deviceData.getOS()
-            //            csrJSON["deviceModel"] = deviceData.getModel()
-            //            csrJSON["applicationId"] = applicationData.getId()
-            //            csrJSON["applicationVersion"] = applicationData.getVersion()
-            //            csrJSON["environment"] =  "iOS" //TODO: is this ok?
-            //
-            var csrValue:String = "" //TODO: delete this line
-            //            csrValue:String = jsonSigner.sign(registrationKeyPair, csrJSON);
-            
-            
+            var csrValue:String = securityUtils.signData(deviceDictionary(), key: registrationKeyPair)!
             params["CSR"] =  csrValue;
-            
             return params;
         } catch {
             //TODO: handle error
         }
+    }
+    
+    func deviceDictionary() -> String{
+        var device = [String : String]()
+        device[BMSAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
+        device[BMSAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
+        device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
+        let appInfo = WLConfig.getApplicationDetails()
+        device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
+        device[BMSAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
+        device[BMSAuthorizationManager.JSON_ENVIRONMENT_KEY] =  BMSAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
+        
+        return String(device)
     }
     
     private func createRegistrationHeaders() -> [String:String]{

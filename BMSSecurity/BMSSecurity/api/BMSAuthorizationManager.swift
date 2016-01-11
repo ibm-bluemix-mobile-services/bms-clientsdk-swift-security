@@ -11,9 +11,49 @@ import BMSCore
 
 public class BMSAuthorizationManager : AuthorizationManager {
    
-    static let BEARER = "Bearer"
-    static let AUTHORIZATION_HEADER = "Authorization"
-    static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
+    public static let BEARER = "Bearer"
+    public static let AUTHORIZATION_HEADER = "Authorization"
+    public static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
+    
+    //JSON keys
+    public static let JSON_CERTIFICATE_KEY = "certificate"
+    public static let JSON_CLIENT_ID_KEY = "clientId"
+    public static let JSON_DEVICE_ID_KEY = "deviceId"
+    public static let JSON_OS_KEY = "deviceOs"
+    public static let JSON_ENVIRONMENT_KEY = "environment"
+    public static let JSON_MODEL_KEY = "deviceModel"
+    public static let JSON_APPLICATION_ID_KEY = "applicationId"
+    public static let JSON_APPLICATION_VERSION_KEY = "applicationVersion"
+    public static let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
+    public  static let JSON_ACCESS_TOKEN_KEY = "access_token"
+    public static let JSON_ID_TOKEN_KEY = "id_token"
+    
+    //Keychain constants
+    public static let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
+    public static let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
+    public static let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
+    public  static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
+    public static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
+    public static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
+
+    var idToken : String {
+        get{
+//            SecurityUtils.getDataForLable("\():\():\()")
+//            return [NSString stringWithFormat:"%:%:%", OAUTH_ID_TOKEN_LABEL, bundleID, appVersion]
+//               if (!_idToken) {
+//            NSString *token = [self getKeyChainItemForLabel:self.idTokenLabel]
+//            if (token.length > 0) {
+//            [self setIdToken:token]
+//            }
+//            }
+//            return _idToken
+//            }
+        
+        return ""
+        
+        }
+    }
+    
 //    var uuidchain : IMFKeychainItemWrapper?
 
     public static let sharedInstance = BMSAuthorizationManager()
@@ -24,12 +64,12 @@ public class BMSAuthorizationManager : AuthorizationManager {
     internal init() {
         preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
-        BMSClient.sharedInstance.sharedAuthorizationManager = self;
+        BMSClient.sharedInstance.sharedAuthorizationManager = self
         
         
-        if preferences.deviceIdentity == nil {
-//            preferences.deviceIdentity
-        }
+//        if preferences.deviceIdentity == nil {
+//            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
+//        }
     }
     
     
@@ -42,58 +82,35 @@ public class BMSAuthorizationManager : AuthorizationManager {
 //            return uuidchain!
 //        }
 //    }
-    
-    func getDeviceData() -> String{
-        var x = String()
-//        SecurityUtils.
-//        SecurityUtils.saveStringParameterToKeyChain(String, label: <#T##String#>)
-//        var wrapper : IMFKeychainItemWrapper = UUIDKeychainItem()
-//        let tmp = wrapper.objectForKey(kSecValueData){
-//                
-//        }
-//        let tmp = wrapper.objectForKey(kSecValueData){
-//            if (!tmp.isEmpty) {
-//                return tmp
-//            }
-        
-        return x
-    }
-    
-    
+//    
+//    func getDeviceData() -> String{
+//        let x = String()
+//        
+//        
+//        return x
+//    }
 
     
 //    -(NSString *)getWLUniqueDeviceId {
-//    NSString *tmpString;
+//    NSString *tmpString
 //    
 //    // try to read UUID from keychain
-//    IMFKeychainItemWrapper *wrapper = [self UUIDKeychainItem];
-//    tmpString = [wrapper objectForKey:(__bridge id)(kSecValueData)];
+//    IMFKeychainItemWrapper *wrapper = [self UUIDKeychainItem]
+//    tmpString = [wrapper objectForKey:(__bridge id)(kSecValueData)]
 //    if ((tmpString != nil) && ([tmpString length] > 0)) {
-//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, @"returning UUID from the keychain");
-//    return tmpString;
+//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, "returning UUID from the keychain")
+//    return tmpString
 //    }
 //    
 //    // If none exist, create UUID
-//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, @"creating UUID and save it to the keychain");
-//    tmpString = [self createUUID];
+//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, "creating UUID and save it to the keychain")
+//    tmpString = [self createUUID]
 //    
 //    // Save to keychain
-//    [wrapper setObject:@"IMFCoreBlueMix" forKey:(__bridge id)(kSecAttrService)];
-//    [wrapper setObject:tmpString forKey:(__bridge id)(kSecValueData)];
+//    [wrapper setObject:"IMFCoreBlueMix" forKey:(__bridge id)(kSecAttrService)]
+//    [wrapper setObject:tmpString forKey:(__bridge id)(kSecValueData)]
 //    
-//    return tmpString;
-//    }
-
-    
-//    - (NSMutableDictionary *) deviceDictionary {
-//    NSMutableDictionary *device = [[NSMutableDictionary alloc] init];
-//    [device setValue:[[WLDeviceAuthManager sharedInstance] getWLUniqueDeviceId] forKey:JSON_DEVICE_ID_KEY];
-//    [device setValue:[UIDevice currentDevice].systemVersion forKey:JSON_OS_KEY];
-//    [device setValue:[UIDevice currentDevice].model forKey:JSON_MODEL_KEY];
-//    [device setValue:[WLConfig getApplicationName] forKey:JSON_APPLICATION_ID_KEY];
-//    [device setValue:[WLConfig getApplicationVersion] forKey:JSON_APPLICATION_VERSION_KEY];
-//    [device setValue:JSON_IOS_ENVIRONMENT_VALUE forKey:JSON_ENVIRONMENT_KEY];
-//    return device;
+//    return tmpString
 //    }
     
     public func isAuthorizationRequired(httpResponse: NSHTTPURLResponse) -> Bool {
@@ -110,16 +127,16 @@ public class BMSAuthorizationManager : AuthorizationManager {
        
             if statusCode == 401 || statusCode == 403 {
                 if responseAuthorizationHeader.containsString(BMSAuthorizationManager.BEARER){
-                    return true;
+                    return true
                 }
             }
         
-        return false;
+        return false
     }
     
     
     public func isOAuthError(response: Response?) -> Bool {
-        return false;
+        return false
     }
     
     public func clearAuthorizationData() {
@@ -131,7 +148,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     }
     
     public func getCachedAuthorizationHeader() -> String? {
-        return nil;
+        return nil
     }
     
     public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler?) {
@@ -141,15 +158,15 @@ public class BMSAuthorizationManager : AuthorizationManager {
     }
     
     public func getUserIdentity() -> AnyObject? {
-        return nil;
+        return nil
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        return nil;
+        return nil
     }
     
     public func getAppIdentity() -> AnyObject? {
-        return nil;
+        return nil
     }
     
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {

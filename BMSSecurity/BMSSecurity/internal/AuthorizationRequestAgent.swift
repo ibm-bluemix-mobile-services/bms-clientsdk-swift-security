@@ -152,7 +152,7 @@ public class AuthorizationRequestAgent {
             request.queryParameters = options?.parameters
             request.send(callback)
         } else {
-//            request.sendWithCompletionHandler(options?.parameters)
+            request.sendWithCompletionHandler((options?.parameters)!, callback: callback)
         }
     }
     

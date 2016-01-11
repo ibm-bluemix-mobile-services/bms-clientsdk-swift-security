@@ -115,24 +115,24 @@ public class SecurityUtils {
         return nil
     }
     
-    func signData(payload:String) -> NSData? {
-        var data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
-        var privateKey = getKeyPair("publicTag", privateTag: "privateTag").privateKey
-        var a:AnyObject
-        
-        var b:AnyObject
-        //        var o  = NSMutableData(length: <#T##Int#>)
-        let digest = NSMutableData(length: 32)
-        let stringData: NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
-        //       CC_SHA256(stringData.bytes, CC_LONG(stringData.length), UnsafeMutablePointer<UInt8>(digest.mutableBytes))
-        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey!))!
-        var signedDataLength: Int = signedData.length
-        var s:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1, UnsafePointer((digest?.bytes)!), (digest?.length)!, UnsafeMutablePointer(signedData.mutableBytes), &signedDataLength)
-        //        _:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1,  digest., digest!.length,
-        //            UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
-        //            &signedDataLength
-        //        )
-        return signedData
+    func signData(payload:String, key:(SecKey?, SecKey?)) -> String? {
+//        var data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+//        var privateKey = getKeyPair("publicTag", privateTag: "privateTag").privateKey
+//        var a:AnyObject
+//        
+//        var b:AnyObject
+//        //        var o  = NSMutableData(length: <#T##Int#>)
+//        let digest = NSMutableData(length: 32)
+//        let stringData: NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+//        //       CC_SHA256(stringData.bytes, CC_LONG(stringData.length), UnsafeMutablePointer<UInt8>(digest.mutableBytes))
+//        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey!))!
+//        var signedDataLength: Int = signedData.length
+//        var s:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1, UnsafePointer((digest?.bytes)!), (digest?.length)!, UnsafeMutablePointer(signedData.mutableBytes), &signedDataLength)
+//        //        _:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1,  digest., digest!.length,
+//        //            UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
+//        //            &signedDataLength
+//                )
+        return "kuku"
     }
     
     
