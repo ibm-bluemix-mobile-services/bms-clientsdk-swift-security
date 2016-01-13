@@ -17,6 +17,23 @@ internal class AuthorizationProcessManager {
     private var logger:Logger
     private var sessionId:String = ""
     
+    private var privateKeyIdentifier : String {
+        get{
+            let nameAndVer = WLConfig.getApplicationDetails()
+            return "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+//           return key.dataUsingEncoding(NSUTF8StringEncoding)!
+        }
+    }
+    
+    private var publicKeyIdentifier : String {
+        get{
+            let nameAndVer = WLConfig.getApplicationDetails()
+            return "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+//            return key.dataUsingEncoding(NSUTF8StringEncoding)!
+        }
+    }
+    
+    private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
     private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {
@@ -87,7 +104,7 @@ internal class AuthorizationProcessManager {
         options.headers = createRegistrationHeaders();
         options.requestMethod = HttpMethod.POST
         
-        var callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
                 if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                     self.saveCertificateFromResponse(response);
@@ -107,7 +124,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = self.securityUtils.getKeyPair("fff", privateTag: "fff")
+            var keyPair = securityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
             var jws:String = "" //TODO: delete this line
             //            var jws:String = jsonSigner.sign(keyPair, payload)
             
@@ -122,12 +139,13 @@ internal class AuthorizationProcessManager {
     }
     
     private func createTokenRequestParams(grantCode:String) -> [String:String] {
+        let params : [String : String] = [
+            "code" : grantCode,
+            "client_id" : preferences.clientId!.get()!,
+            "grant_type" : "authorization_code",
+            "redirect_uri" :AuthorizationProcessManager.HTTP_LOCALHOST
+        ]
         
-        var params = [String:String]()
-        params["code"] =  grantCode
-        params["client_id"] = preferences.clientId!.get()
-        params["grant_type"] = "authorization_code"
-        params["redirect_uri"] = AuthorizationProcessManager.HTTP_LOCALHOST
         return params;
     }
     
@@ -188,7 +206,6 @@ internal class AuthorizationProcessManager {
                 }
             }
             
-            //TODO:ilan - fix listener
             authorizationRequestSend("token", options: options, completionHandler: callback)
         } else {
             //TODO: handle error
@@ -199,13 +216,9 @@ internal class AuthorizationProcessManager {
         
         do {
             let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
-            //                    authorizationRequestManager.initialize(listener);
-            //                        try authorizationRequestManager.sendRequest(path, options: options);
-            
-            authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
-            
+            try authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
         } catch  {
-            //            TODO: handle exception
+            // TODO: handle exception
         }
     }
     
@@ -236,15 +249,16 @@ internal class AuthorizationProcessManager {
             // handle Exception
         }
     }
-    
+   
     private func createRegistrationParams() -> [String:String]{
         let nameAndVer = WLConfig.getApplicationDetails()
-        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-        let registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: publicTag, privateTag: privateTag)
+//        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+//        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+//        let registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
         var params = [String:String]()
         do {
-            var csrValue:String = securityUtils.signData(deviceDictionary(), key: registrationKeyPair)!
+            var csrValue:String = securityUtils.signCsr(deviceDictionary(), withKeyLabels: (publicKeyIdentifier, privateKeyIdentifier), withKeySize: 512)!
+//            var csrValue:String  = ""
             params["CSR"] =  csrValue;
             return params;
         } catch {
@@ -252,8 +266,8 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    func deviceDictionary() -> String{
-        var device = [String : String]()
+    func deviceDictionary() -> [String : AnyObject] {
+        var device = [String : AnyObject]()
         device[BMSAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
         device[BMSAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
         device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
@@ -262,7 +276,7 @@ internal class AuthorizationProcessManager {
         device[BMSAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
         device[BMSAuthorizationManager.JSON_ENVIRONMENT_KEY] =  BMSAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
         
-        return String(device)
+        return device
     }
     
     private func createRegistrationHeaders() -> [String:String]{

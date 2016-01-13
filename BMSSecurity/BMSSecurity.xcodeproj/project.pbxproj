@@ -15,6 +15,7 @@
 		FD1CDAA51C3517A800DBBA4E /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA21C3517A800DBBA4E /* AuthorizationManagerPreferences.swift */; };
 		FD1CDAA61C3517A800DBBA4E /* AuthorizationProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA31C3517A800DBBA4E /* AuthorizationProcessManager.swift */; };
 		FD1CDAA71C3517A800DBBA4E /* BMSSecurityConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */; };
+		FD3BAA981C4522FF002FFAA9 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD3BAA971C4522FF002FFAA9 /* CryptoSwift.framework */; };
 		FD5C41C81C3D351D004FEB59 /* WLDeviceAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41C71C3D351D004FEB59 /* WLDeviceAuthManager.swift */; };
 		FD5C41D01C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5C41CE1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD5C41D11C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */; };
@@ -65,6 +66,7 @@
 		FD1CDAA21C3517A800DBBA4E /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		FD1CDAA31C3517A800DBBA4E /* AuthorizationProcessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationProcessManager.swift; sourceTree = "<group>"; };
 		FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityConstants.swift; sourceTree = "<group>"; };
+		FD3BAA971C4522FF002FFAA9 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = "../../CryptoSwift/build/Debug-iphoneos/CryptoSwift.framework"; sourceTree = "<group>"; };
 		FD5C41C71C3D351D004FEB59 /* WLDeviceAuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WLDeviceAuthManager.swift; path = api/identity/WLDeviceAuthManager.swift; sourceTree = "<group>"; };
 		FD5C41CE1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFKeychainItemWrapper.h; sourceTree = "<group>"; };
 		FD5C41CF1C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFKeychainItemWrapper.m; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD3BAA981C4522FF002FFAA9 /* CryptoSwift.framework in Frameworks */,
 				FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +112,7 @@
 		DB2BCF891C22FB2E0063A673 = {
 			isa = PBXGroup;
 			children = (
+				FD3BAA971C4522FF002FFAA9 /* CryptoSwift.framework */,
 				FDBDF7091C2AD81100185039 /* BMSCore.framework */,
 				DB2BCF951C22FB2E0063A673 /* BMSSecurity */,
 				DB2BCFA11C22FB2F0063A673 /* BMSSecurityTests */,
@@ -412,6 +416,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -460,6 +465,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

@@ -113,10 +113,10 @@ public class BMSAuthorizationManager : AuthorizationManager {
 //    return tmpString
 //    }
     
-    public func isAuthorizationRequired(httpResponse: NSHTTPURLResponse) -> Bool {
-        if let header = httpResponse.allHeaderFields[BMSAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
+    public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
+        if let header = httpResponse?.headers![BMSAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String {
-                return isAuthorizationRequired(httpResponse.statusCode, responseAuthorizationHeader: authHeader)
+                return isAuthorizationRequired(httpResponse!.statusCode!, responseAuthorizationHeader: authHeader)
             }
         }
         

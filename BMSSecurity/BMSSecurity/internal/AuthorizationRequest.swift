@@ -61,7 +61,15 @@ public class AuthorizationRequest : MFPRequest {
         AuthorizationRequest.networkSessionInternal = NSURLSession(configuration: configuration)
     }
 
+    /**
+     * Send this resource request asynchronously, with the given form parameters as the request body.
+     * This method will set the content type header to "application/x-www-form-urlencoded".
+     *
+     * @param formParameters The parameters to put in the request body
+     * @param listener       The listener whose onSuccess or onFailure methods will be called when this request finishes.
+     */
     public func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {
+        headers[MFPRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
         super.sendString(String(formParamaters), withCompletionHandler: callback);
 //
 //        let authManager: AuthorizationManager = BMSClient.sharedInstance.sharedAuthorizationManager

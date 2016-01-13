@@ -57,6 +57,13 @@ public class AuthorizationRequestAgent {
     
     var answers = [String : AnyObject]?()
     
+    private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
+    
+    internal let defaultCompletionHandler : MfpCompletionHandler = {(response: Response?, error: NSError?) in
+        logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
+    }
+
+    
     init() {
         
     }
@@ -95,7 +102,7 @@ public class AuthorizationRequestAgent {
             
         }
         do {
-            try sendInternal(rootUrl, path: path, options: options)
+            try sendInternal(rootUrl, path: path, options: options, completionHandler: completionHandler)
         }
         catch {
             print("something wrong")
@@ -103,7 +110,7 @@ public class AuthorizationRequestAgent {
         
     }
     
-    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) throws {
+    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?, completionHandler:MfpCompletionHandler?) throws {
         if let unWrappedOptions = options {
             self.requestOptions = unWrappedOptions
         }
@@ -113,7 +120,7 @@ public class AuthorizationRequestAgent {
         
         requestPath = Utils.concatenateUrls(rootUrl, path: path)
         
-        var request = AuthorizationRequest(url:rootUrl, method:self.requestOptions!.requestMethod)
+        var request = AuthorizationRequest(url:requestPath!, method:self.requestOptions!.requestMethod)
         
         if requestOptions!.timeout != 0 {
             request.timeout = requestOptions!.timeout
@@ -132,20 +139,39 @@ public class AuthorizationRequestAgent {
         }
         
         let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
-            let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
             
-            if error != nil || !isRedirect {
-                self.processRepponse(response)
+            func processResponseWrapper(response:Response?, isFailure:Bool) {
+                let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
+                if isFailure || !isRedirect {
+                    self.processResponse(response)
+                }
+                else {
+                    do {
+                        try self.processRedirectResponse(response!, callback: nil)
+                    } catch {
+                        print("something wrong 2")
+                    }
+                    
+                }
+            }
+        
+            if let mySuccessfulResonse = (response?.isSuccessful) where error == nil && mySuccessfulResonse == true {
+                //process onSuccess
+                processResponseWrapper(response!, isFailure: false)
             }
             else {
-                do {
-                    try self.processRedirectResponse(response!, callback: nil)
-                } catch {
-                    print("something wrong 2")
-                }
 
+                //process onFailure
+                if (BMSAuthorizationManager.sharedInstance.isAuthorizationRequired(response)) {
+                    processResponseWrapper(response,isFailure: true)
+                } else {
+                    if let myhandler = completionHandler {
+                        myhandler(response, error)
+                    }else {
+                        self.defaultCompletionHandler(response, error)
+                    }
+                }
             }
-            
         }
         
         if let method = options?.requestMethod where method == HttpMethod.GET{
@@ -160,9 +186,11 @@ public class AuthorizationRequestAgent {
         case NoLocation
     }
     
-    internal func processRepponse(response: Response?) {
+    internal func processResponse(response: Response?) {
         // at this point a server response should contain a secure JSON with challenges
-        
+//        if (response?.isSuccessful) {
+//            processr
+//        }
     }
     
 //    /**

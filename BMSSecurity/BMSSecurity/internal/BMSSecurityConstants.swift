@@ -10,3 +10,4 @@ import Foundation
 
 
 internal let MFP_PACKAGE_PREFIX = "mfpsdk."
+internal let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"

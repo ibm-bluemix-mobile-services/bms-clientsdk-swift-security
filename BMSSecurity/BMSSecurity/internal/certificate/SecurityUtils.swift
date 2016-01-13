@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import CryptoSwift
 
 public class SecurityUtils {
     
-    public  func generateKeyPair(keySize:Int, publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
+    public func generateKeyPair(keySize:Int, publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
         var status:OSStatus = noErr
         var privateKey:SecKey?
         var publicKey:SecKey?
@@ -45,9 +46,9 @@ public class SecurityUtils {
         }
     }
     
-    public  func getKeyPair(publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
-        var privateKey:SecKey?
-        var publicKey:SecKey?
+    public func getKeyPairBitsFromKeyChain(publicTag:String, privateTag:String) -> (publicKey: NSData?, privateKey: NSData?){
+        var privateKey:NSData?
+        var publicKey:NSData?
         
         let privateKeyAttr : [NSString:AnyObject] = [
             kSecClass : kSecClassKey,
@@ -65,11 +66,45 @@ public class SecurityUtils {
         var resultPrivate: AnyObject?
         let getPublicStatus = SecItemCopyMatching(privateKeyAttr, &resultPublic)
         if (getPublicStatus == errSecSuccess) {
-            publicKey = resultPublic! as! SecKey
+            publicKey = resultPublic! as! NSData
         } else {
             //TODO : throw exception
         }
         let getPrivateStatus = SecItemCopyMatching(publicKeyAttr, &resultPrivate)
+        if (getPrivateStatus == errSecSuccess) {
+            privateKey = resultPrivate! as! NSData
+        } else {
+            //TODO : throw exception
+        }
+        
+        return (publicKey,privateKey)
+    }
+    
+    public func getKeyPairRefFromKeyChain(publicTag:String, privateTag:String) -> (publicKey: SecKey?, privateKey: SecKey?){
+        var privateKey:SecKey?
+        var publicKey:SecKey?
+        
+        let privateKeyAttr : [NSString:AnyObject] = [
+            kSecClass : kSecClassKey,
+            kSecAttrApplicationTag: privateTag,
+            kSecAttrKeyType : kSecAttrKeyTypeRSA,
+            kSecReturnRef : kCFBooleanTrue,
+        ]
+        let publicKeyAttr : [NSString:AnyObject] = [
+            kSecClass : kSecClassKey,
+            kSecAttrApplicationTag: publicTag,
+            kSecAttrKeyType : kSecAttrKeyTypeRSA,
+            kSecReturnRef : kCFBooleanTrue,
+        ]
+        var resultPublic: AnyObject?
+        var resultPrivate: AnyObject?
+        let getPublicStatus = SecItemCopyMatching(publicKeyAttr, &resultPublic)
+        if (getPublicStatus == errSecSuccess) {
+            publicKey = resultPublic! as! SecKey
+        } else {
+            //TODO : throw exception
+        }
+        let getPrivateStatus = SecItemCopyMatching(privateKeyAttr, &resultPrivate)
         if (getPrivateStatus == errSecSuccess) {
             privateKey = resultPrivate! as! SecKey
         } else {
@@ -115,27 +150,221 @@ public class SecurityUtils {
         return nil
     }
     
-    func signData(payload:String, key:(SecKey?, SecKey?)) -> String? {
-//        var data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
-//        var privateKey = getKeyPair("publicTag", privateTag: "privateTag").privateKey
-//        var a:AnyObject
-//        
-//        var b:AnyObject
-//        //        var o  = NSMutableData(length: <#T##Int#>)
-//        let digest = NSMutableData(length: 32)
-//        let stringData: NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
-//        //       CC_SHA256(stringData.bytes, CC_LONG(stringData.length), UnsafeMutablePointer<UInt8>(digest.mutableBytes))
-//        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey!))!
-//        var signedDataLength: Int = signedData.length
-//        var s:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1, UnsafePointer((digest?.bytes)!), (digest?.length)!, UnsafeMutablePointer(signedData.mutableBytes), &signedDataLength)
-//        //        _:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1,  digest., digest!.length,
-//        //            UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
-//        //            &signedDataLength
-//                )
-        return "kuku"
+    public func parseDictionaryToJson(dict: [String:AnyObject]? ) -> String?{
+        if let myDict = dict{
+            do{
+                let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(myDict, options: [])
+                return String(data: jsonData, encoding:NSUTF8StringEncoding)
+            } catch {
+                //TODO : handle error
+            }
+        }
+        return nil
+    }
+    
+    func signCsr(payloadJSON:[String : AnyObject]?, withKeyLabels labels:(publicKey: String?, privateKey: String?), withKeySize keySize: Int) -> String?{
+        generateKeyPair(keySize, publicTag: labels.publicKey!, privateTag: labels.privateKey!)
+        let base64Options = NSDataBase64EncodingOptions(rawValue:0)
+
+        let strPayloadJSON = parseDictionaryToJson(payloadJSON)
+        var publicKeyKey = labels.publicKey?.dataUsingEncoding(NSUTF8StringEncoding)!
+        var privateKeyKey = labels.privateKey?.dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        let keys = getKeyPairBitsFromKeyChain(labels.publicKey!, privateTag: labels.privateKey!)
+        let publicKey = keys.publicKey
+        let privateKey = keys.privateKey
+        
+        let privateKeySec = getKeyPairRefFromKeyChain(labels.publicKey!, privateTag: labels.privateKey!).privateKey
+        
+        let strJwsHeaderJSON = parseDictionaryToJson (getJWSHeaderForPublicKey(publicKey))
+        
+        var jwsHeaderData : NSData? = strJwsHeaderJSON?.dataUsingEncoding(NSUTF8StringEncoding)
+        let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
+        let payloadJSONData : NSData? = strPayloadJSON!.dataUsingEncoding(NSUTF8StringEncoding)
+        let payloadJSONBase64 = payloadJSONData!.base64EncodedStringWithOptions(base64Options)
+        
+        let jwsHeaderAndPayload = jwsHeaderBase64.stringByAppendingString(".".stringByAppendingString(payloadJSONBase64))
+        var signedData = signData(jwsHeaderAndPayload, privateKey:privateKeySec)
+        var signedDataBase64 = signedData!.base64EncodedStringWithOptions(base64Options)
+        
+        
+        return jwsHeaderAndPayload.stringByAppendingString(".".stringByAppendingString(signedDataBase64))
+    }
+   
+    public func getJWSHeaderForPublicKey(publicKey:NSData?) ->[String:AnyObject]?
+    {
+        let base64Options = NSDataBase64EncodingOptions(rawValue:0)
+        
+        guard let pkModulus : NSData = getPublicKeyMod(publicKey!) else {
+            return nil
+        }
+        
+        let mod:String = pkModulus.base64EncodedStringWithOptions(base64Options)
+        
+        guard let pkExponent : NSData = getPublicKeyExp(publicKey!) else {
+            return nil
+        }
+        
+        let exp:String = pkExponent.base64EncodedStringWithOptions(base64Options)
+        
+        let publicKeyJSON : [String:AnyObject] = [
+            "alg" : "RSA",
+            "mod" : mod,
+            "exp" : exp
+        ]
+        let jwsHeaderJSON :[String:AnyObject] = [
+            "alg" : "RS256",
+            "jpk" : publicKeyJSON
+        ]
+        return jwsHeaderJSON
+        
+    }
+    
+    private func getPublicKeyMod(publicKeyBits: NSData) -> NSData? {
+        var iterator : Int = 0;
+        iterator++; // TYPE - bit stream - mod + exp
+        derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
+        
+        iterator++; // TYPE - bit stream mod
+        let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
+        if(mod_size == -1) {
+//            IMFLogWarnWithName(CERTMANAGER_PACKAGE, @"Cannot get modulus from publicKey");
+            return nil;
+        }
+        return publicKeyBits.subdataWithRange(NSMakeRange(iterator, mod_size))
+    }
+    
+    //Return public key exponent
+    private func getPublicKeyExp(publicKeyBits: NSData) -> NSData? {
+        var iterator : Int = 0;
+        iterator++; // TYPE - bit stream - mod + exp
+        derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
+        
+        iterator++; // TYPE - bit stream mod
+        let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
+        iterator += mod_size
+        
+        iterator++; // TYPE - bit stream exp
+        let exp_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
+        //Ensure we got an exponent size
+        if(exp_size == -1) {
+            //            IMFLogWarnWithName(CERTMANAGER_PACKAGE, @"Cannot get modulus from publicKey");
+            return nil;
+        }
+        return publicKeyBits.subdataWithRange(NSMakeRange(iterator, exp_size))
+    }
+    
+    private func derEncodingGetSizeFrom(buf : NSData, inout at iterator: Int) -> Int{
+        
+        // Have to cast the pointer to the right size
+        let pointer = UnsafePointer<UInt8>(buf.bytes)
+        let count = buf.length
+        
+        // Get our buffer pointer and make an array out of it
+        let buffer = UnsafeBufferPointer<UInt8>(start:pointer, count:count)
+        let data = [UInt8](buffer)
+        
+        var itr : Int = iterator
+        var num_bytes :UInt8 = 1
+        var ret : Int = 0
+        if (data[itr] > 0x80) {
+            num_bytes  = data[itr] - 0x80
+            itr++
+        }
+        
+        for var i = 0; i < Int(num_bytes); i++ {
+           ret = (ret * 0x100) + Int(data[itr + i])
+        }
+        
+        iterator = itr + Int(num_bytes)
+
+        return ret
     }
     
     
+//    //Helper function to return modulu/exponent
+//    + (int)derEncodingGetSizeFrom:(NSData*)buf at:(int*)iterator {
+//    if(buf == nil || [buf length] <= 0 ){
+//    IMFLogWarnWithName(CERTMANAGER_PACKAGE, @"buffer was empty, unable to get encoding size");
+//    return -1;
+//    }
+//    const uint8_t* data = [buf bytes];
+//    int itr = *iterator;
+//    int num_bytes = 1;
+//    int ret = 0;
+//    if (data[itr] > 0x80) {
+//    num_bytes = data[itr] - 0x80;
+//    itr++;
+//    }
+//    for (int i = 0 ; i < num_bytes; i++) ret = (ret * 0x100) + data[itr + i];
+//    *iterator = itr + num_bytes;
+//    return ret;
+//    }
+
+    
+    public func verifySignData(string: String, signature: NSData, publicKey: SecKey?) -> Bool {
+        //        let sha256DigestPrefix:[UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,0x48, 0x01, 0x65, 0x03,0x04, 0x02, 0x01, 0x05,0x00, 0x04, 0x20] as [UInt8]
+        //        let sha256DigestPrefixAsData = NSData(bytes: sha256DigestPrefix, length: sha256DigestPrefix.count)
+        //
+        //
+        
+        //        let sha256DigestPrefix = "484948136996134721101342150432"
+        //        let sha256DigestPrefixAsData = sha256DigestPrefix.dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        let stringData: NSData = string.dataUsingEncoding(NSUTF8StringEncoding)!
+        let digest = stringData.sha256()!
+        
+        //        let mutableFullDigest:NSMutableData = NSMutableData(length: sha256DigestPrefixAsData.length + digest.length)!
+        //        mutableFullDigest.appendData(sha256DigestPrefixAsData)
+        //        mutableFullDigest.appendData(digest)
+        //        let fullDigest:NSData = NSData(data: mutableFullDigest)
+        //
+        //
+        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
+        let digestlen = digest.length
+        
+        let verifyStatus: OSStatus = SecKeyRawVerify(publicKey!, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signature.bytes), signature.length
+        )
+        if verifyStatus == errSecSuccess {
+            return true
+        } else {
+            //TODO handle failure
+            return false
+        }
+    }
+    public func signData(payload:String, privateKey:SecKey?) -> NSData? {
+        //
+        ////        let sha256DigestPrefix:[UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,0x48, 0x01, 0x65, 0x03,0x04, 0x02, 0x01, 0x05,0x00, 0x04, 0x20] as [UInt8]
+        //        let sha256DigestPrefix = "484948136996134721101342150432"
+        //        let sha256DigestPrefixAsData = sha256DigestPrefix.dataUsingEncoding(NSUTF8StringEncoding)!
+        ////        let sha256DigestPrefixAsData = NSData(bytes: sha256DigestPrefix, length: sha256DigestPrefix.count)
+        
+        
+        let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+        let digest:NSData = data.sha256()!
+        
+        //
+        //        let mutableFullDigest:NSMutableData = NSMutableData(data: sha256DigestPrefixAsData)
+        //        mutableFullDigest.appendData(digest)
+        //        let fullDigest:NSData = NSData(data: mutableFullDigest)
+        //
+        //
+        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey!))!
+        var signedDataLength: Int = signedData.length
+        
+        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
+        let digestlen = digest.length
+        
+        let signStatus:OSStatus = SecKeyRawSign(privateKey!, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
+            &signedDataLength)
+        if signStatus == errSecSuccess {
+            return signedData
+        } else {
+            //TODO handle failure
+            return nil
+        }
+    }
+
     func addDataForLabel(data:String, label: String) {
         //create
         let key: [NSString: AnyObject] = [

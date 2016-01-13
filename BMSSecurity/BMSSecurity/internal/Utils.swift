@@ -7,8 +7,12 @@
 //
 
 import Foundation
+import BMSCore
 
 public class Utils {
+    
+    private static let SECURE_PATTERN_START = "/*-secure-\n"
+    private static let SECURE_PATTERN_END = "*/"
     
     public static func concatenateUrls(rootUrl:String, path:String) -> String {
         if rootUrl.isEmpty {
@@ -70,5 +74,23 @@ public class Utils {
             
         }
         return ""
+    }
+    
+    
+    public static func extractSecureJson(response: Response?) -> [String:AnyObject?]? {
+        
+        guard let responseText:String = response?.responseText else {
+            return nil
+        }
+        
+//        guard reponseText.hasPrefix(SECURE_PATTERN_START) && reponseText.hasSuffix(SECURE_PATTERN_END) else {
+//            return nil
+//        }
+//        
+//        let startIndex = responseText
+//        guard responseText
+//        
+//        response
+        return nil
     }
 }
