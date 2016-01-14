@@ -93,4 +93,23 @@ public class Utils {
 //        response
         return nil
     }
+    
+    //Return the App Name and Version
+    public static func getApplicationDetails() -> (name:String?, version:String?) {
+        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        let name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
+        return (name, version)
+    }
+    
+    public static func parseDictionaryToJson(dict: [String:AnyObject]? ) -> String?{
+        if let myDict = dict{
+            do{
+                let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(myDict, options: [])
+                return String(data: jsonData, encoding:NSUTF8StringEncoding)
+            } catch {
+                return nil
+            }
+        }
+        return nil
+    }
 }

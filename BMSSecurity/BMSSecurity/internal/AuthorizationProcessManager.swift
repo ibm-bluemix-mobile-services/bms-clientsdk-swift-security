@@ -13,13 +13,13 @@ internal class AuthorizationProcessManager {
     private var preferences:AuthorizationManagerPreferences  = AuthorizationManagerPreferences()
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
     private var registrationKeyPair:(privateKey : SecKey?,publicKey : SecKey?)
-    private var securityUtils:SecurityUtils
+//    private var securityUtils:SecurityUtils
     private var logger:Logger
     private var sessionId:String = ""
     
     private var privateKeyIdentifier : String {
         get{
-            let nameAndVer = WLConfig.getApplicationDetails()
+            let nameAndVer = Utils.getApplicationDetails()
             return "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
 //           return key.dataUsingEncoding(NSUTF8StringEncoding)!
         }
@@ -27,7 +27,7 @@ internal class AuthorizationProcessManager {
     
     private var publicKeyIdentifier : String {
         get{
-            let nameAndVer = WLConfig.getApplicationDetails()
+            let nameAndVer = Utils.getApplicationDetails()
             return "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
 //            return key.dataUsingEncoding(NSUTF8StringEncoding)!
         }
@@ -48,23 +48,22 @@ internal class AuthorizationProcessManager {
         self.logger = Logger.getLoggerForName(MFP_PACKAGE_PREFIX+"AuthorizationProcessManager")
         self.preferences = preferences;
         self.authorizationQueue = Queue<MfpCompletionHandler>();
-        self.securityUtils = SecurityUtils()
+//        self.securityUtils = SecurityUtils()
         //    String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         
         //case where the shared preferences were deleted but the certificate is saved in the keystore
         if let _ = preferences.clientId!.get() {
             
         } else {
-            //TODO : maybe change this label
-            if let certificate = self.securityUtils.getCertificateFromKeyChain("certificateLabel") {
-                do {
-                    
-                    try      preferences.clientId!.set(self.securityUtils.getClientIdFromCertificate(certificate));
+             do {
+                //TODO : maybe change this label
+                let certificate = try SecurityUtils.getCertificateFromKeyChain("certificateLabel")
+                    try     preferences.clientId!.set(SecurityUtils.getClientIdFromCertificate(certificate));
                 } catch  {
                     // handle exception
                 }
                 
-            }
+            
         }
         //generate new random session id
         sessionId = NSUUID().UUIDString
@@ -97,7 +96,7 @@ internal class AuthorizationProcessManager {
     }
     
     private func invokeInstanceRegistrationRequest() {
-        securityUtils.deleteCertificateFromKeyChain("certificateLabel")
+        SecurityUtils.deleteCertificateFromKeyChain("certificateLabel")
         
         let options:RequestOptions = RequestOptions();
         options.parameters = createRegistrationParams();
@@ -124,7 +123,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = securityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
+            var keyPair = try SecurityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
             var jws:String = "" //TODO: delete this line
             //            var jws:String = jsonSigner.sign(keyPair, payload)
             
@@ -251,19 +250,20 @@ internal class AuthorizationProcessManager {
     }
    
     private func createRegistrationParams() -> [String:String]{
-        let nameAndVer = WLConfig.getApplicationDetails()
+        let nameAndVer = Utils.getApplicationDetails()
 //        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
 //        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
 //        let registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
         var params = [String:String]()
         do {
-            var csrValue:String = securityUtils.signCsr(deviceDictionary(), withKeyLabels: (publicKeyIdentifier, privateKeyIdentifier), withKeySize: 512)!
+            let csrValue:String = try SecurityUtils.signCsr(deviceDictionary(), keyIds: (publicKeyIdentifier, privateKeyIdentifier), keySize: 512)
 //            var csrValue:String  = ""
-            params["CSR"] =  csrValue;
+            params["CSR"] = csrValue;
             return params;
         } catch {
             //TODO: handle error
         }
+        return params
     }
     
     func deviceDictionary() -> [String : AnyObject] {
@@ -271,7 +271,7 @@ internal class AuthorizationProcessManager {
         device[BMSAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
         device[BMSAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
         device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
-        let appInfo = WLConfig.getApplicationDetails()
+        let appInfo = Utils.getApplicationDetails()
         device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
         device[BMSAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
         device[BMSAuthorizationManager.JSON_ENVIRONMENT_KEY] =  BMSAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
@@ -324,17 +324,15 @@ internal class AuthorizationProcessManager {
     
     private func saveCertificateFromResponse(response:Response?) {
         do {
-            var responseBody:String? = response?.responseText
+            let responseBody:String? = response?.responseText
             if let data = responseBody?.dataUsingEncoding(NSUTF8StringEncoding), jsonResponse = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject] {
                 //handle certificate
                 if let certificateString = jsonResponse["certificate"] as? String {
-                    var certificate:SecCertificate? = securityUtils.getCertificateFromString(certificateString)
-                    if  securityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair.publicKey) {
-                        //TODO : maybe change label name
-                        securityUtils.saveCertificateToKeyChain(certificate!, certificateLabel: "certificateLabel")
-                    } else {
-                        // handle error
-                    }
+                    let certificate:SecCertificate? = try SecurityUtils.getCertificateFromString(certificateString)
+                    try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair.publicKey)
+                    //TODO : maybe change label name
+                    try SecurityUtils.saveCertificateToKeyChain(certificate!, certificateLabel: "certificateLabel")
+                    
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
                         preferences.clientId!.set(id)

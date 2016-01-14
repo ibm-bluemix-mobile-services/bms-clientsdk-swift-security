@@ -70,7 +70,11 @@ public class AuthorizationRequest : MFPRequest {
      */
     public func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {
         headers[MFPRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-        super.sendString(String(formParamaters), withCompletionHandler: callback);
+        var body = ""
+        for (key, val) in formParamaters {
+            body += "\(key)=\(val)"
+        }
+        super.sendString(body, withCompletionHandler: callback);
 //
 //        let authManager: AuthorizationManager = BMSClient.sharedInstance.sharedAuthorizationManager
 //        

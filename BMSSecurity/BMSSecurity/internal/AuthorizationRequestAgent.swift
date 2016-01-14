@@ -174,6 +174,9 @@ public class AuthorizationRequestAgent {
             }
         }
         
+//        String rewriteDomainHeaderValue = BMSClient.getInstance().getRewriteDomain();
+        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
+        
         if let method = options?.requestMethod where method == HttpMethod.GET{
             request.queryParameters = options?.parameters
             request.send(callback)
