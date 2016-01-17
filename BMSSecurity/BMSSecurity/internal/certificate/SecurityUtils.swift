@@ -8,8 +8,92 @@
 
 import Foundation
 import CryptoSwift
+import CommonCrypto
 
 public class SecurityUtils {
+    
+    
+    static let _base64DecodingTable: [Int8] = [
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -2, -2, -2,
+        -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, -2,
+        -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
+    ]
+    
+    static let base64EncodingTableString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    static let base64EncodingTable = [Character](base64EncodingTableString.characters)
+    static let base64EncodingTableUrlSafeString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+    static let base64EncodingTableUrlSafe = [Character](base64EncodingTableUrlSafeString.characters)
+    
+    static func _base64StringFromData(data: NSData, length:Int, isSafeUrl: Bool) -> String {
+        
+        
+//        unsigned long ixtext, lentext;
+//        long ctremaining;
+//        unsigned char input[3], output[4];
+//        short i, charsonline = 0, ctcopy;
+//        const unsigned char *raw;
+//        NSMutableString *result;
+//        
+//        lentext = [data length];
+//        if (lentext < 1)
+//        return @"";
+//        result = [NSMutableString stringWithCapacity: lentext];
+//        raw = [data bytes];
+//        ixtext = 0;
+//        
+//        while (true) {
+//            ctremaining = lentext - ixtext;
+//            if (ctremaining <= 0)
+//            break;
+//            for (i = 0; i < 3; i++) {
+//                unsigned long ix = ixtext + i;
+//                if (ix < lentext)
+//                input[i] = raw[ix];
+//                else
+//                input[i] = 0;
+//            }
+//            output[0] = (input[0] & 0xFC) >> 2;
+//            output[1] = ((input[0] & 0x03) << 4) | ((input[1] & 0xF0) >> 4);
+//            output[2] = ((input[1] & 0x0F) << 2) | ((input[2] & 0xC0) >> 6);
+//            output[3] = input[2] & 0x3F;
+//            ctcopy = 4;
+//            switch (ctremaining) {
+//            case 1:
+//                ctcopy = 2;
+//                break;
+//            case 2:
+//                ctcopy = 3;
+//                break;
+//            }
+//            
+//            for (i = 0; i < ctcopy; i++)
+//            [result appendString: [NSString stringWithFormat: @"%c", isSafeUrl ? base64EncodingTableUrlSafe[output[i]]: base64EncodingTable[output[i]]]];
+//            
+//            for (i = ctcopy; i < 4; i++)
+//            [result appendString: @"="];
+//            
+//            ixtext += 3;
+//            charsonline += 4;
+//            
+//            if ((length > 0) && (charsonline >= length))
+//            charsonline = 0;
+//        }
+//        return result;
+        return ""
+    }
     
     enum SecurityError : ErrorType{
         case NoKeysGenerated
@@ -160,6 +244,13 @@ public class SecurityUtils {
         do {
             try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
             let base64Options = NSDataBase64EncodingOptions(rawValue:0)
+           
+            func encodeSafe64(data:NSData) ->String {
+                let signedNotSafe = data.base64EncodedStringWithOptions(base64Options)
+                
+                return signedNotSafe.stringByReplacingOccurrencesOfString("/", withString: "_").stringByReplacingOccurrencesOfString("+", withString: "-")
+            }
+            
 
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
 //            var publicKeyKey = ids.publicKey.dataUsingEncoding(NSUTF8StringEncoding)!
@@ -175,15 +266,23 @@ public class SecurityUtils {
                 throw SecurityError.SigningFailure("Could not create JWS Header");
             }
             
+            
+            
+            let plainData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
+            let base64String = plainData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+            
             let jwsHeaderData : NSData? = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
-            let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
+//            let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
+            let jwsHeaderBase64 = encodeSafe64(jwsHeaderData!)
             let payloadJSONData : NSData? = strPayloadJSON!.dataUsingEncoding(NSUTF8StringEncoding)
-            let payloadJSONBase64 = payloadJSONData!.base64EncodedStringWithOptions(base64Options)
+//            let payloadJSONBase64 = payloadJSONData!.base64EncodedStringWithOptions(base64Options)
+            let payloadJSONBase64 = encodeSafe64(payloadJSONData!)
             
             let jwsHeaderAndPayload = jwsHeaderBase64.stringByAppendingString(".".stringByAppendingString(payloadJSONBase64))
             let signedData = try signData(jwsHeaderAndPayload, privateKey:privateKeySec)
-            let signedDataBase64 = signedData.base64EncodedStringWithOptions(base64Options)
             
+//            let signedDataBase64 = signedData.base64EncodedStringWithOptions(base64Options)
+            let signedDataBase64 = encodeSafe64(signedData)
             
             return jwsHeaderAndPayload.stringByAppendingString(".".stringByAppendingString(signedDataBase64))
         }
@@ -301,16 +400,52 @@ public class SecurityUtils {
     }
     
     internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
-        let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
-        let digest:NSData = data.sha256()!
+//        //        let sha256DigestPrefix:[UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,0x48, 0x01, 0x65, 0x03,0x04, 0x02, 0x01, 0x05,0x00, 0x04, 0x20] as [UInt8]
+//        let sha256DigestPrefix = "484948136996134721101342150432"
+//        let sha256DigestPrefixAsData = sha256DigestPrefix.dataUsingEncoding(NSUTF8StringEncoding)!
+//        ////        let sha256DigestPrefixAsData = NSData(bytes: sha256DigestPrefix, length: sha256DigestPrefix.count)
         
+        
+        var buffer: [UInt8] = [0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,0x00,0x04,0x20]
+        let sha256DigestPrefixAsData = NSData(bytes: buffer, length: buffer.count * sizeof(UInt8))
+       
+        let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        func encode<T>(var value: T) -> NSData {
+            return withUnsafePointer(&value) { p in
+                NSData(bytes: p, length: sizeofValue(value))
+            }
+        }
+        
+        func doSha256(dataIn:NSData) -> NSData {
+            var shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH));
+            CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes));
+            
+            return shaOut;
+        }
+        
+        let digest:NSData = doSha256(data)
+        
+        
+////        let digest:NSData = data.sha256()!
+//        var digestPointer:UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.alloc(Int(CC_SHA256_DIGEST_LENGTH))
+//        CC_SHA256(data.bytes, UInt32(data.length), digestPointer)
+//       
+//        var digest:NSData = encode(digestPointer)
+        
+        let mutableFullDigest:NSMutableData = NSMutableData(data: sha256DigestPrefixAsData)
+        
+        mutableFullDigest.appendData(digest)
+        let fullDigest:NSData = NSData(data: mutableFullDigest)
+
         let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey))!
         var signedDataLength: Int = signedData.length
         
-        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
-        let digestlen = digest.length
+        let digestBytes = UnsafePointer<UInt8>(fullDigest.bytes)
+        let digestlen = fullDigest.length
         
-        let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
+//         let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.
+        let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
             &signedDataLength)
         
         guard signStatus == errSecSuccess else {
@@ -318,6 +453,32 @@ public class SecurityUtils {
         }
         
         return signedData
+        
+//        
+//        NSData *data = [paylaod dataUsingEncoding:NSUTF8StringEncoding];
+//        //iOS doesn't give us a kSecPaddingPKCS1SHA256 option, so we have to prepend this
+//        uint8_t sha256DigestPrefix[]  = "\x30\x31\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01\x05\x00\x04\x20";
+//        uint8_t digest[CC_SHA256_DIGEST_LENGTH];
+//        CC_SHA256(data.bytes, (int)data.length, digest);
+//        size_t sigLen = SecKeyGetBlockSize(privateKey);
+//        //Concatenate the prefix + digest
+//        uint8_t fullDigest[sizeof(sha256DigestPrefix) + CC_SHA256_DIGEST_LENGTH -1];
+//        bzero(fullDigest, sizeof(fullDigest));
+//        memcpy(fullDigest, sha256DigestPrefix, sizeof(sha256DigestPrefix));
+//        uint i = sizeof(sha256DigestPrefix) - 1;
+//        memcpy(&fullDigest[i], digest, sizeof(digest));
+//        uint8_t sigBuf[sigLen];
+//        
+//        //Sign the DER encoded digest info + SHA256 hash, and pad it using pkcs1
+//        OSStatus err = SecKeyRawSign(privateKey, kSecPaddingPKCS1, fullDigest, sizeof(fullDigest), sigBuf, &sigLen);
+//        if(err != noErr) {
+//            IMFLogErrorWithName(CERTMANAGER_PACKAGE, @"Problem signing data.");
+//            return nil;
+//        } else {
+//            return [NSData dataWithBytes: sigBuf length: sigLen];
+//        }
+
+        
     }
 
     internal static func storeDataInKeychain(data:String, label: String) -> Bool{
