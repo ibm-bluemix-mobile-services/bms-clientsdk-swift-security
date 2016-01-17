@@ -123,7 +123,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = try SecurityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
+            var keyPair = registrationKeyPair // try SecurityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
             var jws:String = "" //TODO: delete this line
             //            var jws:String = jsonSigner.sign(keyPair, payload)
             
@@ -329,10 +329,10 @@ internal class AuthorizationProcessManager {
             if let data = responseBody?.dataUsingEncoding(NSUTF8StringEncoding), jsonResponse = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject] {
                 //handle certificate
                 if let certificateString = jsonResponse["certificate"] as? String {
-                    let certificate:SecCertificate? = try SecurityUtils.getCertificateFromString(certificateString)
-                    try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair!.publicKey)
+                    let certificate =  try SecurityUtils.getCertificateFromString(certificateString)
+                    try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKeyTag: publicKeyIdentifier)
                     //TODO : maybe change label name
-                    try SecurityUtils.saveCertificateToKeyChain(certificate!, certificateLabel: "certificateLabel")
+                    try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: "certificateLabel")
                     
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
