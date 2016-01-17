@@ -16,7 +16,7 @@ public class UserDataUtils {
     public init() {
         //TODO:check that this is indeed the correct thing to do here
         self.sharedPreferences = NSUserDefaults.standardUserDefaults()
-        self.stringEncryption = nil
+        self.stringEncryption = AESStringEncryption()
     }
     
     internal func setStringEncryption(stringEncryption:StringEncryption) {

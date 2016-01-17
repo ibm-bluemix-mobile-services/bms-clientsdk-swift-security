@@ -143,7 +143,7 @@ public class AuthorizationRequestAgent {
             func processResponseWrapper(response:Response?, isFailure:Bool) {
                 let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
                 if isFailure || !isRedirect {
-                    self.processResponse(response)
+                    self.processResponse(response, completionHandler: completionHandler!)
                 }
                 else {
                     do {
@@ -189,7 +189,9 @@ public class AuthorizationRequestAgent {
         case NoLocation
     }
     
-    internal func processResponse(response: Response?) {
+    internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler) {
+       completionHandler(response,nil)
+        //TODO : handle JSON
         // at this point a server response should contain a secure JSON with challenges
 //        if (response?.isSuccessful) {
 //            processr

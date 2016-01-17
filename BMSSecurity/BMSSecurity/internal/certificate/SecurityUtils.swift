@@ -400,23 +400,10 @@ public class SecurityUtils {
     }
     
     internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
-//        //        let sha256DigestPrefix:[UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,0x48, 0x01, 0x65, 0x03,0x04, 0x02, 0x01, 0x05,0x00, 0x04, 0x20] as [UInt8]
-//        let sha256DigestPrefix = "484948136996134721101342150432"
-//        let sha256DigestPrefixAsData = sha256DigestPrefix.dataUsingEncoding(NSUTF8StringEncoding)!
-//        ////        let sha256DigestPrefixAsData = NSData(bytes: sha256DigestPrefix, length: sha256DigestPrefix.count)
-        
-        
-        var buffer: [UInt8] = [0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,0x00,0x04,0x20]
-        let sha256DigestPrefixAsData = NSData(bytes: buffer, length: buffer.count * sizeof(UInt8))
        
         let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
         
-        func encode<T>(var value: T) -> NSData {
-            return withUnsafePointer(&value) { p in
-                NSData(bytes: p, length: sizeofValue(value))
-            }
-        }
-        
+    
         func doSha256(dataIn:NSData) -> NSData {
             var shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH));
             CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes));
@@ -426,59 +413,20 @@ public class SecurityUtils {
         
         let digest:NSData = doSha256(data)
         
-        
-////        let digest:NSData = data.sha256()!
-//        var digestPointer:UnsafeMutablePointer<UInt8> = UnsafeMutablePointer<UInt8>.alloc(Int(CC_SHA256_DIGEST_LENGTH))
-//        CC_SHA256(data.bytes, UInt32(data.length), digestPointer)
-//       
-//        var digest:NSData = encode(digestPointer)
-        
-        let mutableFullDigest:NSMutableData = NSMutableData(data: sha256DigestPrefixAsData)
-        
-        mutableFullDigest.appendData(digest)
-        let fullDigest:NSData = NSData(data: mutableFullDigest)
-
         let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey))!
         var signedDataLength: Int = signedData.length
         
-        let digestBytes = UnsafePointer<UInt8>(fullDigest.bytes)
-        let digestlen = fullDigest.length
+        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
+        let digestlen = digest.length
         
-//         let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.
-        let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
+        let signStatus:OSStatus = SecKeyRawSign(privateKey, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signedData.mutableBytes),
             &signedDataLength)
         
         guard signStatus == errSecSuccess else {
             throw SecurityError.SignDataFailure
         }
         
-        return signedData
-        
-//        
-//        NSData *data = [paylaod dataUsingEncoding:NSUTF8StringEncoding];
-//        //iOS doesn't give us a kSecPaddingPKCS1SHA256 option, so we have to prepend this
-//        uint8_t sha256DigestPrefix[]  = "\x30\x31\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01\x05\x00\x04\x20";
-//        uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-//        CC_SHA256(data.bytes, (int)data.length, digest);
-//        size_t sigLen = SecKeyGetBlockSize(privateKey);
-//        //Concatenate the prefix + digest
-//        uint8_t fullDigest[sizeof(sha256DigestPrefix) + CC_SHA256_DIGEST_LENGTH -1];
-//        bzero(fullDigest, sizeof(fullDigest));
-//        memcpy(fullDigest, sha256DigestPrefix, sizeof(sha256DigestPrefix));
-//        uint i = sizeof(sha256DigestPrefix) - 1;
-//        memcpy(&fullDigest[i], digest, sizeof(digest));
-//        uint8_t sigBuf[sigLen];
-//        
-//        //Sign the DER encoded digest info + SHA256 hash, and pad it using pkcs1
-//        OSStatus err = SecKeyRawSign(privateKey, kSecPaddingPKCS1, fullDigest, sizeof(fullDigest), sigBuf, &sigLen);
-//        if(err != noErr) {
-//            IMFLogErrorWithName(CERTMANAGER_PACKAGE, @"Problem signing data.");
-//            return nil;
-//        } else {
-//            return [NSData dataWithBytes: sigBuf length: sigLen];
-//        }
-
-        
+        return signedData        
     }
 
     internal static func storeDataInKeychain(data:String, label: String) -> Bool{
@@ -536,6 +484,7 @@ public class SecurityUtils {
     }
 
     internal static func checkCertificatePublicKeyValidity(certificate:SecCertificate?, publicKey:SecKey?) throws -> Bool{
+        
         if let unWrappedCertificate = certificate, unWrappedPublicKey = publicKey {
             let policy = SecPolicyCreateBasicX509()
             var trust: SecTrust?

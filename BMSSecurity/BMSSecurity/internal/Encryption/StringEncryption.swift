@@ -8,7 +8,7 @@
 
 
 public protocol StringEncryption {
-    func encrypt(str:String)->String;
-    func decrypt(str:String)->String;
+    func encrypt(str:String)->String
+    func decrypt(str:String)->String
 
 }

@@ -12,11 +12,11 @@ internal class AuthorizationProcessManager {
     private static let HTTP_LOCALHOST:String = "http://localhost";
     private var preferences:AuthorizationManagerPreferences  = AuthorizationManagerPreferences()
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
-    private var registrationKeyPair:(privateKey : SecKey?,publicKey : SecKey?)
+    private var registrationKeyPair:(privateKey : SecKey,publicKey : SecKey)?
 //    private var securityUtils:SecurityUtils
     private var logger:Logger
     private var sessionId:String = ""
-    
+
     private var privateKeyIdentifier : String {
         get{
             let nameAndVer = Utils.getApplicationDetails()
@@ -253,9 +253,10 @@ internal class AuthorizationProcessManager {
         let nameAndVer = Utils.getApplicationDetails()
 //        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
 //        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-//        let registrationKeyPair = securityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
+       
         var params = [String:String]()
         do {
+             registrationKeyPair = try SecurityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
             let csrValue:String = try SecurityUtils.signCsr(deviceDictionary(), keyIds: (publicKeyIdentifier, privateKeyIdentifier), keySize: 512)
 //            var csrValue:String  = ""
             params["CSR"] = csrValue;
@@ -329,7 +330,7 @@ internal class AuthorizationProcessManager {
                 //handle certificate
                 if let certificateString = jsonResponse["certificate"] as? String {
                     let certificate:SecCertificate? = try SecurityUtils.getCertificateFromString(certificateString)
-                    try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair.publicKey)
+                    try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKey: registrationKeyPair!.publicKey)
                     //TODO : maybe change label name
                     try SecurityUtils.saveCertificateToKeyChain(certificate!, certificateLabel: "certificateLabel")
                     
