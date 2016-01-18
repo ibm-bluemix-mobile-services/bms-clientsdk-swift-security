@@ -42,6 +42,18 @@ internal class AuthorizationProcessManager {
         }
     }
     
+    private func handleAuthorizationFailure(response: Response?,  error: NSError?) {
+        logger.error("Authorization process failed")
+        if let unwrappedError = error {
+            logger.error(unwrappedError.debugDescription)
+        }
+        
+        while !self.authorizationQueue.isEmpty() {
+            let next:MfpCompletionHandler = authorizationQueue.remove()!
+            next(response, error)
+        }
+    }
+    
     internal init(preferences:AuthorizationManagerPreferences)
     {
         
@@ -110,11 +122,13 @@ internal class AuthorizationProcessManager {
                     self.invokeAuthorizationRequest();
                 }
                 else {
-                    //TODO : call on failure
+                    self.handleAuthorizationFailure(response, error: error)
                 }
+            } else {
+                self.handleAuthorizationFailure(response, error: error)
             }
         }
-        //TODO:ilan fix callback
+       
         authorizationRequestSend("clients/instance", options: options, completionHandler: callBack);
     }
     
@@ -156,24 +170,24 @@ internal class AuthorizationProcessManager {
     }
     
     private func invokeAuthorizationRequest() {
-        
-        var options:RequestOptions = RequestOptions()
+        let options:RequestOptions = RequestOptions()
         
         options.parameters = createAuthorizationParams()
         options.headers = [String:String]()
         addSessionIdHeader(&options.headers)
         options.requestMethod = HttpMethod.GET
-        var callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
                 if let unWrappedResponse = response {
-                    var location:String? = self.extractLocationHeader(response!)
-                    var grantCode:String? = self.extractGrantCode(location)
+                    let location:String? = self.extractLocationHeader(unWrappedResponse)
+                    let grantCode:String? = self.extractGrantCode(location)
                     self.invokeTokenRequest(grantCode)
-                    
                 }
                 else {
-                    //TODO : call on failure
+                    self.handleAuthorizationFailure(response, error: error)
                 }
+            } else {
+                self.handleAuthorizationFailure(response, error: error)
             }
         }
         
@@ -197,9 +211,12 @@ internal class AuthorizationProcessManager {
                         self.handleAuthorizationSuccess(response!, error: error);
                     }
                     else {
-                        //TODO : call on failure
+                        self.handleAuthorizationFailure(response, error: error)
                     }
+                } else {
+                    self.handleAuthorizationFailure(response, error: error)
                 }
+
             }
             
             authorizationRequestSend("token", options: options, completionHandler: callback)
@@ -229,8 +246,9 @@ internal class AuthorizationProcessManager {
                     self.preferences.idToken!.set(idToken);
                     
                     //save the user identity separately
-                    let fullNameArr = idToken.componentsSeparatedByString("\\.")
-                    //                    byte[] decodedIdTokenData = Base64.decode(fullNameArr[1], Base64.DEFAULT);
+                    let fullNameArr = idToken.componentsSeparatedByString(".")
+//                    var decodedIdTokenString : String = 
+//                        byte[] decodedIdTokenData = Base64.decode(fullNameArr[1], Base64.DEFAULT);
                     var decodedIdTokenString:String = "" //TODO: delete this line
                     //                    var decodedIdTokenString:String = decodedIdTokenData;
                     if let decodedData = decodedIdTokenString.dataUsingEncoding(NSUTF8StringEncoding), idTokenJson = try NSJSONSerialization.JSONObjectWithData(decodedData, options: []) as? [String:AnyObject]{
@@ -284,13 +302,8 @@ internal class AuthorizationProcessManager {
         return headers;
     }
     
-    
     private func extractLocationHeader(response:Response) -> String? {
-        
-        
-        //TODO: is it really a set or should I change to just string
-        
-        if let location = response.headers?["Location"], stringLocation = location as? String {
+          if let location = response.headers?["Location"], stringLocation = location as? String {
             logger.debug("Location header extracted successfully");
             return stringLocation;
         } else {
@@ -298,7 +311,6 @@ internal class AuthorizationProcessManager {
         }
         return nil
     }
-    
     
     private func extractGrantCode(urlString:String?) -> String?{
         
