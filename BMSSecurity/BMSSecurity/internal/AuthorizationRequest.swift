@@ -71,8 +71,13 @@ public class AuthorizationRequest : MFPRequest {
     public func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {
         headers[MFPRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
         var body = ""
+        var i = 0
         for (key, val) in formParamaters {
             body += "\(key)=\(val)"
+            if i < formParamaters.count - 1 {
+                body += "&"
+            }
+            i++
         }
         super.sendString(body, withCompletionHandler: callback);
 //

@@ -34,11 +34,11 @@ public class Utils {
     }
     
     public static func getParameterValueFromQuery(query:String?, paramName:String) -> String? {
-        guard let query = query else {
+        guard let myQuery = query  else {
             return nil
         }
         
-        let paramaters = query.componentsSeparatedByString("&")
+        let paramaters = myQuery.componentsSeparatedByString("&")
         
         for val in paramaters {
             let pairs = val.componentsSeparatedByString("=")

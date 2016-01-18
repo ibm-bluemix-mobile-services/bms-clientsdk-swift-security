@@ -123,10 +123,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         do {
             payload["code"] = grantCode
-            var keyPair = registrationKeyPair // try SecurityUtils.getKeyPairRefFromKeyChain("fff", privateTag: "fff")
-            var jws:String = "" //TODO: delete this line
-            //            var jws:String = jsonSigner.sign(keyPair, payload)
-            
+            let jws:String = try SecurityUtils.signCsr(payload, keyIds: (publicKeyIdentifier, privateKeyIdentifier), keySize: 512)
             headers = [String:String]()
             headers["X-WL-Authenticate"] =  jws
             
@@ -184,12 +181,12 @@ internal class AuthorizationProcessManager {
     }
     
     private func invokeTokenRequest(grantCode:String?) {
-        if let grantCode = grantCode {
+        if let unWrappedGrantCode = grantCode {
             
             var options:RequestOptions  = RequestOptions();
             
-            options.parameters = createTokenRequestParams(grantCode);
-            options.headers = createTokenRequestHeaders(grantCode);
+            options.parameters = createTokenRequestParams(unWrappedGrantCode);
+            options.headers = createTokenRequestHeaders(unWrappedGrantCode);
             addSessionIdHeader(&options.headers);
             options.requestMethod = HttpMethod.POST;
             
@@ -305,14 +302,12 @@ internal class AuthorizationProcessManager {
     
     private func extractGrantCode(urlString:String?) -> String?{
         
-        if let urlString = urlString {
-            var url:NSURL = NSURL(fileURLWithPath: urlString)
-            var code:String?
-            //            var code:String? = Utils.getParameterValueFromQuery(url.getQuery(), "code");
+        if let unWrappedUrlString = urlString, url:NSURL = NSURL(string: unWrappedUrlString) {
+            let code:String? = Utils.getParameterValueFromQuery(url.query, paramName: "code");
             
-            if let code = code {
+            if let unWrappedCode = code {
                 logger.debug("Grant code extracted successfully");
-                return code;
+                return unWrappedCode;
             } else {
                 //TODO: handle error
             }
