@@ -168,7 +168,7 @@ internal class AuthorizationProcessManager {
         options.requestMethod = HttpMethod.GET
         var callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
-                if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
+                if let unWrappedResponse = response {
                     var location:String? = self.extractLocationHeader(response!)
                     var grantCode:String? = self.extractGrantCode(location)
                     self.invokeTokenRequest(grantCode)
@@ -293,9 +293,9 @@ internal class AuthorizationProcessManager {
         
         //TODO: is it really a set or should I change to just string
         
-        if let location = response.headers?["location"] as? Set<String> {
+        if let location = response.headers?["Location"], stringLocation = location as? String {
             logger.debug("Location header extracted successfully");
-            return location.first;
+            return stringLocation;
         } else {
             //TODO: handle error
         }

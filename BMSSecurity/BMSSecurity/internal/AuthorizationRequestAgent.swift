@@ -59,6 +59,10 @@ public class AuthorizationRequestAgent {
     
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
+    public enum AuthorizationRequestAgentErrors : ErrorType {
+        case ERROR(String)
+    }
+    
     internal let defaultCompletionHandler : MfpCompletionHandler = {(response: Response?, error: NSError?) in
         logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
     }
@@ -154,13 +158,17 @@ public class AuthorizationRequestAgent {
                     
                 }
             }
-        
+            
+//            guard error != nil else {
+//                AuthorizationRequestAgent.logger.error("Error while getting response:\(error)")
+//                return
+//            }
+            
             if let mySuccessfulResonse = (response?.isSuccessful) where error == nil && mySuccessfulResonse == true {
                 //process onSuccess
                 processResponseWrapper(response!, isFailure: false)
             }
             else {
-
                 //process onFailure
                 if (BMSAuthorizationManager.sharedInstance.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
