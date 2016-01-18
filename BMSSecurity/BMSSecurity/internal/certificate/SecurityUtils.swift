@@ -499,18 +499,21 @@ public class SecurityUtils {
         }
     }
     internal static func checkCertificatePublicKeyValidity(certificate:SecCertificate, publicKeyTag:String) throws -> Bool{
-        let certificatePublicKeyTag = "publicKeyFromCertificate"
+        let certificatePublicKeyTag = "checkCertificatePublicKeyValidity : publicKeyFromCertificate"
+        var publicKeyBits = try getKeyBitsFromKeyChain(publicKeyTag)
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
         let status = SecTrustCreateWithCertificates(certificate, policy, &trust)
         //TODO : read documentation and decide if secTrustEvaluate is needed here
         if let unWrappedTrust = trust where status == errSecSuccess {
             if let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust) {
+                defer {
+                         SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
+                }
                 try savePublicKeyToKeyChain(certificatePublicKey, tag: certificatePublicKeyTag)
-                var a = try getKeyBitsFromKeyChain(certificatePublicKeyTag)
-                SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
-                var b = try getKeyBitsFromKeyChain(publicKeyTag)
-                if(a == b){
+                var ceritificatePublicKeyBits = try getKeyBitsFromKeyChain(certificatePublicKeyTag)
+                
+                if(ceritificatePublicKeyBits == publicKeyBits){
                     return true
                 }
             }
