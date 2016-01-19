@@ -87,15 +87,12 @@ public class Utils {
             return nil
         }
         
-//        guard reponseText.hasPrefix(SECURE_PATTERN_START) && reponseText.hasSuffix(SECURE_PATTERN_END) else {
-//            return nil
-//        }
-//        
-//        let startIndex = responseText
-//        guard responseText
-//        
-//        response
+        guard responseText.hasPrefix(SECURE_PATTERN_START) && responseText.hasSuffix(SECURE_PATTERN_END) else {
+            return nil
+        }
         
+        var jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(Utils.SECURE_PATTERN_END.characters.count)))
+
         
         
         return nil
