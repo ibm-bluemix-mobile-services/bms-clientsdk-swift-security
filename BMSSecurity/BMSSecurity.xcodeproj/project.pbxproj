@@ -11,7 +11,7 @@
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
 		DB2BCFA31C22FB2F0063A673 /* BMSSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */; };
 		FD1CDA921C32B35E00DBBA4E /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDA911C32B35E00DBBA4E /* AuthorizationRequest.swift */; };
-		FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestAgent.swift */; };
+		FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestManager.swift */; };
 		FD1CDAA51C3517A800DBBA4E /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA21C3517A800DBBA4E /* AuthorizationManagerPreferences.swift */; };
 		FD1CDAA61C3517A800DBBA4E /* AuthorizationProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA31C3517A800DBBA4E /* AuthorizationProcessManager.swift */; };
 		FD1CDAA71C3517A800DBBA4E /* BMSSecurityConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */; };
@@ -61,7 +61,7 @@
 		DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMSSecurityTests.swift; sourceTree = "<group>"; };
 		DB2BCFA41C22FB2F0063A673 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FD1CDA911C32B35E00DBBA4E /* AuthorizationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
-		FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequestAgent.swift; sourceTree = "<group>"; };
+		FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequestManager.swift; sourceTree = "<group>"; };
 		FD1CDAA21C3517A800DBBA4E /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		FD1CDAA31C3517A800DBBA4E /* AuthorizationProcessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationProcessManager.swift; sourceTree = "<group>"; };
 		FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityConstants.swift; sourceTree = "<group>"; };
@@ -161,7 +161,7 @@
 				FD1CDAA31C3517A800DBBA4E /* AuthorizationProcessManager.swift */,
 				FD1CDAA41C3517A800DBBA4E /* BMSSecurityConstants.swift */,
 				FD1CDA911C32B35E00DBBA4E /* AuthorizationRequest.swift */,
-				FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestAgent.swift */,
+				FD1CDA931C32DD8800DBBA4E /* AuthorizationRequestManager.swift */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -356,7 +356,7 @@
 				FD5C41D11C3E5C3C004FEB59 /* IMFKeychainItemWrapper.m in Sources */,
 				FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */,
 				FDE913121C39631400D7CF26 /* RequestOptions.swift in Sources */,
-				FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestAgent.swift in Sources */,
+				FD1CDA941C32DD8800DBBA4E /* AuthorizationRequestManager.swift in Sources */,
 				FDE913101C3961F500D7CF26 /* Utils.swift in Sources */,
 				FDE913171C3C10A200D7CF26 /* AppIdentity.swift in Sources */,
 				FD5C41C81C3D351D004FEB59 /* WLDeviceAuthManager.swift in Sources */,

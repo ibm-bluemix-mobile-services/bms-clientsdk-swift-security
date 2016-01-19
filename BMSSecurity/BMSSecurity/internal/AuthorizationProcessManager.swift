@@ -35,6 +35,10 @@ internal class AuthorizationProcessManager {
     
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
+    enum AuthorizationProcessManagerError : ErrorType {
+        case COULD_NOT_SAVE_TOKEN(String)
+    }
+    
     private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {
             let next:MfpCompletionHandler = authorizationQueue.remove()!
@@ -207,8 +211,13 @@ internal class AuthorizationProcessManager {
             var callback:MfpCompletionHandler = {(response: Response?, error: NSError?) in
                 if error == nil {
                     if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
-                        self.saveTokenFromResponse(response!);
-                        self.handleAuthorizationSuccess(response!, error: error);
+                        do {
+                            //TODO: ilan - this is not coded well, check on errors here
+                            try self.saveTokenFromResponse(response!)
+                            self.handleAuthorizationSuccess(response!, error: error)
+                        } catch(let error2) {
+                            self.handleAuthorizationFailure(nil, error: NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error2)"]))
+                        }
                     }
                     else {
                         self.handleAuthorizationFailure(response, error: error)
@@ -228,15 +237,14 @@ internal class AuthorizationProcessManager {
     private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
         do {
-            let authorizationRequestManager:AuthorizationRequestAgent = AuthorizationRequestAgent();
+            let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager();
             try authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
         } catch  {
             // TODO: handle exception
         }
     }
     
-    
-    private func saveTokenFromResponse(response:Response) {
+    private func saveTokenFromResponse(response:Response) throws {
         do {
             if let data = response.responseData, responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
                 if let accessToken = responseJson["access_token"] as? String, idToken = responseJson["id_token"] as? String {
@@ -247,12 +255,12 @@ internal class AuthorizationProcessManager {
                     
                     //save the user identity separately
                     let fullNameArr = idToken.componentsSeparatedByString(".")
-//                    var decodedIdTokenString : String = 
-//                        byte[] decodedIdTokenData = Base64.decode(fullNameArr[1], Base64.DEFAULT);
-                    var decodedIdTokenString:String = "" //TODO: delete this line
-                    //                    var decodedIdTokenString:String = decodedIdTokenData;
-                    if let decodedData = decodedIdTokenString.dataUsingEncoding(NSUTF8StringEncoding), idTokenJson = try NSJSONSerialization.JSONObjectWithData(decodedData, options: []) as? [String:AnyObject]{
-                        if let imfUser = idTokenJson["imf.user"] as? String? {
+                    guard let decodedIdTokenData = SecurityUtils.decodeBase64WithString(fullNameArr[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
+                        throw AuthorizationProcessManagerError.COULD_NOT_SAVE_TOKEN("Could not decode input string")
+                    }
+                    
+                    if let idTokenJson = try NSJSONSerialization.JSONObjectWithData(decodedIdTokenData, options: []) as? [String:AnyObject] {
+                        if let imfUser = idTokenJson["imf.user"] as? String {
                             self.preferences.userIdentity!.set(imfUser)
                         }
                     }
@@ -260,7 +268,7 @@ internal class AuthorizationProcessManager {
                 self.logger.debug("token successfully saved");
             }
         } catch  {
-            // handle Exception
+            throw AuthorizationProcessManagerError.COULD_NOT_SAVE_TOKEN(("\(error)"))
         }
     }
    

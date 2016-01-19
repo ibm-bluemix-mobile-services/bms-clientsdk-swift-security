@@ -1,5 +1,5 @@
 //
-//  AuthorizationRequestAgent.swift
+//  AuthorizationRequestManager.swift
 //  BMSSecurity
 //
 //  Created by Ilan Klein on 29/12/2015.
@@ -9,7 +9,7 @@
 import Foundation
 import BMSCore
 
-public class AuthorizationRequestAgent {
+public class AuthorizationRequestManager {
        
     //MARK constants
     /**
@@ -59,7 +59,7 @@ public class AuthorizationRequestAgent {
     
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
-    public enum AuthorizationRequestAgentErrors : ErrorType {
+    public enum AuthorizationRequestManagerErrors : ErrorType {
         case ERROR(String)
     }
     
@@ -87,7 +87,7 @@ public class AuthorizationRequestAgent {
             
             if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
                 rootUrl = BMSClient.defaultProtocol
-                    + "://" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestAgent.AUTH_SERVER_NAME + "/" + AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+                    + "://" + AuthorizationRequestManager.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestManager.AUTH_SERVER_NAME + "/" + AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
             }
         }
         else {
@@ -97,9 +97,9 @@ public class AuthorizationRequestAgent {
                 backendRoute += "/"
             }
             
-            rootUrl += backendRoute + AuthorizationRequestAgent.AUTH_SERVER_NAME
+            rootUrl += backendRoute + AuthorizationRequestManager.AUTH_SERVER_NAME
             
-            let pathWithTenantId = AuthorizationRequestAgent.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+            let pathWithTenantId = AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
             rootUrl += "/" + pathWithTenantId
             
             print(rootUrl)
@@ -160,7 +160,7 @@ public class AuthorizationRequestAgent {
             }
             
 //            guard error != nil else {
-//                AuthorizationRequestAgent.logger.error("Error while getting response:\(error)")
+//                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
 //                return
 //            }
             
@@ -198,6 +198,7 @@ public class AuthorizationRequestAgent {
     }
     
     internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler) {
+        Utils.extractSecureJson(response)
        completionHandler(response,nil)
         //TODO : handle JSON
         // at this point a server response should contain a secure JSON with challenges
@@ -240,11 +241,11 @@ public class AuthorizationRequestAgent {
             throw ResponseError.NoLocation
         }
         
-        let location = try getLocationString(response.headers?[AuthorizationRequestAgent.LOCATION_HEADER_NAME])
+        let location = try getLocationString(response.headers?[AuthorizationRequestManager.LOCATION_HEADER_NAME])
         
         let url:NSURL = NSURL(string: location!)!
         let query = url.query
-        let results = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestAgent.WL_RESULT)
+        let results = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT)
         
         //TODO:Ilan hadle succuss,and fail here
         //    // process failures if any

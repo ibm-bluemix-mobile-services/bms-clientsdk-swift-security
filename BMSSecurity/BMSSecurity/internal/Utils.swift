@@ -95,6 +95,9 @@ public class Utils {
 //        guard responseText
 //        
 //        response
+        
+        
+        
         return nil
     }
     
@@ -115,81 +118,5 @@ public class Utils {
             }
         }
         return nil
-    }
-    
-    /**
-    * Builds rewrite domain from backend route url.
-    *
-    * @param backendRoute Backend route.
-    * @param subzone      Subzone
-    * @return Rewrite domain.
-    * @throws MalformedURLException if backendRoute parameter has invalid format.
-    */
-    public static func buildRewriteDomain(backendRoute: String?, subzone: String?) throws -> String? {
-//        guard let value = element.value as? Int8 where value != 0 else { return identifier }
-        guard let route = backendRoute! as? String where route.isEmpty == false else {
-            //log
-            return nil
-        }
-        
-        var applicationRoute: String = route
-        if applicationRoute.hasPrefix(BMSClient.HTTP_SCHEME) {
-            applicationRoute = "\(BMSClient.HTTPS_SCHEME)://\(applicationRoute)"
-        }
-        else if applicationRoute.hasPrefix(BMSClient.HTTPS_SCHEME) && applicationRoute.containsString(Utils.BLUEMIX_NAME) {
-            applicationRoute = applicationRoute.stringByReplacingOccurrencesOfString(BMSClient.HTTP_SCHEME, withString: BMSClient.HTTPS_SCHEME)
-        }
-        
-        var url: NSURL = NSURL(string: applicationRoute)!
-        let host = url.host
-        var rewriteDomain = ""
-        var regionInDomain = "ng"
-        let port = url.port
-        
-        var serviceUrl = "\(url.scheme)://\(host)"
-        if port != 0 {
-            serviceUrl += ":\(String(port))"
-        }
-        
-//        host
-        
-//    //    String serviceUrl = String.format("%s://%s", url.getProtocol(), host);
-//    
-//    if (port != 0) {
-//    serviceUrl += ":" + String.valueOf(port);
-//    }
-//    
-//    String[] hostElements = host.split("\\.");
-//    
-//    if (!serviceUrl.contains(STAGE1_NAME)) {
-//    // Multi-region: myApp.eu-gb.mybluemix.net
-//    // US: myApp.mybluemix.net
-//    if (hostElements.length == 4) {
-//    regionInDomain = hostElements[hostElements.length - 3];
-//    }
-//    
-//    // this is production, because STAGE1 is not found
-//    // Multi-Region Eg: eu-gb.bluemix.net
-//    // US Eg: ng.bluemix.net
-//    rewriteDomain = String.format("%s.%s", regionInDomain, BLUEMIX_DOMAIN);
-//    } else {
-//    // Multi-region: myApp.stage1.eu-gb.mybluemix.net
-//    // US: myApp.stage1.mybluemix.net
-//    if (hostElements.length == 5) {
-//    regionInDomain = hostElements[hostElements.length - 3];
-//    }
-//    
-//    if (subzone != null && !subzone.isEmpty()) {
-//    // Multi-region Dev subzone Eg: stage1-Dev.eu-gb.bluemix.net
-//    // US Dev subzone Eg: stage1-Dev.ng.bluemix.net
-//    rewriteDomain = String.format("%s-%s.%s.%s", STAGE1_NAME, subzone, regionInDomain, BLUEMIX_DOMAIN);
-//    } else {
-//    // Multi-region Eg: stage1.eu-gb.bluemix.net
-//    // US  Eg: stage1.ng.bluemix.net
-//    rewriteDomain = String.format("%s.%s.%s", STAGE1_NAME, regionInDomain, BLUEMIX_DOMAIN);
-//    }
-//    }
-    
-        return rewriteDomain;
     }
 }

@@ -37,62 +37,91 @@ public class SecurityUtils {
     static let base64EncodingTableUrlSafeString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
     static let base64EncodingTableUrlSafe = [Character](base64EncodingTableUrlSafeString.characters)
     
-    static func _base64StringFromData(data: NSData, length:Int, isSafeUrl: Bool) -> String {
+    /**
+     Decode base64 code
+     
+     - parameter strBase64: strBase64 the String to decode
+     
+     - returns: return decoded String
+     */
+    public static func decodeBase64WithString(strBase64:String) -> NSData? {
         
+        guard let objPointerHelper = strBase64.cStringUsingEncoding(NSASCIIStringEncoding), objPointer = String(UTF8String: objPointerHelper) else {
+            return nil
+        }
         
-        //        unsigned long ixtext, lentext;
-        //        long ctremaining;
-        //        unsigned char input[3], output[4];
-        //        short i, charsonline = 0, ctcopy;
-        //        const unsigned char *raw;
-        //        NSMutableString *result;
-        //
-        //        lentext = [data length];
-        //        if (lentext < 1)
-        //        return @"";
-        //        result = [NSMutableString stringWithCapacity: lentext];
-        //        raw = [data bytes];
-        //        ixtext = 0;
-        //
-        //        while (true) {
-        //            ctremaining = lentext - ixtext;
-        //            if (ctremaining <= 0)
-        //            break;
-        //            for (i = 0; i < 3; i++) {
-        //                unsigned long ix = ixtext + i;
-        //                if (ix < lentext)
-        //                input[i] = raw[ix];
-        //                else
-        //                input[i] = 0;
-        //            }
-        //            output[0] = (input[0] & 0xFC) >> 2;
-        //            output[1] = ((input[0] & 0x03) << 4) | ((input[1] & 0xF0) >> 4);
-        //            output[2] = ((input[1] & 0x0F) << 2) | ((input[2] & 0xC0) >> 6);
-        //            output[3] = input[2] & 0x3F;
-        //            ctcopy = 4;
-        //            switch (ctremaining) {
-        //            case 1:
-        //                ctcopy = 2;
-        //                break;
-        //            case 2:
-        //                ctcopy = 3;
-        //                break;
-        //            }
-        //
-        //            for (i = 0; i < ctcopy; i++)
-        //            [result appendString: [NSString stringWithFormat: @"%c", isSafeUrl ? base64EncodingTableUrlSafe[output[i]]: base64EncodingTable[output[i]]]];
-        //
-        //            for (i = ctcopy; i < 4; i++)
-        //            [result appendString: @"="];
-        //
-        //            ixtext += 3;
-        //            charsonline += 4;
-        //
-        //            if ((length > 0) && (charsonline >= length))
-        //            charsonline = 0;
-        //        }
-        //        return result;
-        return ""
+        let intLengthFixed:Int = (objPointer.characters.count)
+        var result:[Int8] = [Int8](count: intLengthFixed, repeatedValue : 1)
+        
+        var i:Int=0, j:Int=0, k:Int
+        var count = 0
+        var intLengthMutated:Int = (objPointer.characters.count)
+        var current:Character
+        
+        for current = objPointer[objPointer.startIndex.advancedBy(count++)] ; current != "\0" && intLengthMutated-- > 0 ; current = objPointer[objPointer.startIndex.advancedBy(count++)]  {
+            
+            if current == "=" {
+                if  count < intLengthFixed && objPointer[objPointer.startIndex.advancedBy(count)] != "=" && i%4 == 1 {
+                    
+                    return nil
+                }
+                if count == intLengthFixed {
+                    break
+                }
+                
+                continue
+            }
+            let stringCurrent = String(current)
+            let singleValueArrayCurrent: [UInt8] = Array(stringCurrent.utf8)
+            let intCurrent:Int = Int(singleValueArrayCurrent[0])
+            let int8Current = _base64DecodingTable[intCurrent]
+            
+            if int8Current == -1 {
+                continue
+            } else if int8Current == -2 {
+                return nil
+            }
+            
+            switch (i % 4) {
+            case 0:
+                result[j] = int8Current << 2
+            case 1:
+                result[j++] |= int8Current >> 4
+                result[j] = (int8Current & 0x0f) << 4
+            case 2:
+                result[j++] |= int8Current >> 2
+                result[j] = (int8Current & 0x03) << 6
+            case 3:
+                result[j++] |= int8Current
+            default:  break
+            }
+            i++;
+            
+            if count == intLengthFixed {
+                break
+            }
+            
+        }
+        
+        // mop things up if we ended on a boundary
+        k = j;
+        if (current == "=") {
+            switch (i % 4) {
+            case 1:
+                // Invalid state
+                return nil
+            case 2:
+                k++
+                result[k] = 0
+            case 3:
+                result[k] = 0
+            default:
+                break
+            }
+        }
+        
+        // Setup the return NSData
+        return NSData(bytes: result, length: j)
     }
     
     enum SecurityError : ErrorType{

@@ -53,8 +53,6 @@ public class BMSAuthorizationManager : AuthorizationManager {
         
         }
     }
-    
-//    var uuidchain : IMFKeychainItemWrapper?
 
     public static let sharedInstance = BMSAuthorizationManager()
     
@@ -71,48 +69,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
 //            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
 //        }
     }
-    
-    
-//    func UUIDKeychainItem() -> IMFKeychainItemWrapper{
-//        if (uuidchain != nil) {
-//            return uuidchain!
-//        }
-//        else {
-//            uuidchain = IMFKeychainItemWrapper(identifier: "WLUUID", accessGroup: nil)
-//            return uuidchain!
-//        }
-//    }
-//    
-//    func getDeviceData() -> String{
-//        let x = String()
-//        
-//        
-//        return x
-//    }
 
-    
-//    -(NSString *)getWLUniqueDeviceId {
-//    NSString *tmpString
-//    
-//    // try to read UUID from keychain
-//    IMFKeychainItemWrapper *wrapper = [self UUIDKeychainItem]
-//    tmpString = [wrapper objectForKey:(__bridge id)(kSecValueData)]
-//    if ((tmpString != nil) && ([tmpString length] > 0)) {
-//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, "returning UUID from the keychain")
-//    return tmpString
-//    }
-//    
-//    // If none exist, create UUID
-//    IMFLogTraceWithName(IMF_AUTH_PACKAGE, "creating UUID and save it to the keychain")
-//    tmpString = [self createUUID]
-//    
-//    // Save to keychain
-//    [wrapper setObject:"IMFCoreBlueMix" forKey:(__bridge id)(kSecAttrService)]
-//    [wrapper setObject:tmpString forKey:(__bridge id)(kSecValueData)]
-//    
-//    return tmpString
-//    }
-    
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
         if let header = httpResponse?.headers![BMSAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String {
@@ -152,9 +109,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     }
     
     public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler?) {
-        
         processManager.startAuthorizationProcess(completionHandler)
-//        completionHandler(nil, nil)
     }
     
     public func getUserIdentity() -> AnyObject? {
