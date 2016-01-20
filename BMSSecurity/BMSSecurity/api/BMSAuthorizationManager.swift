@@ -35,7 +35,8 @@ public class BMSAuthorizationManager : AuthorizationManager {
     public  static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
     public static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
     public static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
-
+    
+    private var challengeHandlers:[String:ChallengeHandler]
     var idToken : String {
         get{
 //            SecurityUtils.getDataForLable("\():\():\()")
@@ -62,6 +63,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     internal init() {
         preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
+        self.challengeHandlers = [String:ChallengeHandler]()
         BMSClient.sharedInstance.sharedAuthorizationManager = self
         
         
@@ -130,5 +132,8 @@ public class BMSAuthorizationManager : AuthorizationManager {
     
     public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
         
+    }
+    public func getChallengeHandler(realm:String) -> ChallengeHandler?{
+        return challengeHandlers[realm]
     }
 }
