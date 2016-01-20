@@ -6,16 +6,16 @@
 //  Copyright © 2016 IBM. All rights reserved.
 //
 import BMSCore
-public class ChallengeHandler{ 
+public class ChallengeHandler : AuthenticationContext{
     
     private var realm:String
-    private /*volatile*/ var listener:AuthenticationListener?
+    private /*volatile*/ var authenticationDelegate:AuthenticationDelegate?
     private /*volatile*/ var waitingRequests:[AuthorizationRequestManager]
     private /*volatile*/ var activeRequest:AuthorizationRequestManager?
     
-    public init(realm:String , listener:AuthenticationListener) {
+    public init(realm:String , authenticationDelegate:AuthenticationDelegate) {
         self.realm = realm
-        self.listener = listener
+        self.authenticationDelegate = authenticationDelegate
         self.activeRequest = nil
         self.waitingRequests = [AuthorizationRequestManager]()
     }
@@ -55,7 +55,7 @@ public class ChallengeHandler{
     public func /*synchronized*/ handleChallenge(request:AuthorizationRequestManager , challenge:[String:AnyObject]?) {
          if activeRequest == nil {
             activeRequest = request
-             if let unWrappedListener = self.listener{
+             if let unWrappedListener = self.authenticationDelegate{
                 unWrappedListener.onAuthenticationChallengeReceived(self, challenge: challenge)
             }
         } else {
@@ -64,7 +64,7 @@ public class ChallengeHandler{
     }
     
     public /*synchronized*/ func handleSuccess(success:[String:AnyObject]?) {
-        if let unWrappedListener = self.listener{
+        if let unWrappedListener = self.authenticationDelegate{
             unWrappedListener.onAuthenticationSuccess(success);
         }
         releaseWaitingList();
@@ -72,7 +72,7 @@ public class ChallengeHandler{
     }
     
     public /*synchronized*/ func handleFailure(failure:[String:AnyObject]?) {
-        if let unWrappedListener = self.listener{
+        if let unWrappedListener = self.authenticationDelegate{
             unWrappedListener.onAuthenticationFailure(failure);
         }
         clearWaitingList();

@@ -9,7 +9,7 @@
 import Foundation
 import BMSCore
 
-protocol AuthenticationDelegate{
+public protocol AuthenticationDelegate{
     /**
     * Called when authentication challenge was received. The implementor should handle the challenge and call
     * {@link com.ibm.mobilefirstplatform.clientsdk.android.security.api.AuthenticationContext#submitAuthenticationChallengeAnswer(JSONObject)}
@@ -20,7 +20,7 @@ protocol AuthenticationDelegate{
     * {@link Request#send(Context, ResponseListener)}, which triggered the
     * authentication challenge.
     */
-    func onAuthenticationChallengeReceived(authContext : AuthorizationManager, challenge : AnyObject?)
+    func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject?)
     
     /**
     * Called when authentication succeeded.

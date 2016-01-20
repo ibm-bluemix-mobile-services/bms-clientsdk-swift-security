@@ -37,6 +37,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     public static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
     
     private var challengeHandlers:[String:ChallengeHandler]
+    
     var idToken : String {
         get{
 //            SecurityUtils.getDataForLable("\():\():\()")
@@ -54,6 +55,10 @@ public class BMSAuthorizationManager : AuthorizationManager {
         
         }
     }
+    
+    public enum AutorizationError : ErrorType {
+        case CANNOT_ADD_CHALLANGE_HANDLER(String)
+    }
 
     public static let sharedInstance = BMSAuthorizationManager()
     
@@ -65,7 +70,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
         BMSClient.sharedInstance.sharedAuthorizationManager = self
-        
+        challengeHandlers = [String:ChallengeHandler]()
         
 //        if preferences.deviceIdentity == nil {
 //            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
@@ -126,14 +131,66 @@ public class BMSAuthorizationManager : AuthorizationManager {
         return nil
     }
     
+    /**
+     Registers a delegate that will handle authentication for the specified realm.
+     
+     - parameter delegate: The delegate that will handle authentication challenges
+     - parameter forRealm: The realm name
+     */
+    public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) throws {
+        guard realm.isEmpty == false else {
+            throw AutorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
+        }
+        
+        var handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
+        challengeHandlers[realm] = handler
+    }
+    
+    /**
+     Unregisters the authentication delegate for the specified realm.
+     
+     - parameter realm: The realm name
+     */
+    public func unregisterAuthenticationDelegate(realm: String) {
+        guard realm.isEmpty == false else {
+            return
+        }
+        
+        challengeHandlers.removeValueForKey(realm)
+    }
+    
+    /**
+     <#Description#>
+     
+     - returns: <#return value description#>
+     */
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
         return PersistencePolicy.NEVER
     }
     
+    /**
+     Description
+     
+     - parameter policy: <#policy description#>
+     */
     public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
         
     }
+    
+    /**
+     <#Description#>
+     
+     - parameter realm: <#realm description#>
+     
+     - returns: <#return value description#>
+     */
     public func getChallengeHandler(realm:String) -> ChallengeHandler?{
         return challengeHandlers[realm]
     }
 }
+
+internal extension AuthorizationManager {
+    func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String){}
+    func unregisterAuthenticationDelegate(realm: String){}
+}
+

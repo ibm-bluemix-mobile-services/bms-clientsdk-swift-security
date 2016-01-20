@@ -198,31 +198,61 @@ public class AuthorizationRequestManager {
     }
     
     internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler) {
-        Utils.extractSecureJson(response)
-       completionHandler(response,nil)
-        //TODO : handle JSON
         // at this point a server response should contain a secure JSON with challenges
-//        if (response?.isSuccessful) {
-//            processr
+        //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
+        guard let responseJson = Utils.extractSecureJson(response) else {
+            completionHandler(response, nil)
+            return
+        }
+        
+        if let challanges = responseJson[AuthorizationRequestManager.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
+            startHandleChallenges(challanges, response: response!)
+        }
+        else {
+            completionHandler(response, nil)
+        }
+    }
+    
+    internal func startHandleChallenges(jsonChallenges: [String: AnyObject], response: Response) {
+        
+//        ArrayList<String> challenges = getRealmsFromJson(jsonChallenges);
+//        
+//        MCAAuthorizationManager authManager = (MCAAuthorizationManager) BMSClient.getInstance().getAuthorizationManager();
+//        
+//        if (isAuthorizationRequired(response)) {
+//            setExpectedAnswers(challenges);
+//        }
+//        
+//        for (String realm : challenges) {
+//            ChallengeHandler handler = authManager.getChallengeHandler(realm);
+//            if (handler != null) {
+//                JSONObject challenge = jsonChallenges.optJSONObject(realm);
+//                handler.handleChallenge(this, challenge, context);
+//            } else {
+//                throw new RuntimeException("Challenge handler for realm is not found: " + realm);
+//            }
 //        }
     }
     
-//    /**
-//    * Process a response from the server.
-//    *
-//    * @param response Server response.
-//    */
-//    private void processResponse(Response response) {
-//    // at this point a server response should contain a secure JSON with challenges
-//    JSONObject jsonResponse = Utils.extractSecureJson(response);
-//    JSONObject jsonChallenges = (jsonResponse == null) ? null : jsonResponse.optJSONObject(CHALLENGES_VALUE_NAME);
-//    
-//    if (jsonChallenges != null) {
-//    startHandleChallenges(jsonChallenges, response);
-//    } else {
-//    listener.onSuccess(response);
-//    }
-//    }
+    internal func getRealmsFromJson() {
+        
+//        /**
+//        * Iterates a JSON object containing authorization challenges and builds a list of reals.
+//        *
+//        * @param jsonChallenges Collection of challenges.
+//        * @return Array with realms.
+//        */
+//        private ArrayList<String> getRealmsFromJson(JSONObject jsonChallenges) {
+//            Iterator<String> challengesIterator = jsonChallenges.keys();
+//            ArrayList<String> challenges = new ArrayList<>();
+//            
+//            while (challengesIterator.hasNext()) {
+//                challenges.add(challengesIterator.next());
+//            }
+//            
+//            return challenges;
+//        }
+    }
     
     internal func processRedirectResponse(response:Response, callback:MfpCompletionHandler?) throws {
         

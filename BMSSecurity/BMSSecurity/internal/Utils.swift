@@ -80,7 +80,13 @@ public class Utils {
         return ""
     }
     
-    
+    /**
+     <#Description#>
+     
+     - parameter response: <#response description#>
+     
+     - returns: <#return value description#>
+     */
     public static func extractSecureJson(response: Response?) -> [String:AnyObject?]? {
         
         guard let responseText:String = response?.responseText else {
@@ -92,9 +98,16 @@ public class Utils {
         }
         
         var jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(Utils.SECURE_PATTERN_END.characters.count)))
-
         
+        do {
         
+            if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
+                return responseJson
+            }
+        } catch {
+            return nil
+        }
+       
         return nil
     }
     
