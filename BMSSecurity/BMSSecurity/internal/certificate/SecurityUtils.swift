@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CryptoSwift
 import CommonCrypto
 
 public class SecurityUtils {
@@ -409,23 +408,23 @@ public class SecurityUtils {
         return ret
     }
     
-    private static func verifySignData(string: String, signature: NSData, publicKey: SecKey?) -> Bool {
-        
-        let stringData: NSData = string.dataUsingEncoding(NSUTF8StringEncoding)!
-        let digest = stringData.sha256()!
-        
-        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
-        let digestlen = digest.length
-        
-        let verifyStatus: OSStatus = SecKeyRawVerify(publicKey!, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signature.bytes), signature.length
-        )
-        if verifyStatus == errSecSuccess {
-            return true
-        } else {
-            //TODO handle failure
-            return false
-        }
-    }
+//    private static func verifySignData(string: String, signature: NSData, publicKey: SecKey?) -> Bool {
+//        
+//        let stringData: NSData = string.dataUsingEncoding(NSUTF8StringEncoding)!
+//        let digest = stringData.sha256()!
+//        
+//        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
+//        let digestlen = digest.length
+//        
+//        let verifyStatus: OSStatus = SecKeyRawVerify(publicKey!, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signature.bytes), signature.length
+//        )
+//        if verifyStatus == errSecSuccess {
+//            return true
+//        } else {
+//            //TODO handle failure
+//            return false
+//        }
+//    }
     
     internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
         
@@ -523,7 +522,7 @@ public class SecurityUtils {
     private var publicKeyIdentifier : String {
         get{
             let nameAndVer = Utils.getApplicationDetails()
-            return "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+            return "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
             //            return key.dataUsingEncoding(NSUTF8StringEncoding)!
         }
     }

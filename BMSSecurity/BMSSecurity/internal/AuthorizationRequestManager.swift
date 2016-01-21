@@ -170,7 +170,7 @@ public class AuthorizationRequestManager {
             }
             else {
                 //process onFailure
-                if (BMSAuthorizationManager.sharedInstance.isAuthorizationRequired(response)) {
+                if (MCAAuthorizationManager.sharedInstance.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
                 } else {
                     if let myhandler = completionHandler {

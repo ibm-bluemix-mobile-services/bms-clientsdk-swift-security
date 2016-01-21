@@ -1,5 +1,5 @@
 //
-//  BMSAuthorizationManager.swift
+//  MCAAuthorizationManager.swift
 //  BMSSecurity
 //
 //  Created by Ilan Klein on 23/12/2015.
@@ -9,7 +9,7 @@
 import Foundation
 import BMSCore
 
-public class BMSAuthorizationManager : AuthorizationManager {
+public class MCAAuthorizationManager : AuthorizationManager {
    
     public static let BEARER = "Bearer"
     public static let AUTHORIZATION_HEADER = "Authorization"
@@ -60,7 +60,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
         case CANNOT_ADD_CHALLANGE_HANDLER(String)
     }
 
-    public static let sharedInstance = BMSAuthorizationManager()
+    public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
     var preferences : AuthorizationManagerPreferences
@@ -78,7 +78,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     }
 
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
-        if let header = httpResponse?.headers![BMSAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
+        if let header = httpResponse?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String {
                 return isAuthorizationRequired(httpResponse!.statusCode!, responseAuthorizationHeader: authHeader)
             }
@@ -90,7 +90,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
        
             if statusCode == 401 || statusCode == 403 {
-                if responseAuthorizationHeader.containsString(BMSAuthorizationManager.BEARER){
+                if responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
                     return true
                 }
             }
@@ -115,7 +115,7 @@ public class BMSAuthorizationManager : AuthorizationManager {
         return nil
     }
     
-    public func obtainAuthorizationHeader(completionHandler: MfpCompletionHandler?) {
+    public func obtainAuthorization(completionHandler: MfpCompletionHandler?) {
         processManager.startAuthorizationProcess(completionHandler)
     }
     
@@ -188,9 +188,3 @@ public class BMSAuthorizationManager : AuthorizationManager {
         return challengeHandlers[realm]
     }
 }
-
-internal extension AuthorizationManager {
-    func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String){}
-    func unregisterAuthenticationDelegate(realm: String){}
-}
-

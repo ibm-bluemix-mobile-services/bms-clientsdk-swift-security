@@ -20,7 +20,7 @@ internal class AuthorizationProcessManager {
     private var privateKeyIdentifier : String {
         get{
             let nameAndVer = Utils.getApplicationDetails()
-            return "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+            return "\(MCAAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
 //           return key.dataUsingEncoding(NSUTF8StringEncoding)!
         }
     }
@@ -28,7 +28,7 @@ internal class AuthorizationProcessManager {
     private var publicKeyIdentifier : String {
         get{
             let nameAndVer = Utils.getApplicationDetails()
-            return "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+            return "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
 //            return key.dataUsingEncoding(NSUTF8StringEncoding)!
         }
     }
@@ -274,8 +274,8 @@ internal class AuthorizationProcessManager {
    
     private func createRegistrationParams() -> [String:String]{
         let nameAndVer = Utils.getApplicationDetails()
-//        let privateTag = "\(BMSAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-//        let publicTag = "\(BMSAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+//        let privateTag = "\(MCAAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+//        let publicTag = "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
        
         var params = [String:String]()
         do {
@@ -292,13 +292,13 @@ internal class AuthorizationProcessManager {
     
     func deviceDictionary() -> [String : AnyObject] {
         var device = [String : AnyObject]()
-        device[BMSAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
-        device[BMSAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
-        device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
+        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
+        device[MCAAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
+        device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
         let appInfo = Utils.getApplicationDetails()
-        device[BMSAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
-        device[BMSAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
-        device[BMSAuthorizationManager.JSON_ENVIRONMENT_KEY] =  BMSAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
+        device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
+        device[MCAAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
+        device[MCAAuthorizationManager.JSON_ENVIRONMENT_KEY] =  MCAAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
         
         return device
     }
