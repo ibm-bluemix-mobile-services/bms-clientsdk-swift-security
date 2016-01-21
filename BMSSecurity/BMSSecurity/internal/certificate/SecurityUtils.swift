@@ -31,10 +31,10 @@ public class SecurityUtils {
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
     ]
     
-    static let base64EncodingTableString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-    static let base64EncodingTable = [Character](base64EncodingTableString.characters)
-    static let base64EncodingTableUrlSafeString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-    static let base64EncodingTableUrlSafe = [Character](base64EncodingTableUrlSafeString.characters)
+//    static let base64EncodingTableString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+//    static let base64EncodingTable = [Character](base64EncodingTableString.characters)
+//    static let base64EncodingTableUrlSafeString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+//    static let base64EncodingTableUrlSafe = [Character](base64EncodingTableUrlSafeString.characters)
     
     /**
      Decode base64 code
@@ -407,24 +407,6 @@ public class SecurityUtils {
         
         return ret
     }
-    
-//    private static func verifySignData(string: String, signature: NSData, publicKey: SecKey?) -> Bool {
-//        
-//        let stringData: NSData = string.dataUsingEncoding(NSUTF8StringEncoding)!
-//        let digest = stringData.sha256()!
-//        
-//        let digestBytes = UnsafePointer<UInt8>(digest.bytes)
-//        let digestlen = digest.length
-//        
-//        let verifyStatus: OSStatus = SecKeyRawVerify(publicKey!, SecPadding.PKCS1SHA256, digestBytes, digestlen, UnsafeMutablePointer<UInt8>(signature.bytes), signature.length
-//        )
-//        if verifyStatus == errSecSuccess {
-//            return true
-//        } else {
-//            //TODO handle failure
-//            return false
-//        }
-//    }
     
     internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
         
