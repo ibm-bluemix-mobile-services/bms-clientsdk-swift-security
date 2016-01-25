@@ -29,7 +29,7 @@ public class Utils {
         }
         
         if path.hasPrefix("/") {            
-            final += path.substringWithRange(Range<String.Index>(start: path.startIndex, end: path.endIndex.advancedBy(-1)))
+            final += path.substringWithRange(Range<String.Index>(start: path.startIndex.advancedBy(1), end: path.endIndex))
         } else {
             final += path
         }

@@ -74,21 +74,23 @@ public class AuthorizationRequestManager {
     
     public func send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
-        var rootUrl : String = ""
+        var rootUrl:String = ""
+        var myPath:String = path
         
         if path.hasPrefix(BMSClient.HTTP_SCHEME) && path.characters.indexOf(":") != nil {
             let url = NSURL(string: path)
-            if let path = url?.path {
-                rootUrl = (path as NSString).stringByReplacingOccurrencesOfString(path, withString: "")
+            if let pathTemp = url?.path {
+                rootUrl = (path as NSString).stringByReplacingOccurrencesOfString(pathTemp, withString: "")
+                myPath = pathTemp
             }
             else {
                rootUrl = ""
             }
             
-            if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
-                rootUrl = BMSClient.defaultProtocol
-                    + "://" + AuthorizationRequestManager.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestManager.AUTH_SERVER_NAME + "/" + AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
-            }
+//            if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
+//                rootUrl = BMSClient.defaultProtocol
+//                    + "://" + AuthorizationRequestManager.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestManager.AUTH_SERVER_NAME + "/" + AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+//            }
         }
         else {
             //path is relative
@@ -106,7 +108,7 @@ public class AuthorizationRequestManager {
             
         }
         do {
-            try sendInternal(rootUrl, path: path, options: options, completionHandler: completionHandler)
+            try sendInternal(rootUrl, path: myPath, options: options, completionHandler: completionHandler)
         }
         catch {
             print("something wrong")
@@ -267,11 +269,11 @@ public class AuthorizationRequestManager {
         case ChallengeHandlerNotFound(String)
     }
     
-    internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler) {
+    internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler?) {
         // at this point a server response should contain a secure JSON with challenges
         //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
         guard let responseJson = Utils.extractSecureJson(response) else {
-            completionHandler(response, nil)
+            completionHandler?(response, nil)
             return
         }
         
@@ -284,7 +286,7 @@ public class AuthorizationRequestManager {
             
         }
         else {
-            completionHandler(response, nil)
+            completionHandler?(response, nil)
         }
     }
     
