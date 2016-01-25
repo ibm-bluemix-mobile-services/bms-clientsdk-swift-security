@@ -21,13 +21,14 @@ public class ChallengeHandler : AuthenticationContext{
     }
     
     public func /*synchronized*/ submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?) {
-        guard activeRequest != nil else {
+        guard let aRequest = activeRequest else {
             return
         }
+        
         if answer != nil {
-      //     activeRequest.submitAnswer(answer, realm)
+           aRequest.submitAnswer(answer, realm: realm)
         } else {
-       //     activeRequest.removeExpectedAnswer(realm)
+            aRequest.removeExpectedAnswer(realm)
         }
         activeRequest = nil
     }

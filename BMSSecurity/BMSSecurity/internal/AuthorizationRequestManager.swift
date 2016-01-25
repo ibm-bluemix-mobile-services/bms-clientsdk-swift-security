@@ -55,7 +55,7 @@ public class AuthorizationRequestManager {
     var requestPath : String?
     var requestOptions : RequestOptions?
     
-    var answers = [String : AnyObject]?()
+    var answers: [String : AnyObject]?
     
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
@@ -114,6 +114,36 @@ public class AuthorizationRequestManager {
         
     }
     
+    internal static func isAuthorizationRequired(response: Response?) -> Bool {
+        if let header = response?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
+            if let authHeader : String = header as? String where authHeader == AuthorizationRequestManager.AUTHENTICATE_HEADER_VALUE{
+                return true
+            }
+        }
+        
+        return false
+
+    }
+//    
+//    /**
+//    * Checks server response for MFP 401 error. This kind of response should contain MFP authentication challenges.
+//    *
+//    * @param response Server response.
+//    * @return <code>true</code> if the server response contains 401 status code along with MFP challenges.
+//    */
+//    private boolean isAuthorizationRequired(Response response) {
+//    if (response != null && response.getStatus() == 401) {
+//    ResponseImpl responseImpl = (ResponseImpl)response;
+//    String challengesHeader = responseImpl.getFirstHeader(AUTHENTICATE_HEADER_NAME);
+//    
+//    if (AUTHENTICATE_HEADER_VALUE.equalsIgnoreCase(challengesHeader)) {
+//    return true;
+//    }
+//    }
+    
+//    return false;
+//    }
+    
     internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?, completionHandler:MfpCompletionHandler?) throws {
         if let unWrappedOptions = options {
             self.requestOptions = unWrappedOptions
@@ -170,7 +200,7 @@ public class AuthorizationRequestManager {
             }
             else {
                 //process onFailure
-                if (MCAAuthorizationManager.sharedInstance.isAuthorizationRequired(response)) {
+                if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
                 } else {
                     if let myhandler = completionHandler {
@@ -193,8 +223,48 @@ public class AuthorizationRequestManager {
         }
     }
     
+    /**
+     Processes authentication failures.
+     
+     - parameter jsonFailures: Collection of authentication failures
+     */
+    internal func processFailures(jsonFailures: [String:AnyObject]?) {
+        
+        guard let failures = jsonFailures else {
+            return
+        }
+        
+        let mcaAuthManager = MCAAuthorizationManager.sharedInstance
+        for (realm, challenge) in failures {
+            if let handler = mcaAuthManager.getChallengeHandler(realm) {
+                handler.handleFailure(challenge as! [String : AnyObject])
+            }
+            else {
+                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
+            }
+        }
+    }
+    
+    internal func processSuccesses(jsonSuccesses: [String:AnyObject]?) {
+
+        guard let successes = jsonSuccesses else {
+            return
+        }
+        
+        let mcaAuthManager = MCAAuthorizationManager.sharedInstance
+        for (realm, challenge) in successes {
+            if let handler = mcaAuthManager.getChallengeHandler(realm) {
+                handler.handleFailure(challenge as! [String : AnyObject])
+            }
+            else {
+                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
+            }
+        }
+    }
+    
     enum ResponseError: ErrorType {
-        case NoLocation
+        case NoLocation(String)
+        case ChallengeHandlerNotFound(String)
     }
     
     internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler) {
@@ -206,59 +276,102 @@ public class AuthorizationRequestManager {
         }
         
         if let challanges = responseJson[AuthorizationRequestManager.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
-            startHandleChallenges(challanges, response: response!)
+            do {
+                try startHandleChallenges(challanges, response: response!)
+            } catch {
+                //TODO:ilan this is not checked, in startHandleChallenges it throws a runtime (android) so what here?
+            }
+            
         }
         else {
             completionHandler(response, nil)
         }
     }
     
-    internal func startHandleChallenges(jsonChallenges: [String: AnyObject], response: Response) {
+    internal func startHandleChallenges(jsonChallenges: [String: AnyObject], response: Response) throws {
+        let challenges = Array(jsonChallenges.keys)
         
-//        ArrayList<String> challenges = getRealmsFromJson(jsonChallenges);
-//        
-//        MCAAuthorizationManager authManager = (MCAAuthorizationManager) BMSClient.getInstance().getAuthorizationManager();
-//        
-//        if (isAuthorizationRequired(response)) {
-//            setExpectedAnswers(challenges);
-//        }
-//        
-//        for (String realm : challenges) {
-//            ChallengeHandler handler = authManager.getChallengeHandler(realm);
-//            if (handler != null) {
-//                JSONObject challenge = jsonChallenges.optJSONObject(realm);
-//                handler.handleChallenge(this, challenge, context);
-//            } else {
-//                throw new RuntimeException("Challenge handler for realm is not found: " + realm);
-//            }
-//        }
+        if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
+            setExpectedAnswers(challenges)
+        }
+        let mcaAuthManager = MCAAuthorizationManager.sharedInstance
+        for (realm, challenge) in jsonChallenges {
+             if let handler = mcaAuthManager.getChallengeHandler(realm) {
+                handler.handleChallenge(self, challenge: challenge as! [String : AnyObject])
+            }
+            else {
+                throw ResponseError.ChallengeHandlerNotFound("Challenge handler for realm: \(realm), is not found")
+            }
+        }
     }
     
-    internal func getRealmsFromJson() {
+    internal func setExpectedAnswers(realms:[String]) {
+        guard answers != nil else {
+            return
+        }
         
-//        /**
-//        * Iterates a JSON object containing authorization challenges and builds a list of reals.
-//        *
-//        * @param jsonChallenges Collection of challenges.
-//        * @return Array with realms.
-//        */
-//        private ArrayList<String> getRealmsFromJson(JSONObject jsonChallenges) {
-//            Iterator<String> challengesIterator = jsonChallenges.keys();
-//            ArrayList<String> challenges = new ArrayList<>();
-//            
-//            while (challengesIterator.hasNext()) {
-//                challenges.add(challengesIterator.next());
-//            }
-//            
-//            return challenges;
-//        }
+        for realm in realms {
+            answers![realm] = ""
+        }
+    }
+    
+    public func removeExpectedAnswer(realm:String) {
+        if answers != nil {
+            answers!.removeValueForKey(realm)
+        }
+        
+        if isAnswersFilled() {
+            resendRequest()
+        }
+        
+    }
+    
+    /**
+     Adds an expected challenge answer to collection of answers.
+     
+     - parameter answer: Answer to add.
+     - parameter realm:  Authentication realm for the answer.
+     */
+    public func submitAnswer(answer:[String:AnyObject]?, realm:String) {
+        guard let unwrappedAnswer = answer else {
+            AuthorizationRequestManager.logger.error("Cannot submit nil answer for realm \(realm)")
+            return
+        }
+        
+        if answers == nil {
+            answers = [String:AnyObject]()
+        }
+        
+        answers![realm] = unwrappedAnswer
+        if isAnswersFilled() {
+            resendRequest()
+        }
+    }
+    
+    public func isAnswersFilled() -> Bool {
+        guard answers != nil else {
+            return true
+        }
+        
+        for (_, value) in answers! {
+            if let sVal:String = value as? String where sVal == "" {
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    internal func resendRequest() {
+//        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
+        send(requestPath!, options: requestOptions!, completionHandler: nil)
     }
     
     internal func processRedirectResponse(response:Response, callback:MfpCompletionHandler?) throws {
         
-        func getLocationString(obj:AnyObject?) throws -> String? {
+        func getLocationString(obj:AnyObject?) -> String? {
             guard obj != nil else {
-                throw ResponseError.NoLocation
+                return nil
             }
             
             if case let myObj as String = obj![0] {
@@ -267,34 +380,36 @@ public class AuthorizationRequestManager {
             else if case let str as String = obj{
                 return str
             }
-            
-            throw ResponseError.NoLocation
+            return nil
         }
         
-        let location = try getLocationString(response.headers?[AuthorizationRequestManager.LOCATION_HEADER_NAME])
+        guard let location = try getLocationString(response.headers?[AuthorizationRequestManager.LOCATION_HEADER_NAME]) else {
+           throw ResponseError.NoLocation("Redirect response does not contain 'Location' header.")
+        }
         
-        let url:NSURL = NSURL(string: location!)!
+        // the redirect location url should contain "wl_result" value in query parameters.
+        guard let url:NSURL = NSURL(string: location)! else {
+            throw ResponseError.NoLocation("Could not create URL from 'Location' header.")
+        }
+        
         let query = url.query
         let results = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT)
         
-        //TODO:Ilan hadle succuss,and fail here
-        //    // process failures if any
-        //    JSONObject jsonFailures = jsonResult.optJSONObject(AUTH_FAILURE_VALUE_NAME);
-        //
-        //    if (jsonFailures != null) {
-        //    processFailures(jsonFailures);
-        //    listener.onFailure(response, null, null);
-        //    return;
-        //    }
-        //
-        //    // process successes if any
-        //    JSONObject jsonSuccesses = jsonResult.optJSONObject(AUTH_SUCCESS_VALUE_NAME);
-        //
-        //    if (jsonSuccesses != null) {
-        //    processSuccesses(jsonSuccesses);
-        //    }
-        //    }
-        
+        if let q = query where q.containsString(AuthorizationRequestManager.WL_RESULT) {
+            if let result = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT), jsonResult = Utils.parseJsonStringtoDictionary(result) {
+            
+                // process failures if any
+                
+                if let jsonFailures = jsonResult[AuthorizationRequestManager.AUTH_FAILURE_VALUE_NAME] {
+                    processFailures(jsonFailures as! [String : AnyObject])
+                }
+                
+                if let jsonSuccesses = jsonResult[AuthorizationRequestManager.AUTH_SUCCESS_VALUE_NAME] {
+                    
+                }
+            }
+            
+        }
         
         callback?(response, nil)
     }

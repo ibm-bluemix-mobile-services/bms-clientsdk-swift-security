@@ -80,6 +80,18 @@ public class Utils {
         return ""
     }
     
+    public static func parseJsonStringtoDictionary(jsonString:String) ->[String:AnyObject]? {
+        do {
+            if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
+                return responseJson as [String:AnyObject]
+            }
+        } catch {
+            return nil
+        }
+        
+        return nil
+    }
+        
     /**
      <#Description#>
      
@@ -97,7 +109,7 @@ public class Utils {
             return nil
         }
         
-        var jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(Utils.SECURE_PATTERN_END.characters.count)))
+        var jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(-Utils.SECURE_PATTERN_END.characters.count)))
         
         do {
         

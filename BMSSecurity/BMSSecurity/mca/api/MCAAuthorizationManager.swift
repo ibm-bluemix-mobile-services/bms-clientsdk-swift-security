@@ -187,4 +187,6 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public func getChallengeHandler(realm:String) -> ChallengeHandler?{
         return challengeHandlers[realm]
     }
+    
+    
 }
