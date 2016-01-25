@@ -57,63 +57,84 @@ public class AuthorizationRequestManager {
     
     var answers: [String : AnyObject]?
     
+    public static var overrideServerHost: String?
+    
+    
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
     public enum AuthorizationRequestManagerErrors : ErrorType {
         case ERROR(String)
+        
     }
     
-    internal let defaultCompletionHandler : MfpCompletionHandler = {(response: Response?, error: NSError?) in
-        logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
-    }
+    internal var defaultCompletionHandler : MfpCompletionHandler
+    
+    internal init(completionHandler: MfpCompletionHandler?) {
+        
+        if let handler = completionHandler {
+            defaultCompletionHandler = handler
+        } else {
+            defaultCompletionHandler = {(response: Response?, error: NSError?) in
+                AuthorizationRequestManager.logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
+            }
 
-    
-    init() {
+        }
         
+        AuthorizationRequestManager.logger.debug("AuthorizationRequestAgent is initialized.")
     }
     
-    public func send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?) {
-        
+    public func send(path:String , options:RequestOptions){
         var rootUrl:String = ""
-        var myPath:String = path
+        var computedPath:String = path
         
         if path.hasPrefix(BMSClient.HTTP_SCHEME) && path.characters.indexOf(":") != nil {
             let url = NSURL(string: path)
             if let pathTemp = url?.path {
                 rootUrl = (path as NSString).stringByReplacingOccurrencesOfString(pathTemp, withString: "")
-                myPath = pathTemp
+                computedPath = pathTemp
             }
             else {
                rootUrl = ""
             }
-            
-//            if let region = BMSClient.sharedInstance.bluemixRegionSuffix {
-//                rootUrl = BMSClient.defaultProtocol
-//                    + "://" + AuthorizationRequestManager.AUTH_SERVER_NAME + "." + region + "/" + AuthorizationRequestManager.AUTH_SERVER_NAME + "/" + AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
-//            }
         }
         else {
             //path is relative
-            var backendRoute = BMSClient.sharedInstance.bluemixAppRoute!
-            if backendRoute.hasSuffix("/") == false {
-                backendRoute += "/"
-            }
+            let serverHost = BMSClient.defaultProtocol
+                + "://"
+                + AuthorizationRequestManager.AUTH_SERVER_NAME
+                + "."
+                + BMSClient.sharedInstance.bluemixRegionSuffix!
             
-            rootUrl += backendRoute + AuthorizationRequestManager.AUTH_SERVER_NAME
+//            if overrideServerHost != nil {
+//                serverHost = AuthorizationRequestManager.overrideServerHost
+//            }
             
-            let pathWithTenantId = AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
-            rootUrl += "/" + pathWithTenantId
+            rootUrl = serverHost
+                + "/"
+                + AuthorizationRequestManager.AUTH_SERVER_NAME
+                + "/"
+                + AuthorizationRequestManager.AUTH_PATH
+                + BMSClient.sharedInstance.bluemixAppGUID!
             
-            print(rootUrl)
+//            var backendRoute = BMSClient.sharedInstance.bluemixRegionSuffix!
+//            if backendRoute.hasSuffix("/") == false {
+//                backendRoute += "/"
+//            }
+//            
+//            rootUrl += backendRoute + AuthorizationRequestManager.AUTH_SERVER_NAME
+//            
+//            let pathWithTenantId = AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
+//            rootUrl += "/" + pathWithTenantId
+//            
+//            print(rootUrl)
             
         }
         do {
-            try sendInternal(rootUrl, path: myPath, options: options, completionHandler: completionHandler)
+            try sendInternal(rootUrl, path: computedPath, options: options)
         }
         catch {
             print("something wrong")
         }
-        
     }
     
     internal static func isAuthorizationRequired(response: Response?) -> Bool {
@@ -146,7 +167,7 @@ public class AuthorizationRequestManager {
 //    return false;
 //    }
     
-    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?, completionHandler:MfpCompletionHandler?) throws {
+    internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) throws {
         if let unWrappedOptions = options {
             self.requestOptions = unWrappedOptions
         }
@@ -179,7 +200,7 @@ public class AuthorizationRequestManager {
             func processResponseWrapper(response:Response?, isFailure:Bool) {
                 let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
                 if isFailure || !isRedirect {
-                    self.processResponse(response, completionHandler: completionHandler!)
+                    self.processResponse(response)
                 }
                 else {
                     do {
@@ -205,17 +226,13 @@ public class AuthorizationRequestManager {
                 if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
                 } else {
-                    if let myhandler = completionHandler {
-                        myhandler(response, error)
-                    }else {
-                        self.defaultCompletionHandler(response, error)
-                    }
+                   self.defaultCompletionHandler(response, error)
                 }
             }
         }
         
 //        String rewriteDomainHeaderValue = BMSClient.getInstance().getRewriteDomain();
-        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
+//        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
         
         if let method = options?.requestMethod where method == HttpMethod.GET{
             request.queryParameters = options?.parameters
@@ -269,11 +286,11 @@ public class AuthorizationRequestManager {
         case ChallengeHandlerNotFound(String)
     }
     
-    internal func processResponse(response: Response?, completionHandler : MfpCompletionHandler?) {
+    internal func processResponse(response: Response?) {
         // at this point a server response should contain a secure JSON with challenges
         //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
         guard let responseJson = Utils.extractSecureJson(response) else {
-            completionHandler?(response, nil)
+            defaultCompletionHandler(response, nil)
             return
         }
         
@@ -286,7 +303,7 @@ public class AuthorizationRequestManager {
             
         }
         else {
-            completionHandler?(response, nil)
+            defaultCompletionHandler(response, nil)
         }
     }
     
@@ -366,7 +383,7 @@ public class AuthorizationRequestManager {
     
     internal func resendRequest() {
 //        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
-        send(requestPath!, options: requestOptions!, completionHandler: nil)
+        send(requestPath!, options: requestOptions!)
     }
     
     internal func processRedirectResponse(response:Response, callback:MfpCompletionHandler?) throws {

@@ -240,8 +240,8 @@ internal class AuthorizationProcessManager {
     private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
         do {
-            let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager();
-            try authorizationRequestManager.send(path, options: options, completionHandler: completionHandler)
+            let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
+            try authorizationRequestManager.send(path, options: options )
         } catch  {
             // TODO: handle exception
         }
@@ -295,7 +295,7 @@ internal class AuthorizationProcessManager {
     
     func deviceDictionary() -> [String : AnyObject] {
         var device = [String : AnyObject]()
-        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().identifierForVendor
+        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().identifierForVendor?.UUIDString
         device[MCAAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
         let appInfo = Utils.getApplicationDetails()
         device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
