@@ -122,7 +122,6 @@
 		DB2BCF951C22FB2E0063A673 /* BMSSecurity */ = {
 			isa = PBXGroup;
 			children = (
-				FDD6B5601C50E19A00CA5860 /* internal */,
 				FDD6B54F1C50E0A000CA5860 /* mca */,
 				DB2BCF961C22FB2E0063A673 /* BMSSecurity.h */,
 				DB2BCF981C22FB2E0063A673 /* Info.plist */,
@@ -143,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				FDD6B5501C50E0A000CA5860 /* api */,
+				FDD6B5601C50E19A00CA5860 /* internal */,
 			);
 			path = mca;
 			sourceTree = "<group>";
@@ -150,9 +150,9 @@
 		FDD6B5501C50E0A000CA5860 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				FDD6B5531C50E0A000CA5860 /* identity */,
 				FDD6B5511C50E0A000CA5860 /* AuthenticationContexts.swift */,
 				FDD6B5521C50E0A000CA5860 /* AuthenticationDelegate.swift */,
-				FDD6B5531C50E0A000CA5860 /* identity */,
 				FDD6B5581C50E0A000CA5860 /* MCAAuthorizationManager.swift */,
 			);
 			path = api;
@@ -172,20 +172,21 @@
 		FDD6B5601C50E19A00CA5860 /* internal */ = {
 			isa = PBXGroup;
 			children = (
+				FDD6B5661C50E19A00CA5860 /* certificate */,
+				FDD6B56A1C50E19A00CA5860 /* challengehandlers */,
+				FDD6B56C1C50E19A00CA5860 /* encryption */,
+				FDD6B5721C50E19A00CA5860 /* userData */,
 				FDD6B5611C50E19A00CA5860 /* AuthorizationManagerPreferences.swift */,
 				FDD6B5621C50E19A00CA5860 /* AuthorizationProcessManager.swift */,
 				FDD6B5631C50E19A00CA5860 /* AuthorizationRequest.swift */,
 				FDD6B5641C50E19A00CA5860 /* AuthorizationRequestManager.swift */,
 				FDD6B5651C50E19A00CA5860 /* BMSSecurityConstants.swift */,
-				FDD6B5661C50E19A00CA5860 /* certificate */,
-				FDD6B56A1C50E19A00CA5860 /* challengehandlers */,
-				FDD6B56C1C50E19A00CA5860 /* Encryption */,
 				FDD6B5701C50E19A00CA5860 /* Queue.swift */,
 				FDD6B5711C50E19A00CA5860 /* RequestOptions.swift */,
-				FDD6B5721C50E19A00CA5860 /* UserData */,
 				FDD6B5741C50E19A00CA5860 /* Utils.swift */,
 			);
-			path = internal;
+			name = internal;
+			path = ../internal;
 			sourceTree = "<group>";
 		};
 		FDD6B5661C50E19A00CA5860 /* certificate */ = {
@@ -206,21 +207,23 @@
 			path = challengehandlers;
 			sourceTree = "<group>";
 		};
-		FDD6B56C1C50E19A00CA5860 /* Encryption */ = {
+		FDD6B56C1C50E19A00CA5860 /* encryption */ = {
 			isa = PBXGroup;
 			children = (
 				FDD6B56D1C50E19A00CA5860 /* AESStringEncryption.swift */,
 				FDD6B56E1C50E19A00CA5860 /* BMSSecurityError.swift */,
 				FDD6B56F1C50E19A00CA5860 /* StringEncryption.swift */,
 			);
+			name = encryption;
 			path = Encryption;
 			sourceTree = "<group>";
 		};
-		FDD6B5721C50E19A00CA5860 /* UserData */ = {
+		FDD6B5721C50E19A00CA5860 /* userData */ = {
 			isa = PBXGroup;
 			children = (
 				FDD6B5731C50E19A00CA5860 /* UserDataUtils.swift */,
 			);
+			name = userData;
 			path = UserData;
 			sourceTree = "<group>";
 		};

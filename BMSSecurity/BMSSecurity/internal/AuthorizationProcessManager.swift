@@ -16,6 +16,8 @@ internal class AuthorizationProcessManager {
 //    private var securityUtils:SecurityUtils
     private var logger:Logger
     private var sessionId:String = ""
+    
+    var completionHandler: MfpCompletionHandler?
 
     private var privateKeyIdentifier : String {
         get{
@@ -58,6 +60,7 @@ internal class AuthorizationProcessManager {
         }
     }
     
+    //TODO:ilan add completionhandler
     internal init(preferences:AuthorizationManagerPreferences)
     {
         
@@ -272,16 +275,16 @@ internal class AuthorizationProcessManager {
         }
     }
    
+    /**
+     <#Description#>
+     
+     - returns: <#return value description#>
+     */
     private func createRegistrationParams() -> [String:String]{
-        let nameAndVer = Utils.getApplicationDetails()
-//        let privateTag = "\(MCAAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-//        let publicTag = "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-       
         var params = [String:String]()
         do {
              registrationKeyPair = try SecurityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
             let csrValue:String = try SecurityUtils.signCsr(deviceDictionary(), keyIds: (publicKeyIdentifier, privateKeyIdentifier), keySize: 512)
-//            var csrValue:String  = ""
             params["CSR"] = csrValue;
             return params;
         } catch {
@@ -292,9 +295,8 @@ internal class AuthorizationProcessManager {
     
     func deviceDictionary() -> [String : AnyObject] {
         var device = [String : AnyObject]()
-        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().systemVersion
+        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().identifierForVendor
         device[MCAAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
-        device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  UIDevice.currentDevice().systemVersion
         let appInfo = Utils.getApplicationDetails()
         device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
         device[MCAAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
