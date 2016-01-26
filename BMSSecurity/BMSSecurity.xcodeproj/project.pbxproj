@@ -15,8 +15,6 @@
 		FD4912761C574FB000A8E235 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912621C574FB000A8E235 /* AuthorizationRequest.swift */; };
 		FD4912771C574FB000A8E235 /* AuthorizationRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912631C574FB000A8E235 /* AuthorizationRequestManager.swift */; };
 		FD4912781C574FB000A8E235 /* BMSSecurityConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912641C574FB000A8E235 /* BMSSecurityConstants.swift */; };
-		FD4912791C574FB000A8E235 /* IMFKeychainItemWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = FD4912661C574FB000A8E235 /* IMFKeychainItemWrapper.h */; };
-		FD49127A1C574FB000A8E235 /* IMFKeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4912671C574FB000A8E235 /* IMFKeychainItemWrapper.m */; };
 		FD49127B1C574FB000A8E235 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912681C574FB000A8E235 /* SecurityUtils.swift */; };
 		FD49127C1C574FB000A8E235 /* ChallengeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126A1C574FB000A8E235 /* ChallengeHandler.swift */; };
 		FD49127D1C574FB000A8E235 /* AESStringEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126C1C574FB000A8E235 /* AESStringEncryption.swift */; };
@@ -59,8 +57,6 @@
 		FD4912621C574FB000A8E235 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
 		FD4912631C574FB000A8E235 /* AuthorizationRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequestManager.swift; sourceTree = "<group>"; };
 		FD4912641C574FB000A8E235 /* BMSSecurityConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityConstants.swift; sourceTree = "<group>"; };
-		FD4912661C574FB000A8E235 /* IMFKeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFKeychainItemWrapper.h; sourceTree = "<group>"; };
-		FD4912671C574FB000A8E235 /* IMFKeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFKeychainItemWrapper.m; sourceTree = "<group>"; };
 		FD4912681C574FB000A8E235 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
 		FD49126A1C574FB000A8E235 /* ChallengeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChallengeHandler.swift; sourceTree = "<group>"; };
 		FD49126C1C574FB000A8E235 /* AESStringEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AESStringEncryption.swift; sourceTree = "<group>"; };
@@ -160,8 +156,6 @@
 		FD4912651C574FB000A8E235 /* certificate */ = {
 			isa = PBXGroup;
 			children = (
-				FD4912661C574FB000A8E235 /* IMFKeychainItemWrapper.h */,
-				FD4912671C574FB000A8E235 /* IMFKeychainItemWrapper.m */,
 				FD4912681C574FB000A8E235 /* SecurityUtils.swift */,
 			);
 			path = certificate;
@@ -231,7 +225,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FD4912791C574FB000A8E235 /* IMFKeychainItemWrapper.h in Headers */,
 				DB2BCF971C22FB2E0063A673 /* BMSSecurity.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,7 +332,6 @@
 				FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */,
 				FD4912771C574FB000A8E235 /* AuthorizationRequestManager.swift in Sources */,
 				FD4912751C574FB000A8E235 /* AuthorizationProcessManager.swift in Sources */,
-				FD49127A1C574FB000A8E235 /* IMFKeychainItemWrapper.m in Sources */,
 				FD49127E1C574FB000A8E235 /* BMSSecurityError.swift in Sources */,
 				FD4912761C574FB000A8E235 /* AuthorizationRequest.swift in Sources */,
 				FD4912781C574FB000A8E235 /* BMSSecurityConstants.swift in Sources */,
