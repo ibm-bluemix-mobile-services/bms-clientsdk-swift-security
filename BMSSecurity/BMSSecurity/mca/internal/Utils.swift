@@ -46,7 +46,7 @@ public class Utils {
         
         for val in paramaters {
             let pairs = val.componentsSeparatedByString("=")
-            print (pairs.endIndex)
+//            print (pairs.endIndex)
             
             if (pairs.endIndex != 2) {
                 continue
@@ -72,7 +72,7 @@ public class Utils {
                 }
             }catch {
                 
-                print("error")
+//                print("error")
                 //Access error here
             }
             

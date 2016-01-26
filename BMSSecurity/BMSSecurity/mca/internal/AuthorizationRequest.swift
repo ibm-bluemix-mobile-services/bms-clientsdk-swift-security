@@ -28,7 +28,6 @@ public class AuthorizationRequest : MFPRequest {
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.timeoutIntervalForRequest = timeout
-        configuration.requestCachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
         AuthorizationRequest.networkSessionInternal = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
 

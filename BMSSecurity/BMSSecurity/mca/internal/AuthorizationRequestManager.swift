@@ -115,19 +115,6 @@ public class AuthorizationRequestManager {
                 + "/"
                 + AuthorizationRequestManager.AUTH_PATH
                 + BMSClient.sharedInstance.bluemixAppGUID!
-            
-//            var backendRoute = BMSClient.sharedInstance.bluemixRegionSuffix!
-//            if backendRoute.hasSuffix("/") == false {
-//                backendRoute += "/"
-//            }
-//            
-//            rootUrl += backendRoute + AuthorizationRequestManager.AUTH_SERVER_NAME
-//            
-//            let pathWithTenantId = AuthorizationRequestManager.AUTH_PATH + BMSClient.sharedInstance.bluemixAppGUID!
-//            rootUrl += "/" + pathWithTenantId
-//            
-//            print(rootUrl)
-            
         }
         do {
             try sendInternal(rootUrl, path: computedPath, options: options)
@@ -215,9 +202,6 @@ public class AuthorizationRequestManager {
                     
                 }
             }
-            
-            
-            
 //            guard error != nil else {
 //                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
 //                return
