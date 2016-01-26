@@ -36,9 +36,8 @@ public class ChallengeHandler : AuthenticationContext{
    
     public /* synchronized*/ func submitAuthenticationSuccess () {
         if activeRequest != nil {
-        //    activeRequest.removeExpectedAnswer(realm)
+            activeRequest!.removeExpectedAnswer(realm)
             activeRequest = nil
-
         }
         
         releaseWaitingList()
@@ -86,7 +85,7 @@ public class ChallengeHandler : AuthenticationContext{
     
     private func /*synchronized*/ releaseWaitingList() {
         for request in waitingRequests {
-         //   request.removeExpectedAnswer(realm);
+            request.removeExpectedAnswer(realm);
         }
         
         clearWaitingList();

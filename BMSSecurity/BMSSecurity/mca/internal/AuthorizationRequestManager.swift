@@ -197,14 +197,18 @@ public class AuthorizationRequestManager {
         
         let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
             
+            func isRedirect(response: Response?) -> Bool{
+                return 300..<399 ~= (response?.statusCode)!
+            }
+            
             func processResponseWrapper(response:Response?, isFailure:Bool) {
-                let isRedirect:Bool = 300..<399 ~= (response?.statusCode)!
+                let isRedirect:Bool = isRedirect(response)
                 if isFailure || !isRedirect {
                     self.processResponse(response)
                 }
                 else {
                     do {
-                        try self.processRedirectResponse(response!, callback: nil)
+                        try self.processRedirectResponse(response!)
                     } catch {
                         print("something wrong 2")
                     }
@@ -212,12 +216,25 @@ public class AuthorizationRequestManager {
                 }
             }
             
+            
+            
 //            guard error != nil else {
 //                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
 //                return
 //            }
             
-            if let mySuccessfulResonse = (response?.isSuccessful) where error == nil && mySuccessfulResonse == true {
+            
+            //check this is error failure
+            if error != nil {
+                if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
+                    processResponseWrapper(response,isFailure: true)
+                } else {
+                    self.defaultCompletionHandler(response, error)
+                }
+            }
+            
+            let successResponse = response?.isSuccessful
+            if successResponse == true || isRedirect(response) {
                 //process onSuccess
                 processResponseWrapper(response!, isFailure: false)
             }
@@ -226,7 +243,7 @@ public class AuthorizationRequestManager {
                 if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
                 } else {
-                   self.defaultCompletionHandler(response, error)
+                    self.defaultCompletionHandler(response, error)
                 }
             }
         }
@@ -273,7 +290,7 @@ public class AuthorizationRequestManager {
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in successes {
             if let handler = mcaAuthManager.getChallengeHandler(realm) {
-                handler.handleFailure(challenge as! [String : AnyObject])
+                handler.handleSuccess(challenge as! [String : AnyObject])
             }
             else {
                 AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
@@ -386,7 +403,7 @@ public class AuthorizationRequestManager {
         send(requestPath!, options: requestOptions!)
     }
     
-    internal func processRedirectResponse(response:Response, callback:MfpCompletionHandler?) throws {
+    internal func processRedirectResponse(response:Response) throws {
         
         func getLocationString(obj:AnyObject?) -> String? {
             guard obj != nil else {
@@ -412,7 +429,6 @@ public class AuthorizationRequestManager {
         }
         
         let query = url.query
-        let results = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT)
         
         if let q = query where q.containsString(AuthorizationRequestManager.WL_RESULT) {
             if let result = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT), jsonResult = Utils.parseJsonStringtoDictionary(result) {
@@ -424,12 +440,11 @@ public class AuthorizationRequestManager {
                 }
                 
                 if let jsonSuccesses = jsonResult[AuthorizationRequestManager.AUTH_SUCCESS_VALUE_NAME] {
-                    
+                    processSuccesses(jsonSuccesses as! [String: AnyObject])
                 }
             }
-            
         }
         
-        callback?(response, nil)
+        defaultCompletionHandler(response, nil)
     }
 }

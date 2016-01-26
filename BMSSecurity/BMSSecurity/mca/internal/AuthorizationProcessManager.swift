@@ -263,8 +263,8 @@ internal class AuthorizationProcessManager {
                     }
                     
                     if let idTokenJson = try NSJSONSerialization.JSONObjectWithData(decodedIdTokenData, options: []) as? [String:AnyObject] {
-                        if let imfUser = idTokenJson["imf.user"] as? String {
-                            self.preferences.userIdentity!.set(imfUser)
+                        if let imfUser = idTokenJson["imf.user"] {
+                            self.preferences.userIdentity!.set(Utils.JSONStringify(imfUser))
                         }
                     }
                 }

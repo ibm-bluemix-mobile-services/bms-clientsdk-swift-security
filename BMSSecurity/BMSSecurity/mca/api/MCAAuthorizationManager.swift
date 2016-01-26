@@ -104,7 +104,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func clearAuthorizationData() {
-        
+        preferences.accessToken?.clear()
+        preferences.idToken?.clear()
+        preferences.userIdentity?.clear()
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
@@ -112,6 +114,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getCachedAuthorizationHeader() -> String? {
+        if let accessToken = preferences.accessToken?.get(), idToken = preferences.idToken?.get() {
+            return "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
+        }
+        
         return nil
     }
     
