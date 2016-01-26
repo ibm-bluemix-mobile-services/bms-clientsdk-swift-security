@@ -14,42 +14,12 @@ public class AuthorizationRequest : MFPRequest {
     
     static var networkSessionInternal: NSURLSession!
     
-    //Do not allow redirects
-//    public override var allowRedirects : Bool{
-//        get{
-//            return false
-//        }
-//    }
-    
-    
     public override func getNetworkSession() -> NSURLSession {
         return AuthorizationRequest.networkSessionInternal
     }
     
     public func send(completionHandler: MfpCompletionHandler?) {
-        
-//        if let tempCompletionHandler = completionHandler {
-//            if error == nil {
-//                let
-//            }
-//        }
-////        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
-////            if error == nil {
-////                if let response = response {
-////                    if response.isSuccessful {
-////                        listener.onSuccess(response);
-////                    } else {
-//////                        listener.
-////                    }
-////                }
-////            }
-////            else {
-////                //call on failure
-////                
-////            }
-////        }
-      
-        super.sendWithCompletionHandler(completionHandler)
+         super.sendWithCompletionHandler(completionHandler)
     }
     
     public init(url:String, method:HttpMethod) {
@@ -58,6 +28,7 @@ public class AuthorizationRequest : MFPRequest {
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.timeoutIntervalForRequest = timeout
+        configuration.requestCachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
         AuthorizationRequest.networkSessionInternal = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
 

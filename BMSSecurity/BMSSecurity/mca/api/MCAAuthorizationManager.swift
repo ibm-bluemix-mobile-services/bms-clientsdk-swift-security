@@ -130,11 +130,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        return nil
+        return DeviceIdentity(map: preferences.deviceIdentity?.getAsMap())
     }
     
     public func getAppIdentity() -> AnyObject? {
-        return nil
+        return AppIdentity(map: preferences.appIdentity?.getAsMap())
     }
     
     /**
