@@ -1,12 +1,3 @@
-//
-//  AuthorizationManagerPreferences.swift
-//  BMSSecurity
-//
-//  Created by Oded Betzalel on 12/29/15.
-//  Copyright © 2015 IBM. All rights reserved.
-//
-
-
 /*
 *     Copyright 2015 IBM Corp.
 *     Licensed under the Apache License, Version 2.0 (the "License");
