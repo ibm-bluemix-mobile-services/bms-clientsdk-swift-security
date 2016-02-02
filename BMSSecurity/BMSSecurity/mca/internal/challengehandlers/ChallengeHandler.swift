@@ -14,11 +14,11 @@
 import BMSCore
 public class ChallengeHandler : AuthenticationContext{
     
-    private var realm:String
-    private /*volatile*/ var authenticationDelegate:AuthenticationDelegate?
-    private /*volatile*/ var waitingRequests:[AuthorizationRequestManager]
-    private /*volatile*/ var activeRequest:AuthorizationRequestManager?
-    
+    private  var realm:String
+    private  var authenticationDelegate:AuthenticationDelegate?
+    private  var waitingRequests:[AuthorizationRequestManager]
+    private  var activeRequest:AuthorizationRequestManager?
+    private var lockQueue = dispatch_queue_create("ChallengeHandlerQueue", DISPATCH_QUEUE_CONCURRENT)
     public init(realm:String , authenticationDelegate:AuthenticationDelegate) {
         self.realm = realm
         self.authenticationDelegate = authenticationDelegate
@@ -26,78 +26,88 @@ public class ChallengeHandler : AuthenticationContext{
         self.waitingRequests = [AuthorizationRequestManager]()
     }
     
-    public func /*synchronized*/ submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?) {
-        guard let aRequest = activeRequest else {
-            return
-        }
-        
-        if answer != nil {
-           aRequest.submitAnswer(answer, realm: realm)
-        } else {
-            aRequest.removeExpectedAnswer(realm)
-        }
-        activeRequest = nil
-    }
-    
-   
-    public /* synchronized*/ func submitAuthenticationSuccess () {
-        if activeRequest != nil {
-            activeRequest!.removeExpectedAnswer(realm)
-            activeRequest = nil
-        }
-        
-        releaseWaitingList()
-    }
-    
-    
-    public func /*synchronized */ submitAuthenticationFailure (info:[String:AnyObject]?) {
-        if activeRequest != nil {
-         //   activeRequest.requestFailed(info)
-            activeRequest = nil
-        }
-        releaseWaitingList();
-    }
-    
-    public func /*synchronized*/ handleChallenge(request:AuthorizationRequestManager , challenge:[String:AnyObject]?) {
-         if activeRequest == nil {
-            activeRequest = request
-             if let unWrappedListener = self.authenticationDelegate{
-                unWrappedListener.onAuthenticationChallengeReceived(self, challenge: challenge)
+    public func  submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?) {
+        dispatch_barrier_async(lockQueue){
+            guard let aRequest = self.activeRequest else {
+                return
             }
-        } else {
-            waitingRequests.append(request)
+            
+            if answer != nil {
+                aRequest.submitAnswer(answer, realm: self.realm)
+            } else {
+                aRequest.removeExpectedAnswer(self.realm)
+            }
+            self.activeRequest = nil
         }
     }
     
-    public /*synchronized*/ func handleSuccess(success:[String:AnyObject]?) {
-        if let unWrappedListener = self.authenticationDelegate{
-            unWrappedListener.onAuthenticationSuccess(success);
+    public  func submitAuthenticationSuccess () {
+        dispatch_barrier_async(lockQueue){
+            if self.activeRequest != nil {
+                self.activeRequest!.removeExpectedAnswer(self.realm)
+                self.activeRequest = nil
+            }
+            
+            self.releaseWaitingList()
         }
-        releaseWaitingList();
-        activeRequest = nil
     }
     
-    public /*synchronized*/ func handleFailure(failure:[String:AnyObject]?) {
-        if let unWrappedListener = self.authenticationDelegate{
-            unWrappedListener.onAuthenticationFailure(failure);
+    public func submitAuthenticationFailure (info:[String:AnyObject]?) {
+        dispatch_barrier_async(lockQueue){
+            if self.activeRequest != nil {
+                //   activeRequest.requestFailed(info)
+                self.activeRequest = nil
+            }
+            self.releaseWaitingList();
         }
-        clearWaitingList();
-        activeRequest = nil
     }
-    
-    private /*synchronized*/ func setActiveRequest(request:AuthorizationRequestManager) {
-        activeRequest = request;
-    }
-    
-    private func /*synchronized*/ releaseWaitingList() {
-        for request in waitingRequests {
-            request.removeExpectedAnswer(realm);
+    public func  handleChallenge(request:AuthorizationRequestManager , challenge:[String:AnyObject]?) {
+        dispatch_barrier_async(lockQueue){
+            if self.activeRequest == nil {
+                self.activeRequest = request
+                if let unWrappedListener = self.authenticationDelegate{
+                    unWrappedListener.onAuthenticationChallengeReceived(self, challenge: challenge)
+                }
+            } else {
+                self.waitingRequests.append(request)
+            }
         }
-        
-        clearWaitingList();
     }
-    
-    private /*synchronized*/ func clearWaitingList() {
-        waitingRequests.removeAll()
+    public  func handleSuccess(success:[String:AnyObject]?) {
+        dispatch_barrier_async(lockQueue){
+            if let unWrappedListener = self.authenticationDelegate{
+                unWrappedListener.onAuthenticationSuccess(success);
+            }
+            self.releaseWaitingList();
+            self.activeRequest = nil
+        }
+    }
+    public  func handleFailure(failure:[String:AnyObject]?) {
+        dispatch_barrier_async(lockQueue){
+            if let unWrappedListener = self.authenticationDelegate{
+                unWrappedListener.onAuthenticationFailure(failure);
+            }
+            self.clearWaitingList();
+            self.activeRequest = nil
+        }
+    }
+    private  func setActiveRequest(request:AuthorizationRequestManager) {
+        dispatch_barrier_async(lockQueue){
+            self.activeRequest = request;
+        }
+    }
+    private func  releaseWaitingList() {
+        dispatch_barrier_async(lockQueue){
+            for request in self.waitingRequests {
+                request.removeExpectedAnswer(self.realm);
+            }
+            
+            self.clearWaitingList();
+        }
+    }
+    private  func clearWaitingList() {
+        dispatch_barrier_async(lockQueue){
+            self.waitingRequests.removeAll()
+        }
     }
 }

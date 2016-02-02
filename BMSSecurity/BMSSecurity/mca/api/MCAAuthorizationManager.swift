@@ -14,7 +14,7 @@ import Foundation
 import BMSCore
 
 public class MCAAuthorizationManager : AuthorizationManager {
-   
+    
     public static let BEARER = "Bearer"
     public static let AUTHORIZATION_HEADER = "Authorization"
     public static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
@@ -39,48 +39,48 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public  static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
     public static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
     public static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
-    
+    private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     private var challengeHandlers:[String:ChallengeHandler]
     
     var idToken : String {
         get{
-//            SecurityUtils.getDataForLable("\():\():\()")
-//            return [NSString stringWithFormat:"%:%:%", OAUTH_ID_TOKEN_LABEL, bundleID, appVersion]
-//               if (!_idToken) {
-//            NSString *token = [self getKeyChainItemForLabel:self.idTokenLabel]
-//            if (token.length > 0) {
-//            [self setIdToken:token]
-//            }
-//            }
-//            return _idToken
-//            }
-        
-        return ""
-        
+            //            SecurityUtils.getDataForLable("\():\():\()")
+            //            return [NSString stringWithFormat:"%:%:%", OAUTH_ID_TOKEN_LABEL, bundleID, appVersion]
+            //               if (!_idToken) {
+            //            NSString *token = [self getKeyChainItemForLabel:self.idTokenLabel]
+            //            if (token.length > 0) {
+            //            [self setIdToken:token]
+            //            }
+            //            }
+            //            return _idToken
+            //            }
+            
+            return ""
+            
         }
     }
     
     public enum AutorizationError : ErrorType {
         case CANNOT_ADD_CHALLANGE_HANDLER(String)
     }
-
+    
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
     var preferences : AuthorizationManagerPreferences
     
-    internal init() {
+    private init() {
         preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
         BMSClient.sharedInstance.sharedAuthorizationManager = self
         challengeHandlers = [String:ChallengeHandler]()
         
-//        if preferences.deviceIdentity == nil {
-//            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
-//        }
+        //        if preferences.deviceIdentity == nil {
+        //            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
+        //        }
     }
-
+    
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
         if let header = httpResponse?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String {
@@ -92,12 +92,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
-       
-            if statusCode == 401 || statusCode == 403 {
-                if responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
-                    return true
-                }
+        
+        if statusCode == 401 || statusCode == 403 {
+            if responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
+                return true
             }
+        }
         
         return false
     }
@@ -118,15 +118,19 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getCachedAuthorizationHeader() -> String? {
-        if let accessToken = preferences.accessToken?.get(), idToken = preferences.idToken?.get() {
-            return "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
+        var returnedValue:String? = nil
+        dispatch_barrier_sync(lockQueue){
+            if let accessToken = self.preferences.accessToken?.get(), idToken = self.preferences.idToken?.get() {
+                returnedValue = "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
+            }
         }
-        
-        return nil
+        return returnedValue
     }
     
     public func obtainAuthorization(completionHandler: MfpCompletionHandler?) {
-        processManager.startAuthorizationProcess(completionHandler)
+        dispatch_barrier_async(lockQueue){
+            self.processManager.startAuthorizationProcess(completionHandler)
+        }
     }
     
     public func getUserIdentity() -> AnyObject? {
