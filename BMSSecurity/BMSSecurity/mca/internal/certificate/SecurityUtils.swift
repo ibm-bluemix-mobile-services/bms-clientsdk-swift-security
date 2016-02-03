@@ -12,7 +12,6 @@
 */
 
 import Foundation
-import CommonCrypto
 
 public class SecurityUtils {
        
