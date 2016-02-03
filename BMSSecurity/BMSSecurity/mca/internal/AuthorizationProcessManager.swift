@@ -15,30 +15,65 @@ import BMSCore
 internal class AuthorizationProcessManager {
     
     private static let HTTP_LOCALHOST:String = "http://localhost";
-    private var preferences:AuthorizationManagerPreferences  = AuthorizationManagerPreferences()
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
     private var registrationKeyPair:(privateKey : SecKey,publicKey : SecKey)?
-//    private var securityUtils:SecurityUtils
     private var logger:Logger
     private var sessionId:String = ""
+    internal var deviceIdentity:[String : AnyObject]?{
+        get {
+            let deviceIdentity = getIdentityFromIdToken("imf.device")
+            return deviceIdentity != nil ? deviceIdentity : deviceDictionary()
+        }
+        set(value){
+            self.deviceIdentity = value
+        }
+    }
+    internal var appIdentity:[String : AnyObject]?{
+        get {
+            return getIdentityFromIdToken("imf.application")
+        }
+        set(value){
+            self.appIdentity = value
+        }
+    }
+    internal var userIdentity:[String : AnyObject]?{
+        get{
+            return getIdentityFromIdToken("imf.user")
+        }
+        set(value){
+            self.userIdentity = value
+        }
+    }
+    internal var idToken:String? {
+        get{
+            return (self.idToken != nil) ? self.idToken : SecurityUtils.getItemFromKeyChain(idTokenLabel)
+        }
+        set(value){
+            self.idToken = value
+        }
+    }
+    internal var clientId:String? {
+        get{
+            if self.clientId == nil {
+                let id = NSUserDefaults.standardUserDefaults().valueForKey("clientId") as? String
+                if id?.characters.count > 0 {
+                    self.clientId = id
+                }
+            }
+            return self.clientId
+        }
+        set(value){
+            self.clientId = value
+            NSUserDefaults.standardUserDefaults().setValue(value, forKey: clientIdLabel)
+            NSUserDefaults.standardUserDefaults().synchronize()
+        }
+    }
+    
+    private func removeClientId(){
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(clientIdLabel)
+    }
     
     var completionHandler: MfpCompletionHandler?
-
-    private var privateKeyIdentifier : String {
-        get{
-            let nameAndVer = Utils.getApplicationDetails()
-            return "\(MCAAuthorizationManager._PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-//           return key.dataUsingEncoding(NSUTF8StringEncoding)!
-        }
-    }
-    
-    private var publicKeyIdentifier : String {
-        get{
-            let nameAndVer = Utils.getApplicationDetails()
-            return "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-//            return key.dataUsingEncoding(NSUTF8StringEncoding)!
-        }
-    }
     
     private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
     
@@ -66,29 +101,13 @@ internal class AuthorizationProcessManager {
     }
     
     //TODO:ilan add completionhandler
-    internal init(preferences:AuthorizationManagerPreferences)
+    internal init()
     {
         
         self.logger = Logger.getLoggerForName(MFP_PACKAGE_PREFIX+"AuthorizationProcessManager")
-        self.preferences = preferences;
         self.authorizationQueue = Queue<MfpCompletionHandler>();
-//        self.securityUtils = SecurityUtils()
         //    String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         
-        //case where the shared preferences were deleted but the certificate is saved in the keystore
-        if let _ = preferences.clientId!.get() {
-            
-        } else {
-             do {
-                //TODO : maybe change this label
-                let certificate = try SecurityUtils.getCertificateFromKeyChain("certificateLabel")
-                    try     preferences.clientId!.set(SecurityUtils.getClientIdFromCertificate(certificate));
-                } catch  {
-                    // handle exception
-                }
-                
-            
-        }
         //generate new random session id
         sessionId = NSUUID().UUIDString
     }
@@ -103,7 +122,7 @@ internal class AuthorizationProcessManager {
         //start the authorization process only if this is the first time we ask for authorization
         if (authorizationQueue.size == 1) {
             do {
-                if (preferences.clientId?.get() == nil) {
+                if (clientId == nil) {
                     logger.info("starting registration process");
                     try invokeInstanceRegistrationRequest();
                 } else {
@@ -120,8 +139,8 @@ internal class AuthorizationProcessManager {
     }
     
     private func invokeInstanceRegistrationRequest() {
-        SecurityUtils.deleteCertificateFromKeyChain("certificateLabel")
-        
+        removeClientId()
+        SecurityUtils.deleteCertificateFromKeyChain(certificateIdentifier)
         let options:RequestOptions = RequestOptions();
         options.parameters = createRegistrationParams();
         options.headers = createRegistrationHeaders();
@@ -140,7 +159,7 @@ internal class AuthorizationProcessManager {
                 self.handleAuthorizationFailure(response, error: error)
             }
         }
-       
+        
         authorizationRequestSend("clients/instance", options: options, completionHandler: callBack);
     }
     
@@ -163,7 +182,7 @@ internal class AuthorizationProcessManager {
     private func createTokenRequestParams(grantCode:String) -> [String:String] {
         let params : [String : String] = [
             "code" : grantCode,
-            "client_id" : preferences.clientId!.get()!,
+            "client_id" : clientId!,
             "grant_type" : "authorization_code",
             "redirect_uri" :AuthorizationProcessManager.HTTP_LOCALHOST
         ]
@@ -175,7 +194,7 @@ internal class AuthorizationProcessManager {
         
         var params = [String:String]()
         params["response_type"] =  "code"
-        params["client_id"] =  preferences.clientId!.get()
+        params["client_id"] =  clientId
         params["redirect_uri"] =  AuthorizationProcessManager.HTTP_LOCALHOST
         
         return params;
@@ -209,14 +228,14 @@ internal class AuthorizationProcessManager {
     private func invokeTokenRequest(grantCode:String?) {
         if let unWrappedGrantCode = grantCode {
             
-            var options:RequestOptions  = RequestOptions();
+            let options:RequestOptions  = RequestOptions();
             
             options.parameters = createTokenRequestParams(unWrappedGrantCode);
             options.headers = createTokenRequestHeaders(unWrappedGrantCode);
             addSessionIdHeader(&options.headers);
             options.requestMethod = HttpMethod.POST;
             
-            var callback:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+            let callback:MfpCompletionHandler = {(response: Response?, error: NSError?) in
                 if error == nil {
                     if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                         do {
@@ -233,7 +252,7 @@ internal class AuthorizationProcessManager {
                 } else {
                     self.handleAuthorizationFailure(response, error: error)
                 }
-
+                
             }
             
             authorizationRequestSend("token", options: options, completionHandler: callback)
@@ -255,31 +274,19 @@ internal class AuthorizationProcessManager {
     private func saveTokenFromResponse(response:Response) throws {
         do {
             if let data = response.responseData, responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
-                if let accessToken = responseJson["access_token"] as? String, idToken = responseJson["id_token"] as? String {
-                    
+                if let accessTokenFromResponse = responseJson["access_token"] as? String, idTokenFromResponse = responseJson["id_token"] as? String {
                     //save the tokens
-                    self.preferences.accessToken!.set(accessToken)
-                    self.preferences.idToken!.set(idToken);
-                    
+                    SecurityUtils.saveItemToKeyChain(accessTokenFromResponse, label: accessTokenLabel)
+                    SecurityUtils.saveItemToKeyChain(idTokenFromResponse, label: idTokenLabel)
                     //save the user identity separately
-                    let fullNameArr = idToken.componentsSeparatedByString(".")
-                    guard let decodedIdTokenData = Utils.decodeBase64WithString(fullNameArr[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
-                        throw AuthorizationProcessManagerError.COULD_NOT_SAVE_TOKEN("Could not decode input string")
                     }
-                    
-                    if let idTokenJson = try NSJSONSerialization.JSONObjectWithData(decodedIdTokenData, options: []) as? [String:AnyObject] {
-                        if let imfUser = idTokenJson["imf.user"] {
-                            self.preferences.userIdentity!.set(Utils.JSONStringify(imfUser))
-                        }
-                    }
-                }
                 self.logger.debug("token successfully saved");
             }
         } catch  {
             throw AuthorizationProcessManagerError.COULD_NOT_SAVE_TOKEN(("\(error)"))
         }
     }
-   
+    
     /**
      <#Description#>
      
@@ -288,7 +295,7 @@ internal class AuthorizationProcessManager {
     private func createRegistrationParams() -> [String:String]{
         var params = [String:String]()
         do {
-             registrationKeyPair = try SecurityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
+            registrationKeyPair = try SecurityUtils.generateKeyPair(512, publicTag: publicKeyIdentifier, privateTag: privateKeyIdentifier)
             let csrValue:String = try SecurityUtils.signCsr(deviceDictionary(), keyIds: (publicKeyIdentifier, privateKeyIdentifier), keySize: 512)
             params["CSR"] = csrValue;
             return params;
@@ -310,6 +317,19 @@ internal class AuthorizationProcessManager {
         return device
     }
     
+    func getIdentityFromIdToken(label:String) -> [String : AnyObject]?{
+        guard let dict = getIdTokenDictionary(), imfDevice = dict[label] else {
+            return nil
+        }
+        return imfDevice as? [String : AnyObject]
+    }
+    func getIdTokenDictionary() -> [String : AnyObject]? {
+        guard let idToken = idToken, decodedIdTokenData = Utils.decodeBase64WithString(idToken.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
+            return nil
+        }
+        return Utils.parseJsonStringtoDictionary(decodedIdTokenString)
+    }
+    
     private func createRegistrationHeaders() -> [String:String]{
         var headers = [String:String]()
         addSessionIdHeader(&headers);
@@ -318,7 +338,7 @@ internal class AuthorizationProcessManager {
     }
     
     private func extractLocationHeader(response:Response) -> String? {
-          if let location = response.headers?["Location"], stringLocation = location as? String {
+        if let location = response.headers?["Location"], stringLocation = location as? String {
             logger.debug("Location header extracted successfully");
             return stringLocation;
         } else {
@@ -326,7 +346,30 @@ internal class AuthorizationProcessManager {
         }
         return nil
     }
-    
+//    var accessToken:String? = nil
+//    var authorizationPersistencePolicy
+//    private func getAccessToken() -> String? {
+//        if accessToken != nil {
+//            //NSString *token = nil;
+//            switch authorizationPersistencePolicy {
+//            case IMFAuthorizationPerisistencePolicyWithTouchBiometrics:
+//                token = [WLTouchIdSecurityUtils _readSecretForService:[self accessTokenLabel] andAccount:ACCOUNT withDescription:@"Please authenticate to use stored access token"];
+//                if ([token length] > 0) {
+//                    [self setAccessToken:token];
+//                }
+//                break;
+//            case IMFAuthorizationPerisistencePolicyNever:
+//                break;
+//            default: //IMFAuthorizationPerisistencePolicyAlways
+//                token = [self getKeyChainItemForLabel:[self accessTokenLabel]];
+//                if ([token length] > 0) {
+//                    [self setAccessToken:token];
+//                }
+//                break;
+//            }
+//        }
+//
+//    }
     private func extractGrantCode(urlString:String?) -> String?{
         
         if let unWrappedUrlString = urlString, url:NSURL = NSURL(string: unWrappedUrlString) {
@@ -353,12 +396,12 @@ internal class AuthorizationProcessManager {
                 if let certificateString = jsonResponse["certificate"] as? String {
                     let certificate =  try SecurityUtils.getCertificateFromString(certificateString)
                     try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKeyTag: publicKeyIdentifier)
-                    //TODO : maybe change label name
+                    //TODO: maybe change label name
                     try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: "certificateLabel")
                     
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
-                        preferences.clientId!.set(id)
+                        clientId = id
                     } else {
                         //TODO: handle error
                     }

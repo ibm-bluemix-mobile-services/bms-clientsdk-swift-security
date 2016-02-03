@@ -33,13 +33,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let JSON_ID_TOKEN_KEY = "id_token"
     
     //Keychain constants
-    public static let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
-    public static let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
-    public static let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
-    public  static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
-    public static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
-    public static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
-    private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
+        private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     private var challengeHandlers:[String:ChallengeHandler]
     
     var idToken : String {
@@ -67,11 +61,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
-    var preferences : AuthorizationManagerPreferences
     
     private init() {
-        preferences = AuthorizationManagerPreferences()
-        processManager = AuthorizationProcessManager(preferences: preferences)
+        processManager = AuthorizationProcessManager()
         self.challengeHandlers = [String:ChallengeHandler]()
         BMSClient.sharedInstance.sharedAuthorizationManager = self
         challengeHandlers = [String:ChallengeHandler]()
@@ -108,9 +100,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func clearAuthorizationData() {
-        preferences.accessToken?.clear()
-        preferences.idToken?.clear()
-        preferences.userIdentity?.clear()
+        SecurityUtils.removeItemFromKeyChain(accessTokenLabel)
+        SecurityUtils.removeItemFromKeyChain(idTokenLabel)
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
@@ -119,8 +110,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func getCachedAuthorizationHeader() -> String? {
         var returnedValue:String? = nil
+       
         dispatch_barrier_sync(lockQueue){
-            if let accessToken = self.preferences.accessToken?.get(), idToken = self.preferences.idToken?.get() {
+            if let accessToken = SecurityUtils.getItemFromKeyChain(accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel) {
+                print(self.getUserIdentity())
+                print(self.getDeviceIdentity())
+                print(self.getAppIdentity())
                 returnedValue = "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
             }
         }
@@ -134,15 +129,15 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getUserIdentity() -> AnyObject? {
-        return nil
+        return processManager.userIdentity
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        return DeviceIdentity(map: preferences.deviceIdentity?.getAsMap())
+        return processManager.deviceIdentity
     }
     
     public func getAppIdentity() -> AnyObject? {
-        return AppIdentity(map: preferences.appIdentity?.getAsMap())
+        return processManager.appIdentity
     }
     
     /**

@@ -141,7 +141,7 @@ public class SecurityUtils {
         return result as! SecCertificate
     }
     
-    func getDataFromKeyChain(label:String) ->  String? {
+    internal static func getItemFromKeyChain(label:String) ->  String? {
         //query
         let query: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
@@ -163,7 +163,6 @@ public class SecurityUtils {
     internal static func signCsr(payloadJSON:[String : AnyObject]?, keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
         do {
             try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
-            let base64Options = NSDataBase64EncodingOptions(rawValue:0)
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
             //            var publicKeyKey = ids.publicKey.dataUsingEncoding(NSUTF8StringEncoding)!
             //            var privateKeyKey = ids.privateKey.dataUsingEncoding(NSUTF8StringEncoding)!
@@ -299,7 +298,7 @@ public class SecurityUtils {
         
         
         func doSha256(dataIn:NSData) -> NSData {
-            var shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH));
+            let shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH));
             CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes));
             
             return shaOut;
@@ -323,7 +322,7 @@ public class SecurityUtils {
         return signedData
     }
     
-    internal static func storeDataInKeychain(data:String, label: String) -> Bool{
+    internal static func saveItemToKeyChain(data:String, label: String) -> Bool{
         //create
         let key: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
@@ -336,6 +335,19 @@ public class SecurityUtils {
         return status == errSecSuccess
         
     }
+    internal static func removeItemFromKeyChain(label: String) -> Bool{
+        //create
+        let delQuery : [NSString:AnyObject] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: label
+        ]
+        
+        let delStatus:OSStatus = SecItemDelete(delQuery)
+        
+        return delStatus == errSecSuccess
+        
+    }
+
     
     internal static func getCertificateFromString(stringData:String) throws -> SecCertificate{
         
@@ -386,13 +398,6 @@ public class SecurityUtils {
             throw SecurityError.CertCannotBeSaved
         }
     }
-    private var publicKeyIdentifier : String {
-        get{
-            let nameAndVer = Utils.getApplicationDetails()
-            return "\(MCAAuthorizationManager._PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-            //            return key.dataUsingEncoding(NSUTF8StringEncoding)!
-        }
-    }
     internal static func checkCertificatePublicKeyValidity(certificate:SecCertificate, publicKeyTag:String) throws -> Bool{
         let certificatePublicKeyTag = "checkCertificatePublicKeyValidity : publicKeyFromCertificate"
         var publicKeyBits = try getKeyBitsFromKeyChain(publicKeyTag)
@@ -406,7 +411,7 @@ public class SecurityUtils {
                     SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
                 }
                 try savePublicKeyToKeyChain(certificatePublicKey, tag: certificatePublicKeyTag)
-                var ceritificatePublicKeyBits = try getKeyBitsFromKeyChain(certificatePublicKeyTag)
+                let ceritificatePublicKeyBits = try getKeyBitsFromKeyChain(certificatePublicKeyTag)
                 
                 if(ceritificatePublicKeyBits == publicKeyBits){
                     return true

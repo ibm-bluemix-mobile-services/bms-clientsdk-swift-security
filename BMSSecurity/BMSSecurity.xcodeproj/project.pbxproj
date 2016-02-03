@@ -10,19 +10,16 @@
 		DB2BCF971C22FB2E0063A673 /* BMSSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = DB2BCF961C22FB2E0063A673 /* BMSSecurity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
 		DB2BCFA31C22FB2F0063A673 /* BMSSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */; };
-		FD4912741C574FB000A8E235 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912601C574FB000A8E235 /* AuthorizationManagerPreferences.swift */; };
 		FD4912751C574FB000A8E235 /* AuthorizationProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912611C574FB000A8E235 /* AuthorizationProcessManager.swift */; };
 		FD4912761C574FB000A8E235 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912621C574FB000A8E235 /* AuthorizationRequest.swift */; };
 		FD4912771C574FB000A8E235 /* AuthorizationRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912631C574FB000A8E235 /* AuthorizationRequestManager.swift */; };
 		FD4912781C574FB000A8E235 /* BMSSecurityConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912641C574FB000A8E235 /* BMSSecurityConstants.swift */; };
 		FD49127B1C574FB000A8E235 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912681C574FB000A8E235 /* SecurityUtils.swift */; };
 		FD49127C1C574FB000A8E235 /* ChallengeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126A1C574FB000A8E235 /* ChallengeHandler.swift */; };
-		FD49127D1C574FB000A8E235 /* AESStringEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126C1C574FB000A8E235 /* AESStringEncryption.swift */; };
 		FD49127E1C574FB000A8E235 /* BMSSecurityError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126D1C574FB000A8E235 /* BMSSecurityError.swift */; };
 		FD49127F1C574FB000A8E235 /* StringEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126E1C574FB000A8E235 /* StringEncryption.swift */; };
 		FD4912801C574FB000A8E235 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126F1C574FB000A8E235 /* Queue.swift */; };
 		FD4912811C574FB000A8E235 /* RequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912701C574FB000A8E235 /* RequestOptions.swift */; };
-		FD4912821C574FB000A8E235 /* UserDataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912721C574FB000A8E235 /* UserDataUtils.swift */; };
 		FD4912831C574FB000A8E235 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912731C574FB000A8E235 /* Utils.swift */; };
 		FD49128E1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49128B1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift */; };
 		FD49128F1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49128D1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift */; };
@@ -54,19 +51,16 @@
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCFA21C22FB2F0063A673 /* BMSSecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMSSecurityTests.swift; sourceTree = "<group>"; };
 		DB2BCFA41C22FB2F0063A673 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FD4912601C574FB000A8E235 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		FD4912611C574FB000A8E235 /* AuthorizationProcessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationProcessManager.swift; sourceTree = "<group>"; };
 		FD4912621C574FB000A8E235 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
 		FD4912631C574FB000A8E235 /* AuthorizationRequestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationRequestManager.swift; sourceTree = "<group>"; };
 		FD4912641C574FB000A8E235 /* BMSSecurityConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityConstants.swift; sourceTree = "<group>"; };
 		FD4912681C574FB000A8E235 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
 		FD49126A1C574FB000A8E235 /* ChallengeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChallengeHandler.swift; sourceTree = "<group>"; };
-		FD49126C1C574FB000A8E235 /* AESStringEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AESStringEncryption.swift; sourceTree = "<group>"; };
 		FD49126D1C574FB000A8E235 /* BMSSecurityError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityError.swift; sourceTree = "<group>"; };
 		FD49126E1C574FB000A8E235 /* StringEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringEncryption.swift; sourceTree = "<group>"; };
 		FD49126F1C574FB000A8E235 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		FD4912701C574FB000A8E235 /* RequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestOptions.swift; sourceTree = "<group>"; };
-		FD4912721C574FB000A8E235 /* UserDataUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataUtils.swift; sourceTree = "<group>"; };
 		FD4912731C574FB000A8E235 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		FD49128B1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookAuthenticationManager.swift; sourceTree = "<group>"; };
 		FD49128D1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleAuthenticationManager.swift; sourceTree = "<group>"; };
@@ -141,7 +135,6 @@
 		FD49125F1C574FB000A8E235 /* internal */ = {
 			isa = PBXGroup;
 			children = (
-				FD4912601C574FB000A8E235 /* AuthorizationManagerPreferences.swift */,
 				FD4912611C574FB000A8E235 /* AuthorizationProcessManager.swift */,
 				FD4912621C574FB000A8E235 /* AuthorizationRequest.swift */,
 				FD4912631C574FB000A8E235 /* AuthorizationRequestManager.swift */,
@@ -151,7 +144,6 @@
 				FD49126B1C574FB000A8E235 /* Encryption */,
 				FD49126F1C574FB000A8E235 /* Queue.swift */,
 				FD4912701C574FB000A8E235 /* RequestOptions.swift */,
-				FD4912711C574FB000A8E235 /* UserData */,
 				FD4912731C574FB000A8E235 /* Utils.swift */,
 			);
 			path = internal;
@@ -176,19 +168,10 @@
 		FD49126B1C574FB000A8E235 /* Encryption */ = {
 			isa = PBXGroup;
 			children = (
-				FD49126C1C574FB000A8E235 /* AESStringEncryption.swift */,
 				FD49126D1C574FB000A8E235 /* BMSSecurityError.swift */,
 				FD49126E1C574FB000A8E235 /* StringEncryption.swift */,
 			);
 			path = Encryption;
-			sourceTree = "<group>";
-		};
-		FD4912711C574FB000A8E235 /* UserData */ = {
-			isa = PBXGroup;
-			children = (
-				FD4912721C574FB000A8E235 /* UserDataUtils.swift */,
-			);
-			path = UserData;
 			sourceTree = "<group>";
 		};
 		FD4912891C5F8D7500A8E235 /* auth */ = {
@@ -367,13 +350,10 @@
 				FD4912781C574FB000A8E235 /* BMSSecurityConstants.swift in Sources */,
 				FDD6B55D1C50E0A000CA5860 /* UserIdentity.swift in Sources */,
 				FD4912811C574FB000A8E235 /* RequestOptions.swift in Sources */,
-				FD4912821C574FB000A8E235 /* UserDataUtils.swift in Sources */,
 				FD49128F1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift in Sources */,
-				FD4912741C574FB000A8E235 /* AuthorizationManagerPreferences.swift in Sources */,
 				FDD6B55A1C50E0A000CA5860 /* AuthenticationDelegate.swift in Sources */,
 				FD4912831C574FB000A8E235 /* Utils.swift in Sources */,
 				FDD6B55E1C50E0A000CA5860 /* WLDeviceAuthManager.swift in Sources */,
-				FD49127D1C574FB000A8E235 /* AESStringEncryption.swift in Sources */,
 				FD4912801C574FB000A8E235 /* Queue.swift in Sources */,
 				FDD6B5591C50E0A000CA5860 /* AuthenticationContexts.swift in Sources */,
 				FD49127F1C574FB000A8E235 /* StringEncryption.swift in Sources */,

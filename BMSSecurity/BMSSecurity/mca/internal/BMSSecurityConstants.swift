@@ -13,6 +13,21 @@
 
 import Foundation
 
-
+internal let nameAndVer = Utils.getApplicationDetails()
 internal let MFP_PACKAGE_PREFIX = "mfpsdk."
 internal let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"
+internal let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
+internal let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
+internal let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
+internal let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
+internal let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
+internal let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
+
+
+
+internal let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+internal let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+internal let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+internal let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+internal let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
+internal let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
