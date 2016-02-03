@@ -263,7 +263,7 @@ internal class AuthorizationProcessManager {
                     
                     //save the user identity separately
                     let fullNameArr = idToken.componentsSeparatedByString(".")
-                    guard let decodedIdTokenData = SecurityUtils.decodeBase64WithString(fullNameArr[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
+                    guard let decodedIdTokenData = Utils.decodeBase64WithString(fullNameArr[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
                         throw AuthorizationProcessManagerError.COULD_NOT_SAVE_TOKEN("Could not decode input string")
                     }
                     

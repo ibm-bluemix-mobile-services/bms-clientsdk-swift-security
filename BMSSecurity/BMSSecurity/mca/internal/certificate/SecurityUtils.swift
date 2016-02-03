@@ -15,119 +15,7 @@ import Foundation
 import CommonCrypto
 
 public class SecurityUtils {
-    
-    
-    static let _base64DecodingTable: [Int8] = [
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
-        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -2, -2, -2,
-        -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, -2,
-        -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
-    ]
-    
-//    static let base64EncodingTableString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-//    static let base64EncodingTable = [Character](base64EncodingTableString.characters)
-//    static let base64EncodingTableUrlSafeString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-//    static let base64EncodingTableUrlSafe = [Character](base64EncodingTableUrlSafeString.characters)
-    
-    /**
-     Decode base64 code
-     
-     - parameter strBase64: strBase64 the String to decode
-     
-     - returns: return decoded String
-     */
-    public static func decodeBase64WithString(strBase64:String) -> NSData? {
-        
-        guard let objPointerHelper = strBase64.cStringUsingEncoding(NSASCIIStringEncoding), objPointer = String(UTF8String: objPointerHelper) else {
-            return nil
-        }
-        
-        let intLengthFixed:Int = (objPointer.characters.count)
-        var result:[Int8] = [Int8](count: intLengthFixed, repeatedValue : 1)
-        
-        var i:Int=0, j:Int=0, k:Int
-        var count = 0
-        var intLengthMutated:Int = (objPointer.characters.count)
-        var current:Character
-        
-        for current = objPointer[objPointer.startIndex.advancedBy(count++)] ; current != "\0" && intLengthMutated-- > 0 ; current = objPointer[objPointer.startIndex.advancedBy(count++)]  {
-            
-            if current == "=" {
-                if  count < intLengthFixed && objPointer[objPointer.startIndex.advancedBy(count)] != "=" && i%4 == 1 {
-                    
-                    return nil
-                }
-                if count == intLengthFixed {
-                    break
-                }
-                
-                continue
-            }
-            let stringCurrent = String(current)
-            let singleValueArrayCurrent: [UInt8] = Array(stringCurrent.utf8)
-            let intCurrent:Int = Int(singleValueArrayCurrent[0])
-            let int8Current = _base64DecodingTable[intCurrent]
-            
-            if int8Current == -1 {
-                continue
-            } else if int8Current == -2 {
-                return nil
-            }
-            
-            switch (i % 4) {
-            case 0:
-                result[j] = int8Current << 2
-            case 1:
-                result[j++] |= int8Current >> 4
-                result[j] = (int8Current & 0x0f) << 4
-            case 2:
-                result[j++] |= int8Current >> 2
-                result[j] = (int8Current & 0x03) << 6
-            case 3:
-                result[j++] |= int8Current
-            default:  break
-            }
-            i++;
-            
-            if count == intLengthFixed {
-                break
-            }
-            
-        }
-        
-        // mop things up if we ended on a boundary
-        k = j;
-        if (current == "=") {
-            switch (i % 4) {
-            case 1:
-                // Invalid state
-                return nil
-            case 2:
-                k++
-                result[k] = 0
-            case 3:
-                result[k] = 0
-            default:
-                break
-            }
-        }
-        
-        // Setup the return NSData
-        return NSData(bytes: result, length: j)
-    }
-    
+       
     enum SecurityError : ErrorType{
         case NoKeysGenerated
         case KeysNotFound
@@ -276,14 +164,6 @@ public class SecurityUtils {
         do {
             try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
             let base64Options = NSDataBase64EncodingOptions(rawValue:0)
-            
-            func encodeSafe64(data:NSData) ->String {
-                let signedNotSafe = data.base64EncodedStringWithOptions(base64Options)
-                
-                return signedNotSafe.stringByReplacingOccurrencesOfString("/", withString: "_").stringByReplacingOccurrencesOfString("+", withString: "-")
-            }
-            
-            
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
             //            var publicKeyKey = ids.publicKey.dataUsingEncoding(NSUTF8StringEncoding)!
             //            var privateKeyKey = ids.privateKey.dataUsingEncoding(NSUTF8StringEncoding)!
@@ -305,16 +185,16 @@ public class SecurityUtils {
             
             let jwsHeaderData : NSData? = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
             //            let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
-            let jwsHeaderBase64 = encodeSafe64(jwsHeaderData!)
+            let jwsHeaderBase64 = Utils.base64StringFromData(jwsHeaderData!, isSafeUrl: true)
             let payloadJSONData : NSData? = strPayloadJSON!.dataUsingEncoding(NSUTF8StringEncoding)
             //            let payloadJSONBase64 = payloadJSONData!.base64EncodedStringWithOptions(base64Options)
-            let payloadJSONBase64 = encodeSafe64(payloadJSONData!)
+            let payloadJSONBase64 = Utils.base64StringFromData(payloadJSONData!, isSafeUrl: true)
             
             let jwsHeaderAndPayload = jwsHeaderBase64.stringByAppendingString(".".stringByAppendingString(payloadJSONBase64))
             let signedData = try signData(jwsHeaderAndPayload, privateKey:privateKeySec)
             
             //            let signedDataBase64 = signedData.base64EncodedStringWithOptions(base64Options)
-            let signedDataBase64 = encodeSafe64(signedData)
+            let signedDataBase64 = Utils.base64StringFromData(signedData, isSafeUrl: true)
             
             return jwsHeaderAndPayload.stringByAppendingString(".".stringByAppendingString(signedDataBase64))
         }
@@ -523,7 +403,7 @@ public class SecurityUtils {
         if let unWrappedTrust = trust where status == errSecSuccess {
             if let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust) {
                 defer {
-                         SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
+                    SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
                 }
                 try savePublicKeyToKeyChain(certificatePublicKey, tag: certificatePublicKeyTag)
                 var ceritificatePublicKeyBits = try getKeyBitsFromKeyChain(certificatePublicKeyTag)
