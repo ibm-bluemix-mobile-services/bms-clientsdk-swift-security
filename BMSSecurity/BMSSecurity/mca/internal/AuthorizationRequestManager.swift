@@ -104,15 +104,15 @@ public class AuthorizationRequestManager {
         }
         else {
             //path is relative
-            let serverHost = BMSClient.defaultProtocol
+            var serverHost = BMSClient.defaultProtocol
                 + "://"
                 + AuthorizationRequestManager.AUTH_SERVER_NAME
                 + "."
                 + BMSClient.sharedInstance.bluemixRegionSuffix!
             
-//            if overrideServerHost != nil {
-//                serverHost = AuthorizationRequestManager.overrideServerHost
-//            }
+            if let overrideServerHost = AuthorizationRequestManager.overrideServerHost {
+                serverHost = overrideServerHost
+            }
             
             rootUrl = serverHost
                 + "/"

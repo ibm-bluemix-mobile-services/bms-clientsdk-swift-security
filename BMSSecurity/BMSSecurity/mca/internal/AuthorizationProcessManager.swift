@@ -19,6 +19,9 @@ internal class AuthorizationProcessManager {
     private var registrationKeyPair:(privateKey : SecKey,publicKey : SecKey)?
     private var logger:Logger
     private var sessionId:String = ""
+    internal var accessToken:String?
+    internal var authorizationPersistencePolicy:PersistencePolicy
+    
     internal var deviceIdentity:[String : AnyObject]?{
         get {
             let deviceIdentity = getIdentityFromIdToken("imf.device")
@@ -45,7 +48,7 @@ internal class AuthorizationProcessManager {
         }
     }
     internal var idToken:String?
-   
+    
     internal var clientId:String?
     private func removeClientId(){
         NSUserDefaults.standardUserDefaults().removeObjectForKey(clientIdLabel)
@@ -84,6 +87,7 @@ internal class AuthorizationProcessManager {
         
         self.logger = Logger.getLoggerForName(MFP_PACKAGE_PREFIX+"AuthorizationProcessManager")
         self.authorizationQueue = Queue<MfpCompletionHandler>();
+        self.authorizationPersistencePolicy = PersistencePolicy.IMFAuthorizationPerisistencePolicyAlways
         //    String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         
         //generate new random session id
@@ -99,17 +103,17 @@ internal class AuthorizationProcessManager {
         
         //start the authorization process only if this is the first time we ask for authorization
         if (authorizationQueue.size == 1) {
-           // do {
-                if (getClientId() == nil) {
-                    logger.info("starting registration process");
-                    /*try*/ invokeInstanceRegistrationRequest();
-                } else {
-                    logger.info("starting authorization process");
-                    /*try*/ invokeAuthorizationRequest();
-                }
-          //  } catch {
-                // TODO: handle failure
-         //   }
+            // do {
+            if (getClientId() == nil) {
+                logger.info("starting registration process");
+                /*try*/ invokeInstanceRegistrationRequest();
+            } else {
+                logger.info("starting authorization process");
+                /*try*/ invokeAuthorizationRequest();
+            }
+            //  } catch {
+            // TODO: handle failure
+            //   }
         } else {
             logger.info("authorization process already running, adding response listener to the queue");
             logger.debug("authorization process currently handling \(authorizationQueue.size) requests")
@@ -242,11 +246,12 @@ internal class AuthorizationProcessManager {
     private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
         //do {
-            let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
-         /*   try */ authorizationRequestManager.send(path, options: options )
-      //  } catch  {
-            // TODO: handle exception
-      //  }
+        let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
+        
+        /*   try */ authorizationRequestManager.send(path, options: options )
+        //  } catch  {
+        // TODO: handle exception
+        //  }
     }
     
     private func saveTokenFromResponse(response:Response) throws {
@@ -254,11 +259,10 @@ internal class AuthorizationProcessManager {
             if let data = response.responseData, responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
                 if let accessTokenFromResponse = responseJson["access_token"] as? String, idTokenFromResponse = responseJson["id_token"] as? String {
                     //save the tokens
-                    SecurityUtils.saveItemToKeyChain(accessTokenFromResponse, label: accessTokenLabel)
-                    SecurityUtils.saveItemToKeyChain(idTokenFromResponse, label: idTokenLabel)
-                    self.idToken = idTokenFromResponse
-                    //save the user identity separately
-                    }
+                    //SecurityUtils.saveItemToKeyChain(accessTokenFromResponse, label: accessTokenLabel)
+                    //SecurityUtils.saveItemToKeyChain(idTokenFromResponse, label: idTokenLabel)
+                    self.saveAccessAndIdToken(accessTokenFromResponse, idTokenToSave: idTokenFromResponse)
+                }
                 self.logger.debug("token successfully saved");
             }
         } catch  {
@@ -288,6 +292,7 @@ internal class AuthorizationProcessManager {
         var device = [String : AnyObject]()
         device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] =  UIDevice.currentDevice().identifierForVendor?.UUIDString
         device[MCAAuthorizationManager.JSON_MODEL_KEY] =  UIDevice.currentDevice().model
+        device[MCAAuthorizationManager.JSON_OS_KEY] =  UIDevice.currentDevice().systemVersion
         let appInfo = Utils.getApplicationDetails()
         device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appInfo.name
         device[MCAAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appInfo.version
@@ -321,11 +326,13 @@ internal class AuthorizationProcessManager {
     
     internal func setClientId(id:String?) {
         self.clientId = id
-        NSUserDefaults.standardUserDefaults().setValue(idToken, forKey: clientIdLabel)
+        NSUserDefaults.standardUserDefaults().setValue(id, forKey: clientIdLabel)
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
+    
     internal func getIdToken() -> String? {
         if self.idToken == nil {
-        self.idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel)
+            self.idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel)
             
         }
         return self.idToken
@@ -347,30 +354,33 @@ internal class AuthorizationProcessManager {
         }
         return nil
     }
-//    var accessToken:String? = nil
-//    var authorizationPersistencePolicy
-//    private func getAccessToken() -> String? {
-//        if accessToken != nil {
-//            //NSString *token = nil;
-//            switch authorizationPersistencePolicy {
-//            case IMFAuthorizationPerisistencePolicyWithTouchBiometrics:
-//                token = [WLTouchIdSecurityUtils _readSecretForService:[self accessTokenLabel] andAccount:ACCOUNT withDescription:@"Please authenticate to use stored access token"];
-//                if ([token length] > 0) {
-//                    [self setAccessToken:token];
-//                }
-//                break;
-//            case IMFAuthorizationPerisistencePolicyNever:
-//                break;
-//            default: //IMFAuthorizationPerisistencePolicyAlways
-//                token = [self getKeyChainItemForLabel:[self accessTokenLabel]];
-//                if ([token length] > 0) {
-//                    [self setAccessToken:token];
-//                }
-//                break;
-//            }
-//        }
-//
-//    }
+    
+    internal func saveAccessAndIdToken(accessTokenToSave:String, idTokenToSave:String){
+        // fetch and save access_token
+        switch(self.authorizationPersistencePolicy) {
+        case .IMFAuthorizationPerisistencePolicyNever: break
+        default: // IMFAuthorizationPerisistencePolicyAlways
+            SecurityUtils.saveItemToKeyChain(accessTokenToSave, label: accessTokenLabel)
+        }
+        self.accessToken = accessTokenToSave
+        SecurityUtils.saveItemToKeyChain(idTokenToSave, label: idTokenLabel)
+        self.idToken = idTokenToSave
+    }
+    
+    
+    internal func getAccessToken() -> String? {
+        if accessToken == nil {
+            var token:String?
+            switch(self.authorizationPersistencePolicy) {
+            case .IMFAuthorizationPerisistencePolicyNever: break
+            default: //IMFAuthorizationPerisistencePolicyAlways
+                token = SecurityUtils.getItemFromKeyChain(accessTokenLabel)
+                self.accessToken = token
+            }
+        }
+        return self.accessToken
+    }
+    
     private func extractGrantCode(urlString:String?) -> String?{
         
         if let unWrappedUrlString = urlString, url:NSURL = NSURL(string: unWrappedUrlString) {

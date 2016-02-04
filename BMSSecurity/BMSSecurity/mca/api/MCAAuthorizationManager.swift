@@ -174,7 +174,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: <#return value description#>
      */
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
-        return PersistencePolicy.NEVER
+        return PersistencePolicy.IMFAuthorizationPerisistencePolicyNever
     }
     
     /**
