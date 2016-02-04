@@ -179,8 +179,8 @@ public class SecurityUtils {
             
             
             
-            let plainData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
-            let base64String = plainData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+           // let plainData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
+           // let base64String = plainData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
             
             let jwsHeaderData : NSData? = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
             //            let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
@@ -427,16 +427,6 @@ public class SecurityUtils {
             let query = [ kSecClass as String : availableKSecClass ]
             SecItemDelete(query)
         }
-    }
-    
-    internal static func getClientIdFromCertificate(certificate:SecCertificate?) throws -> String{
-        
-        if let unWrappedCertificate = certificate {
-            
-        } else {
-            //TODO : handle error
-        }
-        return ""
     }
     
     //    //subjectDN is of the form: "UID=<clientId>, DC=<some other value>" or "DC=<some other value>, UID=<clientId>"

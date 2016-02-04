@@ -151,7 +151,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
             throw AutorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
         }
         
-        var handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
+        let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
         challengeHandlers[realm] = handler
     }
     

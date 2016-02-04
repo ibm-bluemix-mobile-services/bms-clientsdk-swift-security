@@ -61,6 +61,7 @@ public class ChallengeHandler : AuthenticationContext{
             self.releaseWaitingList();
         }
     }
+     //TODO: should this get optional ???
     public func  handleChallenge(request:AuthorizationRequestManager , challenge:[String:AnyObject]?) {
         dispatch_barrier_async(lockQueue){
             if self.activeRequest == nil {
@@ -73,6 +74,8 @@ public class ChallengeHandler : AuthenticationContext{
             }
         }
     }
+    
+     //TODO: should this get optional ???
     public  func handleSuccess(success:[String:AnyObject]?) {
         dispatch_barrier_async(lockQueue){
             if let unWrappedListener = self.authenticationDelegate{
@@ -82,6 +85,7 @@ public class ChallengeHandler : AuthenticationContext{
             self.activeRequest = nil
         }
     }
+    //TODO: should this get optional ???
     public  func handleFailure(failure:[String:AnyObject]?) {
         dispatch_barrier_async(lockQueue){
             if let unWrappedListener = self.authenticationDelegate{

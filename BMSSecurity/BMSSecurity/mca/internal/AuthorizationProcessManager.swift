@@ -44,31 +44,9 @@ internal class AuthorizationProcessManager {
             self.userIdentity = value
         }
     }
-    internal var idToken:String? {
-        get{
-            return (self.idToken != nil) ? self.idToken : SecurityUtils.getItemFromKeyChain(idTokenLabel)
-        }
-        set(value){
-            self.idToken = value
-        }
-    }
-    internal var clientId:String? {
-        get{
-            if self.clientId == nil {
-                let id = NSUserDefaults.standardUserDefaults().valueForKey("clientId") as? String
-                if id?.characters.count > 0 {
-                    self.clientId = id
-                }
-            }
-            return self.clientId
-        }
-        set(value){
-            self.clientId = value
-            NSUserDefaults.standardUserDefaults().setValue(value, forKey: clientIdLabel)
-            NSUserDefaults.standardUserDefaults().synchronize()
-        }
-    }
-    
+    internal var idToken:String?
+   
+    internal var clientId:String?
     private func removeClientId(){
         NSUserDefaults.standardUserDefaults().removeObjectForKey(clientIdLabel)
     }
@@ -121,17 +99,17 @@ internal class AuthorizationProcessManager {
         
         //start the authorization process only if this is the first time we ask for authorization
         if (authorizationQueue.size == 1) {
-            do {
-                if (clientId == nil) {
+           // do {
+                if (getClientId() == nil) {
                     logger.info("starting registration process");
-                    try invokeInstanceRegistrationRequest();
+                    /*try*/ invokeInstanceRegistrationRequest();
                 } else {
                     logger.info("starting authorization process");
-                    try invokeAuthorizationRequest();
+                    /*try*/ invokeAuthorizationRequest();
                 }
-            } catch {
+          //  } catch {
                 // TODO: handle failure
-            }
+         //   }
         } else {
             logger.info("authorization process already running, adding response listener to the queue");
             logger.debug("authorization process currently handling \(authorizationQueue.size) requests")
@@ -182,7 +160,7 @@ internal class AuthorizationProcessManager {
     private func createTokenRequestParams(grantCode:String) -> [String:String] {
         let params : [String : String] = [
             "code" : grantCode,
-            "client_id" : clientId!,
+            "client_id" : getClientId()!,
             "grant_type" : "authorization_code",
             "redirect_uri" :AuthorizationProcessManager.HTTP_LOCALHOST
         ]
@@ -194,7 +172,7 @@ internal class AuthorizationProcessManager {
         
         var params = [String:String]()
         params["response_type"] =  "code"
-        params["client_id"] =  clientId
+        params["client_id"] =  getClientId()!
         params["redirect_uri"] =  AuthorizationProcessManager.HTTP_LOCALHOST
         
         return params;
@@ -263,12 +241,12 @@ internal class AuthorizationProcessManager {
     
     private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?) {
         
-        do {
+        //do {
             let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
-            try authorizationRequestManager.send(path, options: options )
-        } catch  {
+         /*   try */ authorizationRequestManager.send(path, options: options )
+      //  } catch  {
             // TODO: handle exception
-        }
+      //  }
     }
     
     private func saveTokenFromResponse(response:Response) throws {
@@ -278,6 +256,7 @@ internal class AuthorizationProcessManager {
                     //save the tokens
                     SecurityUtils.saveItemToKeyChain(accessTokenFromResponse, label: accessTokenLabel)
                     SecurityUtils.saveItemToKeyChain(idTokenFromResponse, label: idTokenLabel)
+                    self.idToken = idTokenFromResponse
                     //save the user identity separately
                     }
                 self.logger.debug("token successfully saved");
@@ -324,10 +303,32 @@ internal class AuthorizationProcessManager {
         return imfDevice as? [String : AnyObject]
     }
     func getIdTokenDictionary() -> [String : AnyObject]? {
-        guard let idToken = idToken, decodedIdTokenData = Utils.decodeBase64WithString(idToken.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
+        guard let idToken = getIdToken(), decodedIdTokenData = Utils.decodeBase64WithString(idToken.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding) else {
             return nil
         }
         return Utils.parseJsonStringtoDictionary(decodedIdTokenString)
+    }
+    
+    internal func getClientId() -> String? {
+        if clientId == nil {
+            let id = NSUserDefaults.standardUserDefaults().valueForKey(clientIdLabel) as? String
+            if id?.characters.count > 0 {
+                self.clientId = id
+            }
+        }
+        return self.clientId
+    }
+    
+    internal func setClientId(id:String?) {
+        self.clientId = id
+        NSUserDefaults.standardUserDefaults().setValue(idToken, forKey: clientIdLabel)
+    }
+    internal func getIdToken() -> String? {
+        if self.idToken == nil {
+        self.idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel)
+            
+        }
+        return self.idToken
     }
     
     private func createRegistrationHeaders() -> [String:String]{
@@ -401,7 +402,7 @@ internal class AuthorizationProcessManager {
                     
                     //save the clientId separately
                     if let id = jsonResponse["clientId"] as? String? {
-                        clientId = id
+                        self.setClientId(id)
                     } else {
                         //TODO: handle error
                     }

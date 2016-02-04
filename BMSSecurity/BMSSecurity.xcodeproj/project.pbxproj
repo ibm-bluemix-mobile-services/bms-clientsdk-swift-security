@@ -21,8 +21,6 @@
 		FD4912801C574FB000A8E235 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49126F1C574FB000A8E235 /* Queue.swift */; };
 		FD4912811C574FB000A8E235 /* RequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912701C574FB000A8E235 /* RequestOptions.swift */; };
 		FD4912831C574FB000A8E235 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4912731C574FB000A8E235 /* Utils.swift */; };
-		FD49128E1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49128B1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift */; };
-		FD49128F1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD49128D1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDD6B5591C50E0A000CA5860 /* AuthenticationContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD6B5511C50E0A000CA5860 /* AuthenticationContexts.swift */; };
@@ -62,8 +60,6 @@
 		FD49126F1C574FB000A8E235 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		FD4912701C574FB000A8E235 /* RequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestOptions.swift; sourceTree = "<group>"; };
 		FD4912731C574FB000A8E235 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		FD49128B1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookAuthenticationManager.swift; sourceTree = "<group>"; };
-		FD49128D1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleAuthenticationManager.swift; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
 		FDD6B5511C50E0A000CA5860 /* AuthenticationContexts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationContexts.swift; sourceTree = "<group>"; };
 		FDD6B5521C50E0A000CA5860 /* AuthenticationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationDelegate.swift; sourceTree = "<group>"; };
@@ -174,35 +170,9 @@
 			path = Encryption;
 			sourceTree = "<group>";
 		};
-		FD4912891C5F8D7500A8E235 /* auth */ = {
-			isa = PBXGroup;
-			children = (
-				FD49128A1C5F8D7500A8E235 /* facebook */,
-				FD49128C1C5F8D7500A8E235 /* google */,
-			);
-			path = auth;
-			sourceTree = "<group>";
-		};
-		FD49128A1C5F8D7500A8E235 /* facebook */ = {
-			isa = PBXGroup;
-			children = (
-				FD49128B1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift */,
-			);
-			path = facebook;
-			sourceTree = "<group>";
-		};
-		FD49128C1C5F8D7500A8E235 /* google */ = {
-			isa = PBXGroup;
-			children = (
-				FD49128D1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift */,
-			);
-			path = google;
-			sourceTree = "<group>";
-		};
 		FDD6B54F1C50E0A000CA5860 /* mca */ = {
 			isa = PBXGroup;
 			children = (
-				FD4912891C5F8D7500A8E235 /* auth */,
 				FDD6B5501C50E0A000CA5860 /* api */,
 				FD49125F1C574FB000A8E235 /* internal */,
 			);
@@ -350,7 +320,6 @@
 				FD4912781C574FB000A8E235 /* BMSSecurityConstants.swift in Sources */,
 				FDD6B55D1C50E0A000CA5860 /* UserIdentity.swift in Sources */,
 				FD4912811C574FB000A8E235 /* RequestOptions.swift in Sources */,
-				FD49128F1C5F8D7500A8E235 /* GoogleAuthenticationManager.swift in Sources */,
 				FDD6B55A1C50E0A000CA5860 /* AuthenticationDelegate.swift in Sources */,
 				FD4912831C574FB000A8E235 /* Utils.swift in Sources */,
 				FDD6B55E1C50E0A000CA5860 /* WLDeviceAuthManager.swift in Sources */,
@@ -359,7 +328,6 @@
 				FD49127F1C574FB000A8E235 /* StringEncryption.swift in Sources */,
 				FD49127B1C574FB000A8E235 /* SecurityUtils.swift in Sources */,
 				FDD6B55B1C50E0A000CA5860 /* AppIdentity.swift in Sources */,
-				FD49128E1C5F8D7500A8E235 /* FacebookAuthenticationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
