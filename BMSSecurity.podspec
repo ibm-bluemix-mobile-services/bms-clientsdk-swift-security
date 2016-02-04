@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "BMSSecurity"
-    s.version      = '0.0.2'
+    s.version      = '0.0.3'
     s.summary      = "The security component of the Swift client SDK for IBM Bluemix Mobile Services"
     s.description  = "The IBM MobileFirst platform for iOS SDK integrates with \n                       the IBM MobileFirst platform Cloud Services. The SDK has a modular design, \n                       so you can add add services that are required by your \n                       application as needed.   \n"
     s.homepage     = "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-security"
