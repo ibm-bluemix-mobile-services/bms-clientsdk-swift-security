@@ -99,19 +99,24 @@ internal class JSONPreference:StringPreference {
     
     internal func set(json:[String:AnyObject])
     {
-        set(String(json))
+        do {
+        set(try Utils.JSONStringify(json))
+        } catch {
+            set(nil)
+        }
     }
     
     internal func getAsMap() -> [String:AnyObject]?{
         do {
-            if let data = get()?.dataUsingEncoding(NSUTF8StringEncoding) {
-                return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject]
+            if let json = get() {
+            return try Utils.parseJsonStringtoDictionary(json)
+            } else {
+                return nil
             }
         } catch {
-            //TODO: handle error
+            print(error)
             return nil
         }
-        return nil
     }
 }
 

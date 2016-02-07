@@ -182,7 +182,7 @@ public class AuthorizationRequestManager {
         }
         
         if let unwrappedAnswers = answers {
-                let ans = Utils.JSONStringify(unwrappedAnswers)
+                let ans = try Utils.JSONStringify(unwrappedAnswers)
                 let authorizationHeaderValue = "Bearer \(ans)"
                 request.addHeader("Authorization", val: authorizationHeaderValue)
         }
@@ -253,7 +253,6 @@ public class AuthorizationRequestManager {
      
      - parameter jsonFailures: Collection of authentication failures
      */
-     //TODO: should this get optional ???
     internal func processFailures(jsonFailures: [String:AnyObject]?) {
         
         guard let failures = jsonFailures else {
@@ -262,15 +261,14 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in failures {
-            if let handler = mcaAuthManager.getChallengeHandler(realm) {
-                handler.handleFailure(challenge as? [String : AnyObject])
+            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+                handler.handleFailure(unWrappedChallenge)
             }
             else {
                 AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
             }
         }
     }
-     //TODO: should this get optional ???
     internal func processSuccesses(jsonSuccesses: [String:AnyObject]?) {
 
         guard let successes = jsonSuccesses else {
@@ -279,8 +277,8 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in successes {
-            if let handler = mcaAuthManager.getChallengeHandler(realm) {
-                handler.handleSuccess(challenge as? [String : AnyObject])
+            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject]{
+                handler.handleSuccess(unWrappedChallenge)
             }
             else {
                 AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
@@ -296,23 +294,26 @@ public class AuthorizationRequestManager {
     internal func processResponse(response: Response?) {
         // at this point a server response should contain a secure JSON with challenges
         //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
-        guard let responseJson = Utils.extractSecureJson(response) else {
+        do {
+            var responseJson = try Utils.extractSecureJson(response)
+            if let challanges = responseJson[AuthorizationRequestManager.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
+                do {
+                    try startHandleChallenges(challanges, response: response!)
+                } catch {
+                    //TODO:ilan this is not checked, in startHandleChallenges it throws a runtime (android) so what here?
+                }
+                
+            }
+            else {
+                defaultCompletionHandler(response, nil)
+            }
+
+        } catch {
             defaultCompletionHandler(response, nil)
             return
         }
         
-        if let challanges = responseJson[AuthorizationRequestManager.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
-            do {
-                try startHandleChallenges(challanges, response: response!)
-            } catch {
-                //TODO:ilan this is not checked, in startHandleChallenges it throws a runtime (android) so what here?
             }
-            
-        }
-        else {
-            defaultCompletionHandler(response, nil)
-        }
-    }
     
     internal func startHandleChallenges(jsonChallenges: [String: AnyObject], response: Response) throws {
         let challenges = Array(jsonChallenges.keys)
@@ -322,8 +323,8 @@ public class AuthorizationRequestManager {
         }
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in jsonChallenges {
-             if let handler = mcaAuthManager.getChallengeHandler(realm) {
-                handler.handleChallenge(self, challenge: challenge as? [String : AnyObject])
+             if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+                handler.handleChallenge(self, challenge:  unWrappedChallenge)
             }
             else {
                 throw ResponseError.ChallengeHandlerNotFound("Challenge handler for realm: \(realm), is not found")
@@ -421,8 +422,8 @@ public class AuthorizationRequestManager {
         let query = url.query
         
         if let q = query where q.containsString(AuthorizationRequestManager.WL_RESULT) {
-            if let result = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT), jsonResult = Utils.parseJsonStringtoDictionary(result) {
-            
+            if let result = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT) {
+                var jsonResult = try Utils.parseJsonStringtoDictionary(result)
                 // process failures if any
                 
                 if let jsonFailures = jsonResult[AuthorizationRequestManager.AUTH_FAILURE_VALUE_NAME] {

@@ -25,6 +25,7 @@ public class AppIdentity{
         jsonData[AppIdentity.ID] =  appInfo.name
         jsonData[AppIdentity.VERSION] =  appInfo.version
     }
+    
     public func getAsJson() -> [String:String]{
         return jsonData
     }
@@ -38,7 +39,6 @@ public class AppIdentity{
         return jsonData[AppIdentity.ID]!
     }
     
-    //@return get application version
     public func getVersion() -> String {
         return jsonData[AppIdentity.VERSION]!
     }

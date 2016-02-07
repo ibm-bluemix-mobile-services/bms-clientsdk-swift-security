@@ -16,3 +16,30 @@ import Foundation
 internal enum BMSSecurityError {
     case generalError
 }
+
+internal enum Errors:ErrorType {
+    case JsonIsMalformed
+    case CouldNotParseDictionaryToJson
+    case CouldNotExtractJsonFromResponse
+}
+
+internal enum SecurityError : ErrorType{
+    case NoKeysGenerated
+    case KeysNotFound
+    case CertNotFound
+    case CertCannotBeCreated
+    case CertCannotBeSaved
+    case CertificatePublicKeyValidationFailed
+    case SignDataFailure
+    case SigningFailure(String)
+    case unableToSavePublicKey
+    case CouldNotCreateHeaderFromPublicKey
+}
+
+internal enum AuthorizationError : ErrorType {
+    case CANNOT_ADD_CHALLANGE_HANDLER(String)
+    case CouldNotExtractGrantCode
+    case CouldNotExtractLocationHeader
+    case CertificateDoesNotIncludeClientId
+    case ResponseDoesNotIncludeCertificate
+}

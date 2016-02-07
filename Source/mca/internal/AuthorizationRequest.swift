@@ -47,6 +47,7 @@ public class AuthorizationRequest : MFPRequest {
         headers[MFPRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
         var body = ""
         var i = 0
+        //creating body params
         for (key, val) in formParamaters {
             body += "\(key)=\(val)"
             if i < formParamaters.count - 1 {
@@ -54,25 +55,7 @@ public class AuthorizationRequest : MFPRequest {
             }
             i++
         }
-        super.sendString(body, withCompletionHandler: callback);
-//
-//        let authManager: AuthorizationManager = BMSClient.sharedInstance.sharedAuthorizationManager
-//        
-//        if let authHeader: String = authManager.getCachedAuthorizationHeader() {
-//            self.headers["Authorization"] = authHeader
-//        }
-//        
-//        func processResponse(response: Response?, error: NSError?) {
-//            if (authManager.isOAuthError(response)) {
-//                authManager.obtainAuthorizationHeader({
-//                    (response: Response?, error: NSError?) in (response != nil) ? self.sendWithCompletionHandler(callback) : callback?(response, error)
-//                });
-//            } else {
-//                callback?(response, error)
-//            }
-//        }
-//        
-//        super.sendWithCompletionHandler(processResponse)
+        super.sendString(body, withCompletionHandler: callback)
     }
     
 }

@@ -36,28 +36,6 @@ public class MCAAuthorizationManager : AuthorizationManager {
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     private var challengeHandlers:[String:ChallengeHandler]
     
-    var idToken : String {
-        get{
-            //            SecurityUtils.getDataForLable("\():\():\()")
-            //            return [NSString stringWithFormat:"%:%:%", OAUTH_ID_TOKEN_LABEL, bundleID, appVersion]
-            //               if (!_idToken) {
-            //            NSString *token = [self getKeyChainItemForLabel:self.idTokenLabel]
-            //            if (token.length > 0) {
-            //            [self setIdToken:token]
-            //            }
-            //            }
-            //            return _idToken
-            //            }
-            
-            return ""
-            
-        }
-    }
-    
-    public enum AutorizationError : ErrorType {
-        case CANNOT_ADD_CHALLANGE_HANDLER(String)
-    }
-    
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
@@ -70,7 +48,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity!.get() == nil {
-            preferences.deviceIdentity?.set(DeviceIdentity().getAsJson())
+            preferences.deviceIdentity!.set(DeviceIdentity().getAsJson())
         }
         if preferences.appIdentity!.get() == nil {
             preferences.appIdentity!.set(AppIdentity().getAsJson())
@@ -78,10 +56,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
-        if let header = httpResponse?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
-            if let authHeader : String = header as? String {
+        if let header = httpResponse?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
                 return isAuthorizationRequired(httpResponse!.statusCode!, responseAuthorizationHeader: authHeader)
-            }
         }
         
         return false
@@ -89,10 +65,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
-        if statusCode == 401 || statusCode == 403 {
-            if responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
                 return true
-            }
         }
         
         return false
@@ -131,15 +105,25 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getUserIdentity() -> AnyObject? {
-        return preferences.userIdentity!.get()
+        guard let userIdentityJson = preferences.userIdentity!.getAsMap() else {
+          return nil
+        }
+        return UserIdentity(map: userIdentityJson)
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        return preferences.deviceIdentity!.get()
+        guard let deviceIdentityJson = preferences.deviceIdentity!.getAsMap() else {
+            return nil
+        }
+        return DeviceIdentity(map: deviceIdentityJson)
     }
     
     public func getAppIdentity() -> AnyObject? {
-        return preferences.appIdentity!.get()
+        guard let appIdentityJson = preferences.appIdentity!.getAsMap() else {
+            return nil
+        }
+        return AppIdentity(map: appIdentityJson)
+
     }
     
     /**
@@ -150,7 +134,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) throws {
         guard realm.isEmpty == false else {
-            throw AutorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
+            throw AuthorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
         }
         
         let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
@@ -176,7 +160,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: <#return value description#>
      */
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
-        return PersistencePolicy.NEVER
+        return preferences.persistencePolicy!.get()
     }
     
     /**
@@ -185,7 +169,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter policy: <#policy description#>
      */
     public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
-        
+        if preferences.persistencePolicy!.get() != policy {
+            preferences.persistencePolicy!.set(policy)
+            preferences.accessToken!.updateStateByPolicy()
+            preferences.idToken!.updateStateByPolicy()
+        }
     }
     
     /**

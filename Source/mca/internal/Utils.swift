@@ -56,19 +56,19 @@ public class Utils {
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
     ]
-
+    
     
     public static func concatenateUrls(rootUrl:String, path:String) -> String {
-        if rootUrl.isEmpty {
+        guard !rootUrl.isEmpty else {
             return path
         }
-     
+        
         var final = rootUrl
         if !final.hasSuffix("/") {
             final += "/"
         }
         
-        if path.hasPrefix("/") {            
+        if path.hasPrefix("/") {
             final += path.substringWithRange(Range<String.Index>(start: path.startIndex.advancedBy(1), end: path.endIndex))
         } else {
             final += path
@@ -86,7 +86,6 @@ public class Utils {
         
         for val in paramaters {
             let pairs = val.componentsSeparatedByString("=")
-//            print (pairs.endIndex)
             
             if (pairs.endIndex != 2) {
                 continue
@@ -98,40 +97,34 @@ public class Utils {
         return nil
     }
     
-    public static func JSONStringify(value: AnyObject, prettyPrinted:Bool = false) -> String{
+    public static func JSONStringify(value: AnyObject, prettyPrinted:Bool = false) throws -> String{
         
         let options = prettyPrinted ? NSJSONWritingOptions.PrettyPrinted : NSJSONWritingOptions(rawValue: 0)
         
         
         if NSJSONSerialization.isValidJSONObject(value) {
-            
             do{
                 let data = try NSJSONSerialization.dataWithJSONObject(value, options: options)
-                if let string = NSString(data: data, encoding: NSUTF8StringEncoding) {
-                    return string as String
+                guard let string = NSString(data: data, encoding: NSUTF8StringEncoding) as? String else {
+                    throw Errors.JsonIsMalformed
                 }
-            }catch {
-                
-//                print("error")
-                //Access error here
+                return string
+            } catch {
+                throw Errors.JsonIsMalformed
             }
-            
         }
         return ""
     }
     
-    public static func parseJsonStringtoDictionary(jsonString:String) ->[String:AnyObject]? {
+    public static func parseJsonStringtoDictionary(jsonString:String) throws ->[String:AnyObject] {
         do {
-            if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
-                return responseJson as [String:AnyObject]
+            guard let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
+                throw Errors.JsonIsMalformed
             }
-        } catch {
-            return nil
+            return responseJson as [String:AnyObject]
         }
-        
-        return nil
     }
-        
+    
     /**
      <#Description#>
      
@@ -139,28 +132,18 @@ public class Utils {
      
      - returns: <#return value description#>
      */
-    public static func extractSecureJson(response: Response?) -> [String:AnyObject?]? {
+    public static func extractSecureJson(response: Response?) throws -> [String:AnyObject?] {
         
-        guard let responseText:String = response?.responseText else {
-            return nil
-        }
-        
-        guard responseText.hasPrefix(SECURE_PATTERN_START) && responseText.hasSuffix(SECURE_PATTERN_END) else {
-            return nil
+        guard let responseText:String = response?.responseText where (responseText.hasPrefix(SECURE_PATTERN_START) && responseText.hasSuffix(SECURE_PATTERN_END)) else {
+            throw Errors.CouldNotExtractJsonFromResponse
         }
         
         let jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(-Utils.SECURE_PATTERN_END.characters.count)))
         
         do {
-        
-            if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
-                return responseJson
-            }
-        } catch {
-            return nil
+            let responseJson = try parseJsonStringtoDictionary(jsonString)
+            return responseJson
         }
-       
-        return nil
     }
     
     //Return the App Name and Version
@@ -170,16 +153,16 @@ public class Utils {
         return (name, version)
     }
     
-    public static func parseDictionaryToJson(dict: [String:AnyObject]? ) -> String?{
-        if let myDict = dict{
-            do{
-                let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(myDict, options: [])
-                return String(data: jsonData, encoding:NSUTF8StringEncoding)
-            } catch {
-                return nil
+    public static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
+        do{
+            guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
+                throw Errors.CouldNotParseDictionaryToJson
             }
+            return json
+        } catch {
+            Errors.CouldNotParseDictionaryToJson
         }
-        return nil
+        return ""
     }
     /**
      Decode base64 code
@@ -324,8 +307,6 @@ public class Utils {
         return result
     }
     
-    
-    
     public static func base64StringFromData(data:NSData, isSafeUrl:Bool) -> String {
         let length = data.length
         var ixtext:Int = 0
@@ -384,5 +365,5 @@ public class Utils {
         return result
     }
     
-
+    
 }

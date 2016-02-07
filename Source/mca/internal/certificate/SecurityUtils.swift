@@ -15,18 +15,6 @@ import Foundation
 
 public class SecurityUtils {
        
-    enum SecurityError : ErrorType{
-        case NoKeysGenerated
-        case KeysNotFound
-        case CertNotFound
-        case CertCannotBeCreated
-        case CertCannotBeSaved
-        case CertificatePublicKeyValidationFailed
-        case SignDataFailure
-        case SigningFailure(String)
-        case unableToSavePublicKey
-    }
-    
     private static func savePublicKeyToKeyChain(key:SecKey,tag:String) throws {
         let publicKeyAttr : [NSString:AnyObject] = [
             kSecValueRef: key,
@@ -89,11 +77,8 @@ public class SecurityUtils {
         
         if (status != errSecSuccess) {
             throw SecurityError.NoKeysGenerated
-            
-            //TODO : handle error to logger . throw exception?
         } else {
             return (publicKey!, privateKey!)
-            //TODO : write success to logger
         }
     }
     
@@ -141,7 +126,6 @@ public class SecurityUtils {
     }
     
     internal static func getItemFromKeyChain(label:String) ->  String? {
-        //query
         let query: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: label,
@@ -159,7 +143,7 @@ public class SecurityUtils {
         return nil
     }
     
-    internal static func signCsr(payloadJSON:[String : AnyObject]?, keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
+    internal static func signCsr(payloadJSON:[String : AnyObject], keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
         do {
             try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
@@ -172,26 +156,17 @@ public class SecurityUtils {
             
             let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
             
-            guard let strJwsHeaderJSON = Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey)) else {
-                throw SecurityError.SigningFailure("Could not create JWS Header");
-            }
-            
-            
-            
-           // let plainData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
-           // let base64String = plainData?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
-            
+            let strJwsHeaderJSON = try Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey))            
             let jwsHeaderData : NSData? = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
-            //            let jwsHeaderBase64 = jwsHeaderData!.base64EncodedStringWithOptions(base64Options)
+
             let jwsHeaderBase64 = Utils.base64StringFromData(jwsHeaderData!, isSafeUrl: true)
-            let payloadJSONData : NSData? = strPayloadJSON!.dataUsingEncoding(NSUTF8StringEncoding)
-            //            let payloadJSONBase64 = payloadJSONData!.base64EncodedStringWithOptions(base64Options)
+            let payloadJSONData : NSData? = strPayloadJSON.dataUsingEncoding(NSUTF8StringEncoding)
+
             let payloadJSONBase64 = Utils.base64StringFromData(payloadJSONData!, isSafeUrl: true)
             
             let jwsHeaderAndPayload = jwsHeaderBase64.stringByAppendingString(".".stringByAppendingString(payloadJSONBase64))
             let signedData = try signData(jwsHeaderAndPayload, privateKey:privateKeySec)
             
-            //            let signedDataBase64 = signedData.base64EncodedStringWithOptions(base64Options)
             let signedDataBase64 = Utils.base64StringFromData(signedData, isSafeUrl: true)
             
             return jwsHeaderAndPayload.stringByAppendingString(".".stringByAppendingString(signedDataBase64))
@@ -201,19 +176,15 @@ public class SecurityUtils {
         }
     }
     
-    private static func getJWSHeaderForPublicKey(publicKey: NSData) ->[String:AnyObject]?
+    private static func getJWSHeaderForPublicKey(publicKey: NSData) throws ->[String:AnyObject]
     {
         let base64Options = NSDataBase64EncodingOptions(rawValue:0)
         
-        guard let pkModulus : NSData = getPublicKeyMod(publicKey) else {
-            return nil
+        guard let pkModulus : NSData = getPublicKeyMod(publicKey), let pkExponent : NSData = getPublicKeyExp(publicKey) else {
+            throw SecurityError.CouldNotCreateHeaderFromPublicKey
         }
         
         let mod:String = pkModulus.base64EncodedStringWithOptions(base64Options)
-        
-        guard let pkExponent : NSData = getPublicKeyExp(publicKey) else {
-            return nil
-        }
         
         let exp:String = pkExponent.base64EncodedStringWithOptions(base64Options)
         
@@ -322,11 +293,9 @@ public class SecurityUtils {
     }
     
     internal static func saveItemToKeyChain(data:String, label: String) -> Bool{
-        //create
         let key: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: label,
-            //        kSecAttrAccount: "",
             kSecValueData: data.dataUsingEncoding(NSUTF8StringEncoding)!,
         ]
         let status = SecItemAdd(key, nil)
@@ -335,14 +304,13 @@ public class SecurityUtils {
         
     }
     internal static func removeItemFromKeyChain(label: String) -> Bool{
-        //create
+
         let delQuery : [NSString:AnyObject] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: label
         ]
         
         let delStatus:OSStatus = SecItemDelete(delQuery)
-        
         return delStatus == errSecSuccess
         
     }
@@ -381,10 +349,9 @@ public class SecurityUtils {
     
     
     internal static func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String) throws {
-        deleteCertificateFromKeyChain(certificateLabel)
         //make sure certificate is deleted
+        deleteCertificateFromKeyChain(certificateLabel)
         //set certificate in key chain
-        //    var setQuery = [String:AnyObject]()
         let setQuery: [NSString: AnyObject] = [
             kSecClass: kSecClassCertificate,
             kSecValueRef: certificate,
@@ -427,21 +394,5 @@ public class SecurityUtils {
             SecItemDelete(query)
         }
     }
-    
-    //    //subjectDN is of the form: "UID=<clientId>, DC=<some other value>" or "DC=<some other value>, UID=<clientId>"
-    //    String clientId = null;
-    //
-    //    String subjectDN = certificate.getSubjectDN().getName();
-    //    String[] parts = subjectDN.split(Pattern.quote(","));
-    //    for (String part: parts){
-    //    if (part.contains("UID=")){
-    //    String uid=part.substring(part.indexOf("UID="));
-    //    clientId = uid.split(Pattern.quote("="))[1];
-    //    }
-    //    }
-    //
-    //    return clientId;
-    //    }
-    
     
 }
