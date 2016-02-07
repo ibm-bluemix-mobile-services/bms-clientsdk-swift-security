@@ -19,28 +19,30 @@ public class DeviceIdentity{
     static let OS = "platform"
     static let MODEL = "model"
     
-    var jsonData : Dictionary<String, String>? = ([:])
+    private var jsonData : [String:String] = ([:])
     
     public init() {
-        jsonData![DeviceIdentity.ID] = "something"
-        jsonData![DeviceIdentity.OS] = "1.0"
-        jsonData![DeviceIdentity.MODEL] = "1.0"
+        jsonData[DeviceIdentity.ID] = UIDevice.currentDevice().identifierForVendor?.UUIDString
+        jsonData[DeviceIdentity.OS] =  UIDevice.currentDevice().systemVersion
+        jsonData[DeviceIdentity.MODEL] =  UIDevice.currentDevice().model
     }
-    
+    public func getAsJson() -> [String:String]{
+        return jsonData
+    }
     public init(map: AnyObject?) {
         let json = map as! Dictionary<String, String>
         jsonData = json
     }
     
     public func getId() ->String {
-        return jsonData![DeviceIdentity.ID]!
+        return jsonData[DeviceIdentity.ID]!
     }
     
     public func getOS() -> String {
-        return jsonData![DeviceIdentity.OS]!
+        return jsonData[DeviceIdentity.OS]!
     }
     
     public func getModel() -> String {
-        return jsonData![DeviceIdentity.MODEL]!
+        return jsonData[DeviceIdentity.MODEL]!
     }
 }

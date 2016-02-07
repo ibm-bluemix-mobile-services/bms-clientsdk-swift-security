@@ -31,9 +31,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
     public  static let JSON_ACCESS_TOKEN_KEY = "access_token"
     public static let JSON_ID_TOKEN_KEY = "id_token"
-    
+    private var preferences:AuthorizationManagerPreferences
     //Keychain constants
-        private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
+    private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     private var challengeHandlers:[String:ChallengeHandler]
     
     var idToken : String {
@@ -63,14 +63,18 @@ public class MCAAuthorizationManager : AuthorizationManager {
     var processManager : AuthorizationProcessManager
     
     private init() {
-        processManager = AuthorizationProcessManager()
+        self.preferences = AuthorizationManagerPreferences()
+        processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
         BMSClient.sharedInstance.sharedAuthorizationManager = self
         challengeHandlers = [String:ChallengeHandler]()
         
-        //        if preferences.deviceIdentity == nil {
-        //            preferences.deviceIdentity?.set(<#T##json: [String : AnyObject]##[String : AnyObject]#>)
-        //        }
+        if preferences.deviceIdentity!.get() == nil {
+            preferences.deviceIdentity?.set(DeviceIdentity().getAsJson())
+        }
+        if preferences.appIdentity!.get() == nil {
+            preferences.appIdentity!.set(AppIdentity().getAsJson())
+        }
     }
     
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
@@ -100,8 +104,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func clearAuthorizationData() {
-        SecurityUtils.removeItemFromKeyChain(accessTokenLabel)
-        SecurityUtils.removeItemFromKeyChain(idTokenLabel)
+        preferences.userIdentity!.clear()
+        preferences.appIdentity!.clear()
+        preferences.deviceIdentity!.clear()
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
@@ -110,12 +115,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func getCachedAuthorizationHeader() -> String? {
         var returnedValue:String? = nil
-       
+        
         dispatch_barrier_sync(lockQueue){
             if let accessToken = SecurityUtils.getItemFromKeyChain(accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel) {
-                print(self.getUserIdentity())
-                print(self.getDeviceIdentity())
-                print(self.getAppIdentity())
                 returnedValue = "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
             }
         }
@@ -129,15 +131,15 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getUserIdentity() -> AnyObject? {
-        return processManager.userIdentity
+        return preferences.userIdentity!.get()
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        return processManager.deviceIdentity
+        return preferences.deviceIdentity!.get()
     }
     
     public func getAppIdentity() -> AnyObject? {
-        return processManager.appIdentity
+        return preferences.appIdentity!.get()
     }
     
     /**
@@ -174,7 +176,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: <#return value description#>
      */
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
-        return PersistencePolicy.IMFAuthorizationPerisistencePolicyNever
+        return PersistencePolicy.NEVER
     }
     
     /**

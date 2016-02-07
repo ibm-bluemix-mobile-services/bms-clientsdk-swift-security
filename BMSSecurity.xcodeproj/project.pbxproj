@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
+		EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
-		FDF76FE91C635683002FC6A2 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FDF76FCC1C635683002FC6A2 /* Info.plist */; };
 		FDF76FEA1C635683002FC6A2 /* AuthenticationContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FCF1C635683002FC6A2 /* AuthenticationContexts.swift */; };
 		FDF76FEB1C635683002FC6A2 /* AuthenticationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FD01C635683002FC6A2 /* AuthenticationDelegate.swift */; };
 		FDF76FEC1C635683002FC6A2 /* AppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FD21C635683002FC6A2 /* AppIdentity.swift */; };
@@ -25,7 +25,6 @@
 		FDF76FF51C635683002FC6A2 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FDE1C635683002FC6A2 /* SecurityUtils.swift */; };
 		FDF76FF61C635683002FC6A2 /* ChallengeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE01C635683002FC6A2 /* ChallengeHandler.swift */; };
 		FDF76FF71C635683002FC6A2 /* BMSSecurityError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE21C635683002FC6A2 /* BMSSecurityError.swift */; };
-		FDF76FF81C635683002FC6A2 /* StringEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE31C635683002FC6A2 /* StringEncryption.swift */; };
 		FDF76FF91C635683002FC6A2 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE41C635683002FC6A2 /* Queue.swift */; };
 		FDF76FFA1C635683002FC6A2 /* RequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE51C635683002FC6A2 /* RequestOptions.swift */; };
 		FDF76FFB1C635683002FC6A2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FE61C635683002FC6A2 /* Utils.swift */; };
@@ -45,6 +44,7 @@
 /* Begin PBXFileReference section */
 		DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
 		FDF76FCC1C635683002FC6A2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		FDF76FCF1C635683002FC6A2 /* AuthenticationContexts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationContexts.swift; sourceTree = "<group>"; };
@@ -61,7 +61,6 @@
 		FDF76FDE1C635683002FC6A2 /* SecurityUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityUtils.swift; sourceTree = "<group>"; };
 		FDF76FE01C635683002FC6A2 /* ChallengeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChallengeHandler.swift; sourceTree = "<group>"; };
 		FDF76FE21C635683002FC6A2 /* BMSSecurityError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BMSSecurityError.swift; sourceTree = "<group>"; };
-		FDF76FE31C635683002FC6A2 /* StringEncryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringEncryption.swift; sourceTree = "<group>"; };
 		FDF76FE41C635683002FC6A2 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		FDF76FE51C635683002FC6A2 /* RequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestOptions.swift; sourceTree = "<group>"; };
 		FDF76FE61C635683002FC6A2 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -159,6 +158,7 @@
 				FDF76FE41C635683002FC6A2 /* Queue.swift */,
 				FDF76FE51C635683002FC6A2 /* RequestOptions.swift */,
 				FDF76FE61C635683002FC6A2 /* Utils.swift */,
+				EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -183,7 +183,6 @@
 			isa = PBXGroup;
 			children = (
 				FDF76FE21C635683002FC6A2 /* BMSSecurityError.swift */,
-				FDF76FE31C635683002FC6A2 /* StringEncryption.swift */,
 			);
 			path = Encryption;
 			sourceTree = "<group>";
@@ -254,7 +253,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = IBM;
 				TargetAttributes = {
 					DB2BCF921C22FB2E0063A673 = {
@@ -288,7 +287,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDF76FE91C635683002FC6A2 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,11 +310,11 @@
 				FDF76FEC1C635683002FC6A2 /* AppIdentity.swift in Sources */,
 				FDF76FF31C635683002FC6A2 /* AuthorizationRequestManager.swift in Sources */,
 				FDF76FEE1C635683002FC6A2 /* UserIdentity.swift in Sources */,
+				EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */,
 				FDF76FFB1C635683002FC6A2 /* Utils.swift in Sources */,
 				FDF76FF11C635683002FC6A2 /* AuthorizationProcessManager.swift in Sources */,
 				FDF76FED1C635683002FC6A2 /* DeviceIdentity.swift in Sources */,
 				FDF76FF91C635683002FC6A2 /* Queue.swift in Sources */,
-				FDF76FF81C635683002FC6A2 /* StringEncryption.swift in Sources */,
 				FDF76FF61C635683002FC6A2 /* ChallengeHandler.swift in Sources */,
 				FDF76FF71C635683002FC6A2 /* BMSSecurityError.swift in Sources */,
 				FDF76FEB1C635683002FC6A2 /* AuthenticationDelegate.swift in Sources */,

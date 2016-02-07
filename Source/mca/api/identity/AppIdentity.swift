@@ -15,16 +15,19 @@ import Foundation
 
 public class AppIdentity{
     
-    static let ID = "id"
-    static let VERSION = "version"
+    private static let ID = "id"
+    private static let VERSION = "version"
     
-    var jsonData : Dictionary<String, String>? = ([:])
+    private var jsonData : [String:String] = ([:])
     
     public init() {
-        jsonData![AppIdentity.ID] = "something"
-        jsonData![AppIdentity.VERSION] = "1.0"
+        let appInfo = Utils.getApplicationDetails()
+        jsonData[AppIdentity.ID] =  appInfo.name
+        jsonData[AppIdentity.VERSION] =  appInfo.version
     }
-    
+    public func getAsJson() -> [String:String]{
+        return jsonData
+    }
     
     public init(map: AnyObject?) {
         let json = map as! Dictionary<String, String>
@@ -32,12 +35,12 @@ public class AppIdentity{
     }
     
     public func getId() ->String {
-        return jsonData![AppIdentity.ID]!
+        return jsonData[AppIdentity.ID]!
     }
     
     //@return get application version
     public func getVersion() -> String {
-        return jsonData![AppIdentity.VERSION]!
+        return jsonData[AppIdentity.VERSION]!
     }
     
 }
