@@ -23,6 +23,18 @@ target 'MyApp' do
     pod 'BMSSecurity'
 end
 ```
+## Getting started
+
+Connectivity and interaction between your mobile app and the Bluemix services depends on the application ID and application route that are associated with Bluemix application.
+
+The IMFClient API is the entry point for interacting with the SDK. You must invoke the initializeWithBackendRoute: backendGUID: method before any other API calls. IMFClient provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
+
+An example of initializing the MobileFirst Platform for iOS SDK follows:
+
+// Initialize SDK with IBM Bluemix application ID and route
+```Swift
+BMSClient.sharedInstance.initializeWithBluemixAppRoute(<app route>, bluemixAppGUID: <app guid>, bluemixRegionSuffix: BMSClient.<region of your app>)
+```
 
 =======================
 Copyright 2015 IBM Corp.
