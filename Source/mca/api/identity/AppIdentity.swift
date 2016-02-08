@@ -31,16 +31,16 @@ public class AppIdentity{
     }
     
     public init(map: AnyObject?) {
-        let json = map as! Dictionary<String, String>
-        jsonData = json
+        let json = map as? Dictionary<String, String>
+        jsonData = json != nil ? json! : ([:])
     }
     
-    public func getId() ->String {
-        return jsonData[AppIdentity.ID]!
+    public func getId() ->String? {
+        return jsonData[AppIdentity.ID]
     }
     
-    public func getVersion() -> String {
-        return jsonData[AppIdentity.VERSION]!
+    public func getVersion() -> String? {
+        return jsonData[AppIdentity.VERSION]
     }
     
 }

@@ -222,7 +222,7 @@ public class Utils {
                 result[j++] |= int8Current
             default:  break
             }
-            i++;
+            i++
             
             if count == intLengthFixed {
                 break
@@ -231,7 +231,7 @@ public class Utils {
         }
         
         // mop things up if we ended on a boundary
-        k = j;
+        k = j
         if (current == "=") {
             switch (i % 4) {
             case 1:

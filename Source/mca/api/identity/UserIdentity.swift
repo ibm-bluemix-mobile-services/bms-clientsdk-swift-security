@@ -23,20 +23,20 @@ public class UserIdentity {
 
     }
     public init(map: AnyObject?) {
-        let json = map as! Dictionary<String, String>
-        jsonData = json
+        let json = map as? Dictionary<String, String>
+        jsonData = json != nil ? json! : ([:])
     }
     
-    public func getId() ->String {
+    public func getId() ->String? {
         return jsonData[UserIdentity.AUTH_BY]!
     }
     
-    public func getAuthBy() ->String {
+    public func getAuthBy() ->String? {
         return jsonData[UserIdentity.ID]!
     }
 
     
-    public func getDisplayName() -> String {
+    public func getDisplayName() -> String? {
         return jsonData[UserIdentity.DISPLAY_NAME]!
     }
 }

@@ -14,29 +14,25 @@
 import BMSCore
 
 internal class AuthorizationManagerPreferences {
-    
-    private var sharedPreferences:NSUserDefaults
-    
-    
-    internal var persistencePolicy:PolicyPreference?
-    internal var clientId:StringPreference?
-    internal var accessToken:TokenPreference?
-    internal var idToken:TokenPreference?
-    internal var userIdentity:JSONPreference?
-    internal var deviceIdentity:JSONPreference?
-    internal var appIdentity:JSONPreference?
+
+    internal var persistencePolicy:PolicyPreference
+    internal var clientId:StringPreference
+    internal var accessToken:TokenPreference
+    internal var idToken:TokenPreference
+    internal var userIdentity:JSONPreference
+    internal var deviceIdentity:JSONPreference
+    internal var appIdentity:JSONPreference
     
     
     internal init() {
-        self.sharedPreferences = NSUserDefaults.standardUserDefaults()
-        persistencePolicy = PolicyPreference(prefName: "persistencePolicy", defaultValue: PersistencePolicy.ALWAYS, authorizationManagerPreferences: self)
-        clientId = StringPreference(prefName: clientIdLabel, authorizationManagerPreferences: self)
-        accessToken  = TokenPreference(prefName: accessTokenLabel, authorizationManagerPreferences: self)
-        idToken  = TokenPreference(prefName: idTokenLabel, authorizationManagerPreferences: self)
         
-        userIdentity  = JSONPreference(prefName: "userIdentity", authorizationManagerPreferences:self)
-        deviceIdentity  = JSONPreference(prefName : "deviceIdentity", authorizationManagerPreferences:self)
-        appIdentity  = JSONPreference(prefName:"appIdentity", authorizationManagerPreferences:self)
+        persistencePolicy = PolicyPreference(prefName: "persistencePolicy", defaultValue: PersistencePolicy.ALWAYS)
+        clientId = StringPreference(prefName: clientIdLabel)
+        accessToken  = TokenPreference(prefName: accessTokenLabel, persistencePolicy: persistencePolicy)
+        idToken  = TokenPreference(prefName: idTokenLabel, persistencePolicy: persistencePolicy)
+        userIdentity  = JSONPreference(prefName: "userIdentity")
+        deviceIdentity  = JSONPreference(prefName : "deviceIdentity")
+        appIdentity  = JSONPreference(prefName:"appIdentity")
         
         
         //        String uuid = Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
@@ -49,19 +45,17 @@ internal class AuthorizationManagerPreferences {
  * Holds single string preference value
  */
 internal class StringPreference {
+    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    var prefName:String
+    var value:String?
     
-    var prefName:String;
-    var value:String?;
-    var authorizationManagerPreferences:AuthorizationManagerPreferences
-    
-  internal convenience init(prefName:String, authorizationManagerPreferences : AuthorizationManagerPreferences) {
-    self.init(prefName: prefName, defaultValue: nil, authorizationManagerPreferences : authorizationManagerPreferences)
+  internal convenience init(prefName:String) {
+    self.init(prefName: prefName, defaultValue: nil)
    }
     
-    internal init(prefName:String, defaultValue:String?, authorizationManagerPreferences : AuthorizationManagerPreferences) {
-        self.prefName = prefName;
-        self.authorizationManagerPreferences = authorizationManagerPreferences
-        if let val = authorizationManagerPreferences.sharedPreferences.valueForKey(prefName) as? String {
+    internal init(prefName:String, defaultValue:String?) {
+        self.prefName = prefName
+        if let val = self.sharedPreferences.valueForKey(prefName) as? String {
             self.value = val
         } else {
             self.value = defaultValue
@@ -78,13 +72,13 @@ internal class StringPreference {
     }
     
     internal func clear() {
-        self.value = nil;
+        self.value = nil
         commit()
     }
     
     private func commit() {
-        self.authorizationManagerPreferences.sharedPreferences.setValue(value, forKey: prefName)
-        self.authorizationManagerPreferences.sharedPreferences.synchronize()
+        self.sharedPreferences.setValue(value, forKey: prefName)
+        self.sharedPreferences.synchronize()
     }
 }
 
@@ -92,18 +86,13 @@ internal class StringPreference {
  * Holds single JSON preference value
  */
 internal class JSONPreference:StringPreference {
-    
-    internal init(prefName:String, authorizationManagerPreferences:AuthorizationManagerPreferences) {
-        super.init(prefName: prefName, defaultValue: nil, authorizationManagerPreferences: authorizationManagerPreferences)
+    internal init(prefName:String) {
+        super.init(prefName: prefName, defaultValue: nil)
     }
     
     internal func set(json:[String:AnyObject])
     {
-        do {
-        set(try Utils.JSONStringify(json))
-        } catch {
-            set(nil)
-        }
+        set(try? Utils.JSONStringify(json))
     }
     
     internal func getAsMap() -> [String:AnyObject]?{
@@ -126,15 +115,13 @@ internal class JSONPreference:StringPreference {
  * Holds authorization manager Policy preference
  */
 internal class PolicyPreference {
-    
+    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
     private var value:PersistencePolicy
     private var prefName:String
-    var authorizationManagerPreferences:AuthorizationManagerPreferences
     
-    init(prefName:String, defaultValue:PersistencePolicy, authorizationManagerPreferences:AuthorizationManagerPreferences) {
-        self.prefName = prefName;
-        self.authorizationManagerPreferences = authorizationManagerPreferences
-        if let rawValue = self.authorizationManagerPreferences.sharedPreferences.valueForKey(prefName) as? String , newValue = PersistencePolicy(rawValue: rawValue){
+    init(prefName:String, defaultValue:PersistencePolicy) {
+        self.prefName = prefName
+        if let rawValue = self.sharedPreferences.valueForKey(prefName) as? String , newValue = PersistencePolicy(rawValue: rawValue){
             self.value = newValue
         } else {
             self.value = defaultValue
@@ -142,32 +129,31 @@ internal class PolicyPreference {
     }
     
     internal func get() -> PersistencePolicy {
-        return self.value;
+        return self.value
     }
     
     internal func set(value:PersistencePolicy ) {
-        self.value = value;
-        self.authorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
-        self.authorizationManagerPreferences.sharedPreferences.synchronize()
+        self.value = value
+        self.sharedPreferences.setValue(value.rawValue, forKey: prefName)
+        self.sharedPreferences.synchronize()
     }
 }
 /**
  * Holds authorization manager Token preference
  */
 internal class TokenPreference {
-    
+    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
     var runtimeValue:String?
     var prefName:String
-    var authorizationManagerPreferences:AuthorizationManagerPreferences
-    
-    init(prefName:String, authorizationManagerPreferences:AuthorizationManagerPreferences){
+    var persistencePolicy:PolicyPreference
+    init(prefName:String, persistencePolicy:PolicyPreference){
         self.prefName = prefName
-        self.authorizationManagerPreferences = authorizationManagerPreferences
+        self.persistencePolicy = persistencePolicy
     }
 
     internal func set(value:String) {
-        runtimeValue = value;
-        if self.authorizationManagerPreferences.persistencePolicy!.get() ==  PersistencePolicy.ALWAYS {
+        runtimeValue = value
+        if self.persistencePolicy.get() ==  PersistencePolicy.ALWAYS {
             SecurityUtils.saveItemToKeyChain(value, label: prefName)
         } else {
             SecurityUtils.removeItemFromKeyChain(prefName)
@@ -175,14 +161,14 @@ internal class TokenPreference {
     }
     
     internal func get() -> String?{
-        if (self.runtimeValue == nil && self.authorizationManagerPreferences.persistencePolicy!.get() == PersistencePolicy.ALWAYS) {
+        if (self.runtimeValue == nil && self.persistencePolicy.get() == PersistencePolicy.ALWAYS) {
             return SecurityUtils.getItemFromKeyChain(prefName)
         }
-        return runtimeValue;
+        return runtimeValue
     }
     
     internal func updateStateByPolicy() {
-        if (self.authorizationManagerPreferences.persistencePolicy!.get() == PersistencePolicy.ALWAYS) {
+        if (self.persistencePolicy.get() == PersistencePolicy.ALWAYS) {
             SecurityUtils.saveItemToKeyChain(runtimeValue!, label: prefName)
         } else {
             SecurityUtils.removeItemFromKeyChain(prefName)
@@ -191,6 +177,6 @@ internal class TokenPreference {
     
     internal func clear() {
         SecurityUtils.removeItemFromKeyChain(prefName)
-        runtimeValue = nil;
+        runtimeValue = nil
     }
 }

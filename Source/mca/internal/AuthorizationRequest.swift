@@ -28,7 +28,7 @@ public class AuthorizationRequest : MFPRequest {
     }
     
     public init(url:String, method:HttpMethod) {
-        super.init(url: url, headers: nil, queryParameters: nil, method: method, timeout: 0);
+        super.init(url: url, headers: nil, queryParameters: nil, method: method, timeout: 0)
         allowRedirects = false
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()

@@ -13,7 +13,7 @@
 
 import Foundation
 
-internal enum BMSSecurityError {
+internal enum BMSSecurityError:ErrorType {
     case generalError
 }
 
@@ -38,8 +38,17 @@ internal enum SecurityError : ErrorType{
 
 internal enum AuthorizationError : ErrorType {
     case CANNOT_ADD_CHALLANGE_HANDLER(String)
-    case CouldNotExtractGrantCode
-    case CouldNotExtractLocationHeader
-    case CertificateDoesNotIncludeClientId
+        case CertificateDoesNotIncludeClientId
     case ResponseDoesNotIncludeCertificate
 }
+
+internal enum AuthorizationProcessManagerError : ErrorType {
+    case CouldNotExtractGrantCode
+    case CouldNotExtractLocationHeader
+    case FailedToCreateTokenRequestHeaders
+    case FailedToCreateRegistrationParams
+    case FailedToSendAuthorizationRequest
+    case COULD_NOT_SAVE_TOKEN(String)
+}
+
+

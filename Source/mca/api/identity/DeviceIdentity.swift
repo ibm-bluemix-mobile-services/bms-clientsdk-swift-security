@@ -30,16 +30,16 @@ public class DeviceIdentity{
         return jsonData
     }
     public init(map: AnyObject?) {
-        let json = map as! Dictionary<String, String>
-        jsonData = json
+        let json = map as? Dictionary<String, String>
+        jsonData = json != nil ? json! : ([:])
     }
     
-    public func getId() ->String {
-        return jsonData[DeviceIdentity.ID]!
+    public func getId() ->String? {
+        return jsonData[DeviceIdentity.ID]
     }
     
-    public func getOS() -> String {
-        return jsonData[DeviceIdentity.OS]!
+    public func getOS() -> String? {
+        return jsonData[DeviceIdentity.OS]
     }
     
     public func getModel() -> String {

@@ -25,7 +25,7 @@ public class SecurityUtils {
         ]
         let addStatus:OSStatus = SecItemAdd(publicKeyAttr, nil)
         guard addStatus == errSecSuccess else {
-            throw SecurityError.unableToSavePublicKey
+            throw BMSSecurityError.generalError
         }
         
         
@@ -42,7 +42,7 @@ public class SecurityUtils {
         let status = SecItemCopyMatching(keyAttr, &result)
         
         guard status == errSecSuccess else {
-            throw SecurityError.KeysNotFound
+            throw BMSSecurityError.generalError
         }
         
         return result! as! NSData
@@ -76,7 +76,7 @@ public class SecurityUtils {
         status = SecKeyGeneratePair(keyPairAttr, &publicKey, &privateKey)
         
         if (status != errSecSuccess) {
-            throw SecurityError.NoKeysGenerated
+            throw BMSSecurityError.generalError
         } else {
             return (publicKey!, privateKey!)
         }
@@ -102,7 +102,7 @@ public class SecurityUtils {
         let status = SecItemCopyMatching(keyAttr, &result)
         
         guard status == errSecSuccess else {
-            throw SecurityError.KeysNotFound
+            throw BMSSecurityError.generalError
         }
         
         return result! as! SecKey
@@ -119,7 +119,7 @@ public class SecurityUtils {
         let getStatus = SecItemCopyMatching(getQuery, &result)
         
         guard getStatus == errSecSuccess else {
-            throw SecurityError.CertNotFound
+            throw BMSSecurityError.generalError
         }
         
         return result as! SecCertificate
@@ -172,7 +172,7 @@ public class SecurityUtils {
             return jwsHeaderAndPayload.stringByAppendingString(".".stringByAppendingString(signedDataBase64))
         }
         catch {
-            throw SecurityError.SigningFailure("\(error)")
+            throw BMSSecurityError.generalError
         }
     }
     
@@ -202,35 +202,33 @@ public class SecurityUtils {
     }
     
     private static func getPublicKeyMod(publicKeyBits: NSData) -> NSData? {
-        var iterator : Int = 0;
-        iterator++; // TYPE - bit stream - mod + exp
+        var iterator : Int = 0
+        iterator++ // TYPE - bit stream - mod + exp
         derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
         
-        iterator++; // TYPE - bit stream mod
+        iterator++ // TYPE - bit stream mod
         let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         if(mod_size == -1) {
-            //            IMFLogWarnWithName(CERTMANAGER_PACKAGE, @"Cannot get modulus from publicKey");
-            return nil;
+            return nil
         }
         return publicKeyBits.subdataWithRange(NSMakeRange(iterator, mod_size))
     }
     
     //Return public key exponent
     private static func getPublicKeyExp(publicKeyBits: NSData) -> NSData? {
-        var iterator : Int = 0;
-        iterator++; // TYPE - bit stream - mod + exp
+        var iterator : Int = 0
+        iterator++ // TYPE - bit stream - mod + exp
         derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
         
-        iterator++; // TYPE - bit stream mod
+        iterator++// TYPE - bit stream mod
         let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         iterator += mod_size
         
-        iterator++; // TYPE - bit stream exp
+        iterator++ // TYPE - bit stream exp
         let exp_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         //Ensure we got an exponent size
         if(exp_size == -1) {
-            //            IMFLogWarnWithName(CERTMANAGER_PACKAGE, @"Cannot get modulus from publicKey");
-            return nil;
+            return nil
         }
         return publicKeyBits.subdataWithRange(NSMakeRange(iterator, exp_size))
     }
@@ -268,10 +266,10 @@ public class SecurityUtils {
         
         
         func doSha256(dataIn:NSData) -> NSData {
-            let shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH));
-            CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes));
+            let shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
+            CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes))
             
-            return shaOut;
+            return shaOut
         }
         
         let digest:NSData = doSha256(data)
@@ -286,7 +284,7 @@ public class SecurityUtils {
             &signedDataLength)
         
         guard signStatus == errSecSuccess else {
-            throw SecurityError.SignDataFailure
+            throw BMSSecurityError.generalError
         }
         
         return signedData
@@ -324,7 +322,7 @@ public class SecurityUtils {
                 return certificate
             }
         }
-        throw SecurityError.CertCannotBeCreated
+        throw BMSSecurityError.generalError
     }
     
     internal static func deleteCertificateFromKeyChain(certificateLabel:String) -> Bool{
@@ -361,7 +359,7 @@ public class SecurityUtils {
         let addStatus:OSStatus = SecItemAdd(setQuery, nil)
         
         guard addStatus == errSecSuccess else {
-            throw SecurityError.CertCannotBeSaved
+            throw BMSSecurityError.generalError
         }
     }
     internal static func checkCertificatePublicKeyValidity(certificate:SecCertificate, publicKeyTag:String) throws -> Bool{
@@ -384,7 +382,7 @@ public class SecurityUtils {
                 }
             }
         }
-        throw SecurityError.CertificatePublicKeyValidationFailed
+        throw BMSSecurityError.generalError
     }
     
     internal static func clearKeyChain()  {

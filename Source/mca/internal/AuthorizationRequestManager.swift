@@ -65,7 +65,7 @@ public class AuthorizationRequestManager {
     public static var overrideServerHost: String?
     
     
-    private static let logger = Logger.getLoggerForName(MFP_SECURITY_PACKAGE)
+    private static let logger = Logger.getLoggerForName(MFP_PACKAGE_PREFIX + "AuthorizationRequestAgent")
     
     public enum AuthorizationRequestManagerErrors : ErrorType {
         case ERROR(String)
@@ -88,7 +88,7 @@ public class AuthorizationRequestManager {
         AuthorizationRequestManager.logger.debug("AuthorizationRequestAgent is initialized.")
     }
     
-    public func send(path:String , options:RequestOptions){
+    public func send(path:String , options:RequestOptions) throws {
         var rootUrl:String = ""
         var computedPath:String = path
         
@@ -121,12 +121,8 @@ public class AuthorizationRequestManager {
                 + AuthorizationRequestManager.AUTH_PATH
                 + BMSClient.sharedInstance.bluemixAppGUID!
         }
-        do {
-            try sendInternal(rootUrl, path: computedPath, options: options)
-        }
-        catch {
-            print("something wrong")
-        }
+        try sendInternal(rootUrl, path: computedPath, options: options)
+        
     }
     
     internal static func isAuthorizationRequired(response: Response?) -> Bool {
@@ -202,6 +198,8 @@ public class AuthorizationRequestManager {
                     do {
                         try self.processRedirectResponse(response!)
                     } catch {
+                      //  AuthorizationRequestManager.logger.error(")
+                        //TODO: figure out how to throw from here
                         print("something wrong 2")
                     }
                     
@@ -348,7 +346,11 @@ public class AuthorizationRequestManager {
         }
         
         if isAnswersFilled() {
-            resendRequest()
+            do {
+                try resendRequest()
+            } catch {
+                AuthorizationRequestManager.logger.error("removeExpectedAnswer failed with error : \(error)")
+            }
         }
         
     }
@@ -371,7 +373,11 @@ public class AuthorizationRequestManager {
         
         answers![realm] = unwrappedAnswer
         if isAnswersFilled() {
-            resendRequest()
+            do {
+            try resendRequest()
+        } catch {
+            AuthorizationRequestManager.logger.error("submitAnswer failed with error : \(error)")
+        }
         }
     }
     
@@ -389,9 +395,9 @@ public class AuthorizationRequestManager {
         return true
     }
     
-    internal func resendRequest() {
+    internal func resendRequest() throws {
 //        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
-        send(requestPath!, options: requestOptions!)
+        try send(requestPath!, options: requestOptions!)
     }
     
     internal func processRedirectResponse(response:Response) throws {

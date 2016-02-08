@@ -47,11 +47,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
         BMSClient.sharedInstance.sharedAuthorizationManager = self
         challengeHandlers = [String:ChallengeHandler]()
         
-        if preferences.deviceIdentity!.get() == nil {
-            preferences.deviceIdentity!.set(DeviceIdentity().getAsJson())
+        if preferences.deviceIdentity.get() == nil {
+            preferences.deviceIdentity.set(DeviceIdentity().getAsJson())
         }
-        if preferences.appIdentity!.get() == nil {
-            preferences.appIdentity!.set(AppIdentity().getAsJson())
+        if preferences.appIdentity.get() == nil {
+            preferences.appIdentity.set(AppIdentity().getAsJson())
         }
     }
     
@@ -78,9 +78,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func clearAuthorizationData() {
-        preferences.userIdentity!.clear()
-        preferences.appIdentity!.clear()
-        preferences.deviceIdentity!.clear()
+        preferences.userIdentity.clear()
+        preferences.appIdentity.clear()
+        preferences.deviceIdentity.clear()
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
@@ -105,21 +105,21 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func getUserIdentity() -> AnyObject? {
-        guard let userIdentityJson = preferences.userIdentity!.getAsMap() else {
+        guard let userIdentityJson = preferences.userIdentity.getAsMap() else {
           return nil
         }
         return UserIdentity(map: userIdentityJson)
     }
     
     public func getDeviceIdentity() -> AnyObject? {
-        guard let deviceIdentityJson = preferences.deviceIdentity!.getAsMap() else {
+        guard let deviceIdentityJson = preferences.deviceIdentity.getAsMap() else {
             return nil
         }
         return DeviceIdentity(map: deviceIdentityJson)
     }
     
     public func getAppIdentity() -> AnyObject? {
-        guard let appIdentityJson = preferences.appIdentity!.getAsMap() else {
+        guard let appIdentityJson = preferences.appIdentity.getAsMap() else {
             return nil
         }
         return AppIdentity(map: appIdentityJson)
@@ -160,7 +160,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: <#return value description#>
      */
     public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
-        return preferences.persistencePolicy!.get()
+        return preferences.persistencePolicy.get()
     }
     
     /**
@@ -169,10 +169,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter policy: <#policy description#>
      */
     public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
-        if preferences.persistencePolicy!.get() != policy {
-            preferences.persistencePolicy!.set(policy)
-            preferences.accessToken!.updateStateByPolicy()
-            preferences.idToken!.updateStateByPolicy()
+        if preferences.persistencePolicy.get() != policy {
+            preferences.persistencePolicy.set(policy)
+            preferences.accessToken.updateStateByPolicy()
+            preferences.idToken.updateStateByPolicy()
         }
     }
     
