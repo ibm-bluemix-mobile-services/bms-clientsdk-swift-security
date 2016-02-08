@@ -1,4 +1,4 @@
-IBM Bluemix Mobile Services - Client SDK Swift Core
+IBM Bluemix Mobile Services - Client SDK Swift Security
 ===================================================
 
 This is the security component of the Swift SDK for IBM Bluemix Mobile Services.
@@ -22,6 +22,18 @@ target 'MyApp' do
     platform :ios, '8.0'
     pod 'BMSSecurity'
 end
+```
+## Getting started
+
+Connectivity and interaction between your mobile app and the Bluemix services depends on the application ID and application route that are associated with Bluemix application.
+
+The BMSClient API is the entry point for interacting with the SDK. You must invoke the ```SwiftinitializeWithBluemixAppRoute: bluemixAppGUID: bluemixRegionSuffix:``` method before any other API calls. BMSClient provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
+
+An example of initializing the MobileFirst Platform for iOS SDK follows:
+
+Initialize SDK with IBM Bluemix application ID and route
+```Swift
+BMSClient.sharedInstance.initializeWithBluemixAppRoute(<app route>, bluemixAppGUID: <app guid>, bluemixRegionSuffix: BMSClient.<region of your app>)
 ```
 
 =======================

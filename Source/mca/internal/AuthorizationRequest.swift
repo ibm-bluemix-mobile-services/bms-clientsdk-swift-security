@@ -17,14 +17,20 @@ import BMSCore
 //AuthorizationRequest is used internally to send authorization requests.
 public class AuthorizationRequest : MFPRequest {
     
-    static var networkSessionInternal: NSURLSession!
-    
-    public override func getNetworkSession() -> NSURLSession {
-        return AuthorizationRequest.networkSessionInternal
-    }
-    
     public func send(completionHandler: MfpCompletionHandler?) {
          super.sendWithCompletionHandler(completionHandler)
+    }
+    
+    //Add new header
+    internal func addHeader(key:String, val:String) {
+        headers[key] = val
+    }
+    
+    //Iterate and add all new headers
+    public func addHeaders(newHeaders: [String:String]) {
+        for (key,value) in newHeaders {
+            addHeader(key, val: value)
+        }
     }
     
     public init(url:String, method:HttpMethod) {
@@ -33,7 +39,7 @@ public class AuthorizationRequest : MFPRequest {
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.timeoutIntervalForRequest = timeout
-        AuthorizationRequest.networkSessionInternal = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        networkSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
 
     /**
