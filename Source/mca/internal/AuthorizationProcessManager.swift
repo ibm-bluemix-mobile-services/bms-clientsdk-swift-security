@@ -255,12 +255,12 @@ internal class AuthorizationProcessManager {
         let deviceIdentity = DeviceIdentity()
         let appIdentity = AppIdentity()
         var device = [String : AnyObject]()
-        device[MCAAuthorizationManager.JSON_DEVICE_ID_KEY] = deviceIdentity.getId()
-        device[MCAAuthorizationManager.JSON_MODEL_KEY] =  deviceIdentity.getModel()
-        device[MCAAuthorizationManager.JSON_OS_KEY] = deviceIdentity.getOS()
-        device[MCAAuthorizationManager.JSON_APPLICATION_ID_KEY] =  appIdentity.getId()
-        device[MCAAuthorizationManager.JSON_APPLICATION_VERSION_KEY] =  appIdentity.getVersion()
-        device[MCAAuthorizationManager.JSON_ENVIRONMENT_KEY] =  MCAAuthorizationManager.JSON_IOS_ENVIRONMENT_VALUE
+        device[JSON_DEVICE_ID_KEY] = deviceIdentity.getId()
+        device[JSON_MODEL_KEY] =  deviceIdentity.getModel()
+        device[JSON_OS_KEY] = deviceIdentity.getOS()
+        device[JSON_APPLICATION_ID_KEY] =  appIdentity.getId()
+        device[JSON_APPLICATION_VERSION_KEY] =  appIdentity.getVersion()
+        device[JSON_ENVIRONMENT_KEY] =  JSON_IOS_ENVIRONMENT_VALUE
         
         return device
     }
@@ -316,7 +316,7 @@ internal class AuthorizationProcessManager {
         logger.debug("certificate successfully saved")
     }
     private func addSessionIdHeader(inout headers:[String:String]) {
-        headers["X-WL-Session"] =  self.sessionId //TODO: is this the right assignment
+        headers["X-WL-Session"] =  self.sessionId 
     }
     private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {

@@ -15,25 +15,11 @@ import BMSCore
 
 public class MCAAuthorizationManager : AuthorizationManager {
     
-    public static let BEARER = "Bearer"
-    public static let AUTHORIZATION_HEADER = "Authorization"
-    public static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
-    
-    //JSON keys
-    public static let JSON_CERTIFICATE_KEY = "certificate"
-    public static let JSON_CLIENT_ID_KEY = "clientId"
-    public static let JSON_DEVICE_ID_KEY = "deviceId"
-    public static let JSON_OS_KEY = "deviceOs"
-    public static let JSON_ENVIRONMENT_KEY = "environment"
-    public static let JSON_MODEL_KEY = "deviceModel"
-    public static let JSON_APPLICATION_ID_KEY = "applicationId"
-    public static let JSON_APPLICATION_VERSION_KEY = "applicationVersion"
-    public static let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
-    public  static let JSON_ACCESS_TOKEN_KEY = "access_token"
-    public static let JSON_ID_TOKEN_KEY = "id_token"
     private var preferences:AuthorizationManagerPreferences
-    //Keychain constants
+    
+    //lock constant
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
+   
     private var challengeHandlers:[String:ChallengeHandler]
     
     public static let sharedInstance = MCAAuthorizationManager()
@@ -56,7 +42,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
-        if let header = httpResponse?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
+        if let header = httpResponse?.headers![WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
                 return isAuthorizationRequired(httpResponse!.statusCode!, responseAuthorizationHeader: authHeader)
         }
         
@@ -65,7 +51,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
-        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(MCAAuthorizationManager.BEARER){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(BEARER){
                 return true
         }
         
@@ -92,7 +78,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         
         dispatch_barrier_sync(lockQueue){
             if let accessToken = SecurityUtils.getItemFromKeyChain(accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel) {
-                returnedValue = "\(MCAAuthorizationManager.BEARER) \(accessToken) \(idToken)"
+                returnedValue = "\(BEARER) \(accessToken) \(idToken)"
             }
         }
         return returnedValue

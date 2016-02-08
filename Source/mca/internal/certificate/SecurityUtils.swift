@@ -147,12 +147,8 @@ public class SecurityUtils {
         do {
             try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
-            //            var publicKeyKey = ids.publicKey.dataUsingEncoding(NSUTF8StringEncoding)!
-            //            var privateKeyKey = ids.privateKey.dataUsingEncoding(NSUTF8StringEncoding)!
-            
             let keys = try getKeyPairBitsFromKeyChain(ids.publicKey, privateTag: ids.privateKey)
             let publicKey = keys.publicKey
-            //            let privateKey = keys.privateKey
             
             let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
             

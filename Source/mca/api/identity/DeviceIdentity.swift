@@ -42,7 +42,7 @@ public class DeviceIdentity{
         return jsonData[DeviceIdentity.OS]
     }
     
-    public func getModel() -> String {
-        return jsonData[DeviceIdentity.MODEL]!
+    public func getModel() -> String? {
+        return jsonData[DeviceIdentity.MODEL]
     }
 }

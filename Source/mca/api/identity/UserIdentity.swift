@@ -28,15 +28,15 @@ public class UserIdentity {
     }
     
     public func getId() ->String? {
-        return jsonData[UserIdentity.AUTH_BY]!
+        return jsonData[UserIdentity.AUTH_BY]
     }
     
     public func getAuthBy() ->String? {
-        return jsonData[UserIdentity.ID]!
+        return jsonData[UserIdentity.ID]
     }
 
     
     public func getDisplayName() -> String? {
-        return jsonData[UserIdentity.DISPLAY_NAME]!
+        return jsonData[UserIdentity.DISPLAY_NAME]
     }
 }

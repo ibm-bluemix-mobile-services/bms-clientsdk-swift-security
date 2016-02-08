@@ -126,7 +126,7 @@ public class AuthorizationRequestManager {
     }
     
     internal static func isAuthorizationRequired(response: Response?) -> Bool {
-        if let header = response?.headers![MCAAuthorizationManager.WWW_AUTHENTICATE_HEADER] {
+        if let header = response?.headers![WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String where authHeader == AuthorizationRequestManager.AUTHENTICATE_HEADER_VALUE{
                 return true
             }

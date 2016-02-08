@@ -169,7 +169,9 @@ internal class TokenPreference {
     
     internal func updateStateByPolicy() {
         if (self.persistencePolicy.get() == PersistencePolicy.ALWAYS) {
-            SecurityUtils.saveItemToKeyChain(runtimeValue!, label: prefName)
+            if let unWrappedRuntimeValue = runtimeValue {
+                SecurityUtils.saveItemToKeyChain(unWrappedRuntimeValue, label: prefName)
+            }
         } else {
             SecurityUtils.removeItemFromKeyChain(prefName)
         }
