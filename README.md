@@ -31,7 +31,7 @@ The IMFClient API is the entry point for interacting with the SDK. You must invo
 
 An example of initializing the MobileFirst Platform for iOS SDK follows:
 
-// Initialize SDK with IBM Bluemix application ID and route
+Initialize SDK with IBM Bluemix application ID and route
 ```Swift
 BMSClient.sharedInstance.initializeWithBluemixAppRoute(<app route>, bluemixAppGUID: <app guid>, bluemixRegionSuffix: BMSClient.<region of your app>)
 ```
