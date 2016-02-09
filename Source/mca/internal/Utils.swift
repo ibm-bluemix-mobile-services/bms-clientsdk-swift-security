@@ -58,7 +58,7 @@ public class Utils {
     ]
     
     
-    public static func concatenateUrls(rootUrl:String, path:String) -> String {
+    internal static func concatenateUrls(rootUrl:String, path:String) -> String {
         guard !rootUrl.isEmpty else {
             return path
         }
@@ -77,7 +77,7 @@ public class Utils {
         return final
     }
     
-    public static func getParameterValueFromQuery(query:String?, paramName:String) -> String? {
+    internal static func getParameterValueFromQuery(query:String?, paramName:String) -> String? {
         guard let myQuery = query  else {
             return nil
         }
@@ -97,7 +97,7 @@ public class Utils {
         return nil
     }
     
-    public static func JSONStringify(value: AnyObject, prettyPrinted:Bool = false) throws -> String{
+    internal static func JSONStringify(value: AnyObject, prettyPrinted:Bool = false) throws -> String{
         
         let options = prettyPrinted ? NSJSONWritingOptions.PrettyPrinted : NSJSONWritingOptions(rawValue: 0)
         
@@ -132,7 +132,7 @@ public class Utils {
      
      - returns: <#return value description#>
      */
-    public static func extractSecureJson(response: Response?) throws -> [String:AnyObject?] {
+    internal static func extractSecureJson(response: Response?) throws -> [String:AnyObject?] {
         
         guard let responseText:String = response?.responseText where (responseText.hasPrefix(SECURE_PATTERN_START) && responseText.hasSuffix(SECURE_PATTERN_END)) else {
             throw Errors.CouldNotExtractJsonFromResponse
@@ -147,13 +147,35 @@ public class Utils {
     }
     
     //Return the App Name and Version
-    public static func getApplicationDetails() -> (name:String?, version:String?) {
+    internal static func getApplicationDetails() -> (name:String?, version:String?) {
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
+        if name == nil {
+            //TODO: logger error
+        }
+        if version == nil {
+            //TODO: logger error
+        }
         return (name, version)
+        
     }
     
-    public static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
+    internal static func getDeviceDictionary() -> [String : AnyObject] {
+        let deviceIdentity = DeviceIdentity()
+        let appIdentity = AppIdentity()
+        var device = [String : AnyObject]()
+        device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.getId()
+        device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.getModel()
+        device[BMSSecurityConstants.JSON_OS_KEY] = deviceIdentity.getOS()
+        device[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] =  appIdentity.getId()
+        device[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] =  appIdentity.getVersion()
+        device[BMSSecurityConstants.JSON_ENVIRONMENT_KEY] =  BMSSecurityConstants.JSON_IOS_ENVIRONMENT_VALUE
+        
+        return device
+    }
+
+    
+    internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
         do{
             guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
                 throw Errors.CouldNotParseDictionaryToJson
@@ -171,7 +193,7 @@ public class Utils {
      
      - returns: return decoded String
      */
-    public static func decodeBase64WithString(strBase64:String) -> NSData? {
+    internal static func decodeBase64WithString(strBase64:String) -> NSData? {
         
         guard let objPointerHelper = strBase64.cStringUsingEncoding(NSASCIIStringEncoding), objPointer = String(UTF8String: objPointerHelper) else {
             return nil
@@ -250,7 +272,7 @@ public class Utils {
         // Setup the return NSData
         return NSData(bytes: result, length: j)
     }
-    public static func base64StringFromData(data:NSData, length:Int, isSafeUrl:Bool) -> String {
+    internal static func base64StringFromData(data:NSData, length:Int, isSafeUrl:Bool) -> String {
         var ixtext:Int = 0
         var ctremaining:Int
         var input:[Int] = [Int](count: 3, repeatedValue: 0)
@@ -307,7 +329,7 @@ public class Utils {
         return result
     }
     
-    public static func base64StringFromData(data:NSData, isSafeUrl:Bool) -> String {
+    internal static func base64StringFromData(data:NSData, isSafeUrl:Bool) -> String {
         let length = data.length
         var ixtext:Int = 0
         var ctremaining:Int

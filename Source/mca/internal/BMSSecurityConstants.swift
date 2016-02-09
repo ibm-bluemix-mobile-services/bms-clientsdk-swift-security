@@ -13,42 +13,89 @@
 
 import Foundation
 
-internal let nameAndVer = Utils.getApplicationDetails()
-internal let MFP_PACKAGE_PREFIX = "mfpsdk."
-internal let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"
+internal class BMSSecurityConstants {
+    internal static var deviceInfo = Utils.getDeviceDictionary()
+    internal static let nameAndVer = Utils.getApplicationDetails()
+    internal static let MFP_PACKAGE_PREFIX = "mfpsdk."
+    internal static let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"
+    
+    internal static let BEARER = "Bearer"
+    internal static let AUTHORIZATION_HEADER = "Authorization"
+    internal static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
+    
+    internal static let HTTP_LOCALHOST = "http://localhost"
+    /**
+     * Parts of the path to authorization endpoint.
+     */
+    internal static let AUTH_SERVER_NAME = "imf-authserver"
+    internal static let AUTH_PATH = "authorization/v1/apps/"
+    
+    /**
+     * The name of "result" parameter returned from authorization endpoint.
+     */
+    internal static let WL_RESULT = "wl_result";
+    
+    /**
+     * Name of rewrite domain header. This header is added to authorization requests.
+     */
+    internal static let REWRITE_DOMAIN_HEADER_NAME = "X-REWRITE-DOMAIN"
+    
+    /**
+     * Name of location header.
+     */
+    internal static let LOCATION_HEADER_NAME = "Location"
+    
+    /**
+     * Name of the standard "www-authenticate" header.
+     */
+    internal static let AUTHENTICATE_HEADER_NAME = "WWW-Authenticate"
+    
+    /**
+     * Name of "www-authenticate" header value.
+     */
+    internal static let AUTHENTICATE_HEADER_VALUE = "WL-Composite-Challenge"
+    
+    /**
+     * Names of JSON values returned from the server.
+     */
+    internal static let AUTH_FAILURE_VALUE_NAME = "WL-Authentication-Failure"
+    internal static let AUTH_SUCCESS_VALUE_NAME = "WL-Authentication-Success"
+    internal static let CHALLENGES_VALUE_NAME = "challenges"
+    
 
-//MCAAuthorizationManager constants
-internal let BEARER = "Bearer"
-internal let AUTHORIZATION_HEADER = "Authorization"
-internal let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
+    
+    
+    //JSON keys
+    internal static let JSON_CERTIFICATE_KEY = "certificate"
+    internal static let JSON_CLIENT_ID_KEY = "clientId"
+    internal static let JSON_DEVICE_ID_KEY = "deviceId"
+    internal static let JSON_OS_KEY = "deviceOs"
+    internal static let JSON_ENVIRONMENT_KEY = "environment"
+    internal static let JSON_MODEL_KEY = "deviceModel"
+    internal static let JSON_APPLICATION_ID_KEY = "applicationId"
+    internal static let JSON_APPLICATION_VERSION_KEY = "applicationVersion"
+    internal static let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
+    internal static let JSON_ACCESS_TOKEN_KEY = "access_token"
+    internal static let JSON_ID_TOKEN_KEY = "id_token"
+    
+    //label names
+    internal static let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
+    internal static let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
+    internal static let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
+    internal static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
+    internal static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
+    internal static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
+    
+    
+    //labels
+    internal static let IMFClientErrorDomain = "com.ibm.mobilefoundation.client"
+    internal static let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+    internal static let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+    internal static let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+    internal static let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+    internal static let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+    internal static let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+}
 
-//JSON keys
-internal let JSON_CERTIFICATE_KEY = "certificate"
-internal let JSON_CLIENT_ID_KEY = "clientId"
-internal let JSON_DEVICE_ID_KEY = "deviceId"
-internal let JSON_OS_KEY = "deviceOs"
-internal let JSON_ENVIRONMENT_KEY = "environment"
-internal let JSON_MODEL_KEY = "deviceModel"
-internal let JSON_APPLICATION_ID_KEY = "applicationId"
-internal let JSON_APPLICATION_VERSION_KEY = "applicationVersion"
-internal let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
-internal let JSON_ACCESS_TOKEN_KEY = "access_token"
-internal let JSON_ID_TOKEN_KEY = "id_token"
-
-//label names
-internal let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
-internal let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
-internal let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
-internal let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
-internal let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
-internal let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
 
 
-//labels 
-
-internal let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-internal let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-internal let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-internal let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-internal let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"
-internal let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name!):\(nameAndVer.version!)"

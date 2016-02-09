@@ -13,7 +13,7 @@
 
 import Foundation
 
-public class SecurityUtils {
+internal class SecurityUtils {
        
     private static func savePublicKeyToKeyChain(key:SecKey,tag:String) throws {
         let publicKeyAttr : [NSString:AnyObject] = [
@@ -153,12 +153,12 @@ public class SecurityUtils {
             let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
             
             let strJwsHeaderJSON = try Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey))            
-            let jwsHeaderData : NSData? = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding)
+            guard let jwsHeaderData : NSData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding), payloadJSONData : NSData = strPayloadJSON.dataUsingEncoding(NSUTF8StringEncoding) else {
+                throw BMSSecurityError.generalError
+            }
 
-            let jwsHeaderBase64 = Utils.base64StringFromData(jwsHeaderData!, isSafeUrl: true)
-            let payloadJSONData : NSData? = strPayloadJSON.dataUsingEncoding(NSUTF8StringEncoding)
-
-            let payloadJSONBase64 = Utils.base64StringFromData(payloadJSONData!, isSafeUrl: true)
+            let jwsHeaderBase64 = Utils.base64StringFromData(jwsHeaderData, isSafeUrl: true)
+            let payloadJSONBase64 = Utils.base64StringFromData(payloadJSONData, isSafeUrl: true)
             
             let jwsHeaderAndPayload = jwsHeaderBase64.stringByAppendingString(".".stringByAppendingString(payloadJSONBase64))
             let signedData = try signData(jwsHeaderAndPayload, privateKey:privateKeySec)
@@ -257,20 +257,26 @@ public class SecurityUtils {
     }
     
     internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
+        guard let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding) else {
+            throw BMSSecurityError.generalError
+        }
         
-        let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding)!
         
         
-        func doSha256(dataIn:NSData) -> NSData {
-            let shaOut: NSMutableData! = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
+        func doSha256(dataIn:NSData) throws -> NSData {
+            guard let shaOut: NSMutableData = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH)) else {
+                throw BMSSecurityError.generalError
+            }
+            
             CC_SHA256(dataIn.bytes, CC_LONG(dataIn.length), UnsafeMutablePointer<UInt8>(shaOut.mutableBytes))
             
             return shaOut
         }
         
-        let digest:NSData = doSha256(data)
+        guard let digest:NSData = try? doSha256(data), signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey))  else {
+            throw BMSSecurityError.generalError
+        }
         
-        let signedData: NSMutableData = NSMutableData(length: SecKeyGetBlockSize(privateKey))!
         var signedDataLength: Int = signedData.length
         
         let digestBytes = UnsafePointer<UInt8>(digest.bytes)
@@ -287,10 +293,13 @@ public class SecurityUtils {
     }
     
     internal static func saveItemToKeyChain(data:String, label: String) -> Bool{
+        guard let stringData = data.dataUsingEncoding(NSUTF8StringEncoding) else {
+            return false
+        }
         let key: [NSString: AnyObject] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: label,
-            kSecValueData: data.dataUsingEncoding(NSUTF8StringEncoding)!,
+            kSecValueData: stringData
         ]
         let status = SecItemAdd(key, nil)
         
@@ -312,7 +321,7 @@ public class SecurityUtils {
     
     internal static func getCertificateFromString(stringData:String) throws -> SecCertificate{
         
-        //TODO : oded : unsure about the ignoreUnknownCharacters
+        //TODO: oded : unsure about the ignoreUnknownCharacters
         if let data:NSData = NSData(base64EncodedString: stringData, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)  {
             if let certificate = SecCertificateCreateWithData(kCFAllocatorDefault, data) {
                 return certificate

@@ -14,6 +14,8 @@
 import BMSCore
 
 internal class AuthorizationManagerPreferences {
+    
+    private static var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
 
     internal var persistencePolicy:PolicyPreference
     internal var clientId:StringPreference
@@ -25,18 +27,13 @@ internal class AuthorizationManagerPreferences {
     
     
     internal init() {
-        
         persistencePolicy = PolicyPreference(prefName: "persistencePolicy", defaultValue: PersistencePolicy.ALWAYS)
-        clientId = StringPreference(prefName: clientIdLabel)
-        accessToken  = TokenPreference(prefName: accessTokenLabel, persistencePolicy: persistencePolicy)
-        idToken  = TokenPreference(prefName: idTokenLabel, persistencePolicy: persistencePolicy)
+        clientId = StringPreference(prefName: BMSSecurityConstants.clientIdLabel)
+        accessToken  = TokenPreference(prefName: BMSSecurityConstants.accessTokenLabel, persistencePolicy: persistencePolicy)
+        idToken  = TokenPreference(prefName: BMSSecurityConstants.idTokenLabel, persistencePolicy: persistencePolicy)
         userIdentity  = JSONPreference(prefName: "userIdentity")
         deviceIdentity  = JSONPreference(prefName : "deviceIdentity")
         appIdentity  = JSONPreference(prefName:"appIdentity")
-        
-        
-        //        String uuid = Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        //        setStringEncryption(new AESStringEncryption(uuid));
     }
 }
 
@@ -45,7 +42,7 @@ internal class AuthorizationManagerPreferences {
  * Holds single string preference value
  */
 internal class StringPreference {
-    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    
     var prefName:String
     var value:String?
     
@@ -55,7 +52,7 @@ internal class StringPreference {
     
     internal init(prefName:String, defaultValue:String?) {
         self.prefName = prefName
-        if let val = self.sharedPreferences.valueForKey(prefName) as? String {
+        if let val = AuthorizationManagerPreferences.sharedPreferences.valueForKey(prefName) as? String {
             self.value = val
         } else {
             self.value = defaultValue
@@ -77,8 +74,8 @@ internal class StringPreference {
     }
     
     private func commit() {
-        self.sharedPreferences.setValue(value, forKey: prefName)
-        self.sharedPreferences.synchronize()
+        AuthorizationManagerPreferences.sharedPreferences.setValue(value, forKey: prefName)
+        AuthorizationManagerPreferences.sharedPreferences.synchronize()
     }
 }
 
@@ -115,13 +112,13 @@ internal class JSONPreference:StringPreference {
  * Holds authorization manager Policy preference
  */
 internal class PolicyPreference {
-    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    
     private var value:PersistencePolicy
     private var prefName:String
     
     init(prefName:String, defaultValue:PersistencePolicy) {
         self.prefName = prefName
-        if let rawValue = self.sharedPreferences.valueForKey(prefName) as? String , newValue = PersistencePolicy(rawValue: rawValue){
+        if let rawValue = AuthorizationManagerPreferences.sharedPreferences.valueForKey(prefName) as? String , newValue = PersistencePolicy(rawValue: rawValue){
             self.value = newValue
         } else {
             self.value = defaultValue
@@ -134,15 +131,15 @@ internal class PolicyPreference {
     
     internal func set(value:PersistencePolicy ) {
         self.value = value
-        self.sharedPreferences.setValue(value.rawValue, forKey: prefName)
-        self.sharedPreferences.synchronize()
+        AuthorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
+        AuthorizationManagerPreferences.sharedPreferences.synchronize()
     }
 }
 /**
  * Holds authorization manager Token preference
  */
 internal class TokenPreference {
-    private var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    
     var runtimeValue:String?
     var prefName:String
     var persistencePolicy:PolicyPreference

@@ -16,14 +16,14 @@
 import Foundation
 import BMSCore
 
-public class RequestOptions {
+internal class RequestOptions {
     
-    public var requestMethod : HttpMethod
-    public var timeout : Double = 0
-    public var headers = [String : String]()
-    public var parameters = [String : String]()
+    internal var requestMethod : HttpMethod
+    internal var timeout : Double = 0
+    internal var headers = [String : String]()
+    internal var parameters = [String : String]()
     
-    public init(requestMethod : HttpMethod = HttpMethod.GET) {
+    internal init(requestMethod : HttpMethod = HttpMethod.GET) {
         self.requestMethod = requestMethod
     }
 }

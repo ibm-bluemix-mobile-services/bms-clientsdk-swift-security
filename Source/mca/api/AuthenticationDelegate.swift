@@ -34,7 +34,6 @@ public protocol AuthenticationDelegate{
     * authentication challenge.
     * @param info Extended data describing the authentication success.
     */
-//    func onAuthenticationSuccess(JSONObject info)
     func onAuthenticationSuccess(info : AnyObject?)
     
     /**
@@ -44,7 +43,6 @@ public protocol AuthenticationDelegate{
     * authentication challenge.
     * @param info Extended data describing authentication failure.
     */
-//    func onAuthenticationFailure(JSONObject info)
     func onAuthenticationFailure(info : AnyObject?)
 
 }

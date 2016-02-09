@@ -15,62 +15,19 @@ import Foundation
 import BMSCore
 
 public class AuthorizationRequestManager {
-       
+    
     //MARK constants
-    /**
-    * Parts of the path to authorization endpoint.
-    */
-    static let AUTH_SERVER_NAME = "imf-authserver"
-    static let AUTH_PATH = "authorization/v1/apps/"
-    
-    /**
-    * The name of "result" parameter returned from authorization endpoint.
-    */
-    static let WL_RESULT = "wl_result";
-    
-    /**
-    * Name of rewrite domain header. This header is added to authorization requests.
-    */
-    static let REWRITE_DOMAIN_HEADER_NAME = "X-REWRITE-DOMAIN"
-    
-    /**
-    * Name of location header.
-    */
-    static let LOCATION_HEADER_NAME = "Location"
-    
-    /**
-    * Name of the standard "www-authenticate" header.
-    */
-    static let AUTHENTICATE_HEADER_NAME = "WWW-Authenticate"
-    
-    /**
-    * Name of "www-authenticate" header value.
-    */
-    static let AUTHENTICATE_HEADER_VALUE = "WL-Composite-Challenge"
-    
-    /**
-    * Names of JSON values returned from the server.
-    */
-    static let AUTH_FAILURE_VALUE_NAME = "WL-Authentication-Failure"
-    static let AUTH_SUCCESS_VALUE_NAME = "WL-Authentication-Success"
-    static let CHALLENGES_VALUE_NAME = "challenges"
-    
-    //MARK vars (private)
+        //MARK vars (private)
     
     var requestPath : String?
     var requestOptions : RequestOptions?
     
     var answers: [String : AnyObject]?
     
-    public static var overrideServerHost: String?
+    internal static var overrideServerHost: String?
     
     
-    private static let logger = Logger.getLoggerForName(MFP_PACKAGE_PREFIX + "AuthorizationRequestAgent")
-    
-    public enum AuthorizationRequestManagerErrors : ErrorType {
-        case ERROR(String)
-        
-    }
+    private static let logger = Logger.getLoggerForName(BMSSecurityConstants.MFP_PACKAGE_PREFIX + "AuthorizationRequestAgent")
     
     internal var defaultCompletionHandler : MfpCompletionHandler
     
@@ -82,13 +39,13 @@ public class AuthorizationRequestManager {
             defaultCompletionHandler = {(response: Response?, error: NSError?) in
                 AuthorizationRequestManager.logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
             }
-
+            
         }
         
         AuthorizationRequestManager.logger.debug("AuthorizationRequestAgent is initialized.")
     }
     
-    public func send(path:String , options:RequestOptions) throws {
+    internal func send(path:String , options:RequestOptions) throws {
         var rootUrl:String = ""
         var computedPath:String = path
         
@@ -99,14 +56,14 @@ public class AuthorizationRequestManager {
                 computedPath = pathTemp
             }
             else {
-               rootUrl = ""
+                rootUrl = ""
             }
         }
         else {
             //path is relative
             var serverHost = BMSClient.defaultProtocol
                 + "://"
-                + AuthorizationRequestManager.AUTH_SERVER_NAME
+                + BMSSecurityConstants.AUTH_SERVER_NAME
                 + "."
                 + BMSClient.sharedInstance.bluemixRegionSuffix!
             
@@ -116,9 +73,9 @@ public class AuthorizationRequestManager {
             
             rootUrl = serverHost
                 + "/"
-                + AuthorizationRequestManager.AUTH_SERVER_NAME
+                + BMSSecurityConstants.AUTH_SERVER_NAME
                 + "/"
-                + AuthorizationRequestManager.AUTH_PATH
+                + BMSSecurityConstants.AUTH_PATH
                 + BMSClient.sharedInstance.bluemixAppGUID!
         }
         try sendInternal(rootUrl, path: computedPath, options: options)
@@ -126,61 +83,53 @@ public class AuthorizationRequestManager {
     }
     
     internal static func isAuthorizationRequired(response: Response?) -> Bool {
-        if let header = response?.headers![WWW_AUTHENTICATE_HEADER] {
-            if let authHeader : String = header as? String where authHeader == AuthorizationRequestManager.AUTHENTICATE_HEADER_VALUE{
+        if let header = response?.headers![BMSSecurityConstants.WWW_AUTHENTICATE_HEADER] {
+            if let authHeader : String = header as? String where authHeader == BMSSecurityConstants.AUTHENTICATE_HEADER_VALUE{
                 return true
             }
         }
         
         return false
-
+        
     }
-//    
-//    /**
-//    * Checks server response for MFP 401 error. This kind of response should contain MFP authentication challenges.
-//    *
-//    * @param response Server response.
-//    * @return <code>true</code> if the server response contains 401 status code along with MFP challenges.
-//    */
-//    private boolean isAuthorizationRequired(Response response) {
-//    if (response != null && response.getStatus() == 401) {
-//    ResponseImpl responseImpl = (ResponseImpl)response;
-//    String challengesHeader = responseImpl.getFirstHeader(AUTHENTICATE_HEADER_NAME);
-//    
-//    if (AUTHENTICATE_HEADER_VALUE.equalsIgnoreCase(challengesHeader)) {
-//    return true;
-//    }
-//    }
+    //
+    //    /**
+    //    * Checks server response for MFP 401 error. This kind of response should contain MFP authentication challenges.
+    //    *
+    //    * @param response Server response.
+    //    * @return <code>true</code> if the server response contains 401 status code along with MFP challenges.
+    //    */
+    //    private boolean isAuthorizationRequired(Response response) {
+    //    if (response != null && response.getStatus() == 401) {
+    //    ResponseImpl responseImpl = (ResponseImpl)response;
+    //    String challengesHeader = responseImpl.getFirstHeader(AUTHENTICATE_HEADER_NAME);
+    //
+    //    if (AUTHENTICATE_HEADER_VALUE.equalsIgnoreCase(challengesHeader)) {
+    //    return true;
+    //    }
+    //    }
     
-//    return false;
-//    }
+    //    return false;
+    //    }
     
     internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) throws {
-        if let unWrappedOptions = options {
-            self.requestOptions = unWrappedOptions
-        }
-        else {
-            self.requestOptions = RequestOptions()
-        }
+        self.requestOptions = options != nil ? options : RequestOptions()
         
         requestPath = Utils.concatenateUrls(rootUrl, path: path)
         
         var request = AuthorizationRequest(url:requestPath!, method:self.requestOptions!.requestMethod)
         
-        if requestOptions!.timeout != 0 {
-            request.timeout = requestOptions!.timeout
-        } else {
-            request.timeout = BMSClient.sharedInstance.defaultRequestTimeout
-        }
+        request.timeout = requestOptions!.timeout != 0 ? requestOptions!.timeout : BMSClient.sharedInstance.defaultRequestTimeout
+        
         
         if let unwrappedHeaders = options?.headers {
             request.addHeaders(unwrappedHeaders)
         }
         
         if let unwrappedAnswers = answers {
-                let ans = try Utils.JSONStringify(unwrappedAnswers)
-                let authorizationHeaderValue = "Bearer \(ans)"
-                request.addHeader("Authorization", val: authorizationHeaderValue)
+            let ans = try Utils.JSONStringify(unwrappedAnswers)
+            let authorizationHeaderValue = "Bearer \(ans)"
+            request.addHeader("Authorization", val: authorizationHeaderValue)
         }
         
         let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
@@ -198,17 +147,17 @@ public class AuthorizationRequestManager {
                     do {
                         try self.processRedirectResponse(response!)
                     } catch {
-                      //  AuthorizationRequestManager.logger.error(")
-                        //TODO: figure out how to throw from here
-                        print("something wrong 2")
+                        let nsError = NSError(domain: BMSSecurityConstants.IMFClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error)"])
+                        AuthorizationRequestManager.logger.error(String(error))
+                        self.defaultCompletionHandler(response, nsError)
                     }
                     
                 }
             }
-//            guard error != nil else {
-//                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
-//                return
-//            }
+            //            guard error != nil else {
+            //                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
+            //                return
+            //            }
             
             
             //check this is error failure
@@ -235,8 +184,8 @@ public class AuthorizationRequestManager {
             }
         }
         
-//        String rewriteDomainHeaderValue = BMSClient.getInstance().getRewriteDomain();
-//        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
+        //        String rewriteDomainHeaderValue = BMSClient.getInstance().getRewriteDomain();
+        //        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
         
         if let method = options?.requestMethod where method == HttpMethod.GET{
             request.queryParameters = options?.parameters
@@ -263,12 +212,19 @@ public class AuthorizationRequestManager {
                 handler.handleFailure(unWrappedChallenge)
             }
             else {
-                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
+                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found")
             }
         }
     }
+    
+    internal func requestFailed(info:[String:AnyObject]?) {
+        AuthorizationRequestManager.logger.error("BaseRequest failed with info: \(info == nil ? "info is nil" : String(info))")
+        defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.IMFClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
+    }
+    
+    
     internal func processSuccesses(jsonSuccesses: [String:AnyObject]?) {
-
+        
         guard let successes = jsonSuccesses else {
             return
         }
@@ -279,7 +235,7 @@ public class AuthorizationRequestManager {
                 handler.handleSuccess(unWrappedChallenge)
             }
             else {
-                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found");
+                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found")
             }
         }
     }
@@ -294,24 +250,15 @@ public class AuthorizationRequestManager {
         //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
         do {
             var responseJson = try Utils.extractSecureJson(response)
-            if let challanges = responseJson[AuthorizationRequestManager.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
-                do {
-                    try startHandleChallenges(challanges, response: response!)
-                } catch {
-                    //TODO:ilan this is not checked, in startHandleChallenges it throws a runtime (android) so what here?
-                }
-                
-            }
-            else {
+            if let challanges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
+                try startHandleChallenges(challanges, response: response!)
+            } else {
                 defaultCompletionHandler(response, nil)
             }
-
         } catch {
             defaultCompletionHandler(response, nil)
-            return
         }
-        
-            }
+    }
     
     internal func startHandleChallenges(jsonChallenges: [String: AnyObject], response: Response) throws {
         let challenges = Array(jsonChallenges.keys)
@@ -321,7 +268,7 @@ public class AuthorizationRequestManager {
         }
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in jsonChallenges {
-             if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleChallenge(self, challenge:  unWrappedChallenge)
             }
             else {
@@ -340,7 +287,7 @@ public class AuthorizationRequestManager {
         }
     }
     
-    public func removeExpectedAnswer(realm:String) {
+    internal func removeExpectedAnswer(realm:String) {
         if answers != nil {
             answers!.removeValueForKey(realm)
         }
@@ -361,7 +308,7 @@ public class AuthorizationRequestManager {
      - parameter answer: Answer to add.
      - parameter realm:  Authentication realm for the answer.
      */
-    public func submitAnswer(answer:[String:AnyObject]?, realm:String) {
+    internal func submitAnswer(answer:[String:AnyObject]?, realm:String) {
         guard let unwrappedAnswer = answer else {
             AuthorizationRequestManager.logger.error("Cannot submit nil answer for realm \(realm)")
             return
@@ -374,14 +321,14 @@ public class AuthorizationRequestManager {
         answers![realm] = unwrappedAnswer
         if isAnswersFilled() {
             do {
-            try resendRequest()
-        } catch {
-            AuthorizationRequestManager.logger.error("submitAnswer failed with error : \(error)")
-        }
+                try resendRequest()
+            } catch {
+                AuthorizationRequestManager.logger.error("submitAnswer failed with error : \(error)")
+            }
         }
     }
     
-    public func isAnswersFilled() -> Bool {
+    internal func isAnswersFilled() -> Bool {
         guard answers != nil else {
             return true
         }
@@ -396,28 +343,29 @@ public class AuthorizationRequestManager {
     }
     
     internal func resendRequest() throws {
-//        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
+        //        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
         try send(requestPath!, options: requestOptions!)
     }
     
     internal func processRedirectResponse(response:Response) throws {
         
         func getLocationString(obj:AnyObject?) -> String? {
-            guard obj != nil else {
+            guard let unWrappedObj = obj else {
                 return nil
             }
-            
-            if case let myObj as String = obj![0] {
+            //checks if obj is an array of strings
+            if case let myObj as String = unWrappedObj[0] {
                 return myObj
             }
-            else if case let str as String = obj{
+                //or string
+            else if case let str as String = unWrappedObj{
                 return str
             }
             return nil
         }
         
-        guard let location = /*try*/ getLocationString(response.headers?[AuthorizationRequestManager.LOCATION_HEADER_NAME]) else {
-           throw ResponseError.NoLocation("Redirect response does not contain 'Location' header.")
+        guard let location =  getLocationString(response.headers?[BMSSecurityConstants.LOCATION_HEADER_NAME]) else {
+            throw ResponseError.NoLocation("Redirect response does not contain 'Location' header.")
         }
         
         // the redirect location url should contain "wl_result" value in query parameters.
@@ -425,18 +373,18 @@ public class AuthorizationRequestManager {
             throw ResponseError.NoLocation("Could not create URL from 'Location' header.")
         }
         
-        let query = url.query
+        let query =  url.query
         
-        if let q = query where q.containsString(AuthorizationRequestManager.WL_RESULT) {
-            if let result = Utils.getParameterValueFromQuery(query, paramName: AuthorizationRequestManager.WL_RESULT) {
+        if let q = query where q.containsString(BMSSecurityConstants.WL_RESULT) {
+            if let result = Utils.getParameterValueFromQuery(query, paramName: BMSSecurityConstants.WL_RESULT) {
                 var jsonResult = try Utils.parseJsonStringtoDictionary(result)
                 // process failures if any
                 
-                if let jsonFailures = jsonResult[AuthorizationRequestManager.AUTH_FAILURE_VALUE_NAME] {
+                if let jsonFailures = jsonResult[BMSSecurityConstants.AUTH_FAILURE_VALUE_NAME] {
                     processFailures(jsonFailures as? [String : AnyObject])
                 }
                 
-                if let jsonSuccesses = jsonResult[AuthorizationRequestManager.AUTH_SUCCESS_VALUE_NAME] {
+                if let jsonSuccesses = jsonResult[BMSSecurityConstants.AUTH_SUCCESS_VALUE_NAME] {
                     processSuccesses(jsonSuccesses as? [String: AnyObject])
                 }
             }

@@ -41,9 +41,13 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
-    public func isAuthorizationRequired(httpResponse: Response?) -> Bool {
-        if let header = httpResponse?.headers![WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
-                return isAuthorizationRequired(httpResponse!.statusCode!, responseAuthorizationHeader: authHeader)
+    public func isAuthorizationRequired(httpResponse: Response) -> Bool {
+        if let header = httpResponse.headers![BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
+            guard let statusCode = httpResponse.statusCode else {
+              return false
+            }
+            
+            return isAuthorizationRequired(statusCode, responseAuthorizationHeader: authHeader)
         }
         
         return false
@@ -51,7 +55,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
-        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(BEARER){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(BMSSecurityConstants.BEARER){
                 return true
         }
         
@@ -70,15 +74,21 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
-        
+        MCAAuthorizationManager.addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
+    }
+    public static func addAuthorizationHeader(request: NSMutableURLRequest, header:String?) {
+    guard let unWrappedHeader = header else {
+        return
+    }
+        request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
     public func getCachedAuthorizationHeader() -> String? {
         var returnedValue:String? = nil
         
         dispatch_barrier_sync(lockQueue){
-            if let accessToken = SecurityUtils.getItemFromKeyChain(accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(idTokenLabel) {
-                returnedValue = "\(BEARER) \(accessToken) \(idToken)"
+            if let accessToken = SecurityUtils.getItemFromKeyChain(BMSSecurityConstants.accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(BMSSecurityConstants.idTokenLabel) {
+                returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
             }
         }
         return returnedValue
@@ -90,21 +100,21 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
-    public func getUserIdentity() -> AnyObject? {
+    public func getUserIdentity() -> UserIdentity? {
         guard let userIdentityJson = preferences.userIdentity.getAsMap() else {
           return nil
         }
         return UserIdentity(map: userIdentityJson)
     }
     
-    public func getDeviceIdentity() -> AnyObject? {
+    public func getDeviceIdentity() -> DeviceIdentity? {
         guard let deviceIdentityJson = preferences.deviceIdentity.getAsMap() else {
             return nil
         }
         return DeviceIdentity(map: deviceIdentityJson)
     }
     
-    public func getAppIdentity() -> AnyObject? {
+    public func getAppIdentity() -> AppIdentity? {
         guard let appIdentityJson = preferences.appIdentity.getAsMap() else {
             return nil
         }

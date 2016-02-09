@@ -36,6 +36,10 @@ internal enum SecurityError : ErrorType{
     case CouldNotCreateHeaderFromPublicKey
 }
 
+internal enum MCAAuthorizationManagerError: ErrorType {
+    case ResponseHasNoStatusCode
+}
+
 internal enum AuthorizationError : ErrorType {
     case CANNOT_ADD_CHALLANGE_HANDLER(String)
         case CertificateDoesNotIncludeClientId
@@ -43,8 +47,11 @@ internal enum AuthorizationError : ErrorType {
 }
 
 internal enum AuthorizationProcessManagerError : ErrorType {
+    case ClientIdIsNil
+    case CallBackFunctionIsNil
     case CouldNotExtractGrantCode
     case CouldNotExtractLocationHeader
+    case CouldNotRetrieveUserIdentityFromToken
     case FailedToCreateTokenRequestHeaders
     case FailedToCreateRegistrationParams
     case FailedToSendAuthorizationRequest

@@ -11,29 +11,29 @@
 *     limitations under the License.
 */
 
-public class Queue<Element> {
-    public var items = [Element]()
-    public var size:Int {return items.count}
+internal class Queue<Element> {
+    internal var items = [Element]()
+    internal var size:Int {return items.count}
     
-    public init() {}
+    internal init() {}
 
     //adds element to queue
-    public func add(element:Element){
+    internal func add(element:Element){
         items.append(element)
     }
 
     //remove element from queue. if queue empty returns nil
-    public func remove()->Element?{
+    internal func remove()->Element?{
         return isEmpty() ? nil : items.removeFirst()
     }
     
     //returns next element in queue(without removing). if queue empty, returns nil
-    public func element()->Element?{
+    internal func element()->Element?{
         return isEmpty() ? nil : items[0]
     }
     
     //checks if queue is empty
-    public func isEmpty()->Bool {
+    internal func isEmpty()->Bool {
         return size == 0 ? true : false
     }
 }
