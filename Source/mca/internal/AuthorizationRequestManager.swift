@@ -27,7 +27,7 @@ public class AuthorizationRequestManager {
     internal static var overrideServerHost: String?
     
     
-    private static let logger = Logger.getLoggerForName(BMSSecurityConstants.MFP_PACKAGE_PREFIX + "AuthorizationRequestAgent")
+    private static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
     internal var defaultCompletionHandler : MfpCompletionHandler
     
@@ -128,8 +128,8 @@ public class AuthorizationRequestManager {
         
         if let unwrappedAnswers = answers {
             let ans = try Utils.JSONStringify(unwrappedAnswers)
-            let authorizationHeaderValue = "Bearer \(ans)"
-            request.addHeader("Authorization", val: authorizationHeaderValue)
+            let authorizationHeaderValue = "\(BMSSecurityConstants.BEARER) \(ans)"
+            request.addHeader(BMSSecurityConstants.AUTHORIZATION_HEADER, val: authorizationHeaderValue)
         }
         
         let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
@@ -247,11 +247,10 @@ public class AuthorizationRequestManager {
     
     internal func processResponse(response: Response?) {
         // at this point a server response should contain a secure JSON with challenges
-        //TODO: ilan check if we need to send an errir here someplace or just onsuccces (like android)
         do {
             var responseJson = try Utils.extractSecureJson(response)
-            if let challanges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
-                try startHandleChallenges(challanges, response: response!)
+            if let challenges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
+                try startHandleChallenges(challenges, response: response!)
             } else {
                 defaultCompletionHandler(response, nil)
             }

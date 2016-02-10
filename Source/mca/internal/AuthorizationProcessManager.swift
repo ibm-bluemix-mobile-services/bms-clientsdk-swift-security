@@ -13,8 +13,6 @@
 
 import BMSCore
 internal class AuthorizationProcessManager {
-    
-    
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
     private var registrationKeyPair:(privateKey : SecKey,publicKey : SecKey)?
     private var sessionId:String = ""
@@ -22,7 +20,7 @@ internal class AuthorizationProcessManager {
     internal var authorizationPersistencePolicy:PersistencePolicy
     var completionHandler: MfpCompletionHandler?
     
-    private static let logger = Logger.getLoggerForName(BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationProcessManager")
+    internal static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
     internal init(preferences:AuthorizationManagerPreferences)
@@ -89,7 +87,7 @@ internal class AuthorizationProcessManager {
             }
         }
         do {
-            try authorizationRequestSend("clients/instance", options: options, completionHandler: callBack)
+            try authorizationRequestSend(BMSSecurityConstants.clientsInstanceEndPoint, options: options, completionHandler: callBack)
         } catch {
             self.handleAuthorizationFailure(error)
         }
@@ -98,11 +96,11 @@ internal class AuthorizationProcessManager {
     private func createTokenRequestHeaders(grantCode:String) throws -> [String:String]{
         var payload = [String:String]()
         var headers = [String:String]()
-        payload["code"] = grantCode
+        payload[BMSSecurityConstants.JSON_CODE_KEY] = grantCode
         do {
             let jws:String = try SecurityUtils.signCsr(payload, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
             headers = [String:String]()
-            headers["X-WL-Authenticate"] =  jws
+            headers[BMSSecurityConstants.X_WL_AUTHENTICATE_HEADER_NAME] =  jws
             return headers
         } catch {
             throw AuthorizationProcessManagerError.FailedToCreateTokenRequestHeaders
@@ -115,10 +113,10 @@ internal class AuthorizationProcessManager {
             throw AuthorizationProcessManagerError.ClientIdIsNil
         }
         let params : [String : String] = [
-            "code" : grantCode,
-            "client_id" :  clientId,
-            "grant_type" : "authorization_code",
-            "redirect_uri" :BMSSecurityConstants.HTTP_LOCALHOST
+            BMSSecurityConstants.JSON_CODE_KEY : grantCode,
+            BMSSecurityConstants.client_id_String :  clientId,
+            BMSSecurityConstants.JSON_GRANT_TYPE_KEY : BMSSecurityConstants.authorization_code_String,
+            BMSSecurityConstants.JSON_REDIRECT_URI_KEY :BMSSecurityConstants.HTTP_LOCALHOST
         ]
         return params
         
@@ -129,9 +127,9 @@ internal class AuthorizationProcessManager {
             throw AuthorizationProcessManagerError.ClientIdIsNil
         }
         let params : [String:String] = [
-            "response_type" :  "code",
-            "client_id" :  clientId,
-            "redirect_uri" :  BMSSecurityConstants.HTTP_LOCALHOST
+            BMSSecurityConstants.JSON_RESPONSE_TYPE_KEY : BMSSecurityConstants.JSON_CODE_KEY,
+            BMSSecurityConstants.client_id_String :  clientId,
+            BMSSecurityConstants.JSON_REDIRECT_URI_KEY :  BMSSecurityConstants.HTTP_LOCALHOST
         ]
         return params
     }
@@ -162,7 +160,7 @@ internal class AuthorizationProcessManager {
                     self.handleAuthorizationFailure(response, error: error)
                 }
             }
-            try authorizationRequestSend("authorization", options: options,completionHandler: callBack)
+            try authorizationRequestSend(BMSSecurityConstants.authorizationEndPoint, options: options,completionHandler: callBack)
             
         } catch {
             self.handleAuthorizationFailure(error)
@@ -195,7 +193,7 @@ internal class AuthorizationProcessManager {
                     self.handleAuthorizationFailure(response, error: error)
                 }
             }
-            try authorizationRequestSend("token", options: options, completionHandler: callback)
+            try authorizationRequestSend(BMSSecurityConstants.tokenEndPoint, options: options, completionHandler: callback)
         } catch {
             self.handleAuthorizationFailure(error)
         }
@@ -214,13 +212,13 @@ internal class AuthorizationProcessManager {
     private func saveTokenFromResponse(response:Response) throws {
         do {
             if let data = response.responseData, responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]{
-                if let accessTokenFromResponse = responseJson["access_token"] as? String, idTokenFromResponse = responseJson["id_token"] as? String {
+                if let accessTokenFromResponse = responseJson[BMSSecurityConstants.JSON_ACCESS_TOKEN_KEY] as? String, idTokenFromResponse = responseJson[BMSSecurityConstants.JSON_ID_TOKEN_KEY] as? String {
                     //save the tokens
                     preferences.idToken.set(idTokenFromResponse)
                     preferences.accessToken.set(accessTokenFromResponse)
                     
                     
-                    guard let  decodedIdTokenData = Utils.decodeBase64WithString(idTokenFromResponse.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)["imf.user"] as? [String:AnyObject] else {
+                    guard let  decodedIdTokenData = Utils.decodeBase64WithString(idTokenFromResponse.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)[BMSSecurityConstants.JSON_IMF_USER_KEY] as? [String:AnyObject] else {
                             throw AuthorizationProcessManagerError.CouldNotRetrieveUserIdentityFromToken
                     }
                     preferences.userIdentity.set(userIdentity)
@@ -243,7 +241,7 @@ internal class AuthorizationProcessManager {
             var params = [String:String]()
             registrationKeyPair = try SecurityUtils.generateKeyPair(512, publicTag: BMSSecurityConstants.publicKeyIdentifier, privateTag: BMSSecurityConstants.privateKeyIdentifier)
             let csrValue:String = try SecurityUtils.signCsr(BMSSecurityConstants.deviceInfo, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
-            params["CSR"] = csrValue
+            params[BMSSecurityConstants.JSON_CSR_KEY] = csrValue
             return params
         } catch {
             throw AuthorizationProcessManagerError.FailedToCreateRegistrationParams
@@ -261,7 +259,7 @@ internal class AuthorizationProcessManager {
     }
     
     private func extractLocationHeader(response:Response) throws -> String {
-        if let location = response.headers?["Location"], stringLocation = location as? String {
+        if let location = response.headers?[BMSSecurityConstants.LOCATION_HEADER_NAME], stringLocation = location as? String {
             AuthorizationProcessManager.logger.debug("Location header extracted successfully")
             return stringLocation
         } else {
@@ -272,7 +270,7 @@ internal class AuthorizationProcessManager {
     
     private func extractGrantCode(urlString:String) throws -> String{
         
-        if let url:NSURL = NSURL(string: urlString), code = Utils.getParameterValueFromQuery(url.query, paramName: "code")  {
+        if let url:NSURL = NSURL(string: urlString), code = Utils.getParameterValueFromQuery(url.query, paramName: BMSSecurityConstants.JSON_CODE_KEY)  {
             AuthorizationProcessManager.logger.debug("Grant code extracted successfully")
             return code
         } else {
@@ -282,28 +280,28 @@ internal class AuthorizationProcessManager {
     
     private func saveCertificateFromResponse(response:Response?) throws {
         guard let responseBody:String? = response?.responseText, data = responseBody?.dataUsingEncoding(NSUTF8StringEncoding) else {
-            throw Errors.JsonIsMalformed
+            throw JsonUtilsErrors.JsonIsMalformed
         }
         do {
-            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject], certificateString = jsonResponse["certificate"] as? String {
+            if let jsonResponse = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String : AnyObject], certificateString = jsonResponse[BMSSecurityConstants.JSON_CERTIFICATE_KEY] as? String {
                 //handle certificate
                 let certificate =  try SecurityUtils.getCertificateFromString(certificateString)
                 try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKeyTag: BMSSecurityConstants.publicKeyIdentifier)
                 try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: BMSSecurityConstants.certificateIdentifier)
                 
                 //save the clientId separately
-                if let id = jsonResponse["clientId"] as? String? {
+                if let id = jsonResponse[BMSSecurityConstants.JSON_CLIENT_ID_KEY] as? String? {
                     preferences.clientId.set(id)
                 } else {
-                    throw AuthorizationError.CertificateDoesNotIncludeClientId                     }
+                    throw AuthorizationProcessManagerError.CertificateDoesNotIncludeClientId                     }
             }else {
-                throw AuthorizationError.ResponseDoesNotIncludeCertificate
+                throw AuthorizationProcessManagerError.ResponseDoesNotIncludeCertificate
             }
         }
         AuthorizationProcessManager.logger.debug("certificate successfully saved")
     }
     private func addSessionIdHeader(inout headers:[String:String]) {
-        headers["X-WL-Session"] =  self.sessionId
+        headers[BMSSecurityConstants.X_WL_SESSION_HEADER_NAME] =  self.sessionId
     }
     private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {

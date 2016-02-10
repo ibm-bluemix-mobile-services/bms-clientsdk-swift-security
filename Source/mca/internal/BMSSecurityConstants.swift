@@ -14,8 +14,81 @@
 import Foundation
 
 internal class BMSSecurityConstants {
+
+    
+    
+    internal static let SECURE_PATTERN_START = "/*-secure-\n"
+    internal static let SECURE_PATTERN_END = "*/"
+    
+    internal static let BLUEMIX_NAME = "bluemix"
+    internal static let BLUEMIX_DOMAIN = "bluemix.net"
+    internal static let STAGE1_NAME = "stage1"
+    
+    internal static let  base64EncodingTable:[Character] = [
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+        "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
+        "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+        "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"
+    ]
+    
+    internal static let base64EncodingTableUrlSafe:[Character] = [
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+        "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
+        "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+        "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"
+    ]
+    
+    
+    internal static let base64DecodingTable: [Int8] = [
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -2, -2, -2,
+        -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, -2,
+        -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
+    ]
+    
+   
     internal static var deviceInfo = Utils.getDeviceDictionary()
     internal static let nameAndVer = Utils.getApplicationDetails()
+    internal static var authorizationProcessManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationProcessManager"
+    internal static var authorizationRequestManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationRequestManager"
+
+    internal static var authorizationEndPoint = "authorization"
+    internal static var tokenEndPoint = "token"
+    internal static var clientsInstanceEndPoint = "clients/instance"
+    
+    
+    internal static var client_id_String = "client_id"
+    
+    internal static var authorization_code_String = "authorization_code"
+    internal static var JSON_RSA_VALUE = "RSA"
+    internal static var JSON_RS256_VALUE = "RS256"
+    internal static var JSON_ALG_KEY = "alg"
+    internal static var JSON_MOD_KEY = "mod"
+    internal static var JSON_EXP_KEY = "exp"
+    internal static var JSON_JPK_KEY = "jpk"
+    
+    internal static var X_WL_SESSION_HEADER_NAME = "X-WL-Session"
+    internal static var X_WL_AUTHENTICATE_HEADER_NAME = "X-WL-Authenticate"
+    
+    internal static var JSON_RESPONSE_TYPE_KEY = "response_type"
+    internal static var JSON_CSR_KEY = "CSR"
+    internal static var JSON_IMF_USER_KEY = "imf.user"
+    internal static var JSON_REDIRECT_URI_KEY = "redirect_uri"
+    internal static var JSON_CODE_KEY = "code"
+    internal static var JSON_GRANT_TYPE_KEY = "grant_type"
+    
     internal static let MFP_PACKAGE_PREFIX = "mfpsdk."
     internal static let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"
     
@@ -85,8 +158,10 @@ internal class BMSSecurityConstants {
     internal static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
     internal static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
     internal static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
-    
-    
+    internal static let PERSISTENCE_POLICY_LABEL = "persistencePolicy"
+    internal static let APP_IDENTITY_LABEL = "appIdentity"
+    internal static let DEVICE_IDENTITY_LABEL = "deviceIdentity"
+    internal static let USER_IDENTITY_LABEL = "userIdentity"
     //labels
     internal static let IMFClientErrorDomain = "com.ibm.mobilefoundation.client"
     internal static let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"

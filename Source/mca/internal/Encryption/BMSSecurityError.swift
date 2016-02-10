@@ -17,33 +17,10 @@ internal enum BMSSecurityError:ErrorType {
     case generalError
 }
 
-internal enum Errors:ErrorType {
+internal enum JsonUtilsErrors:ErrorType {
     case JsonIsMalformed
     case CouldNotParseDictionaryToJson
     case CouldNotExtractJsonFromResponse
-}
-
-internal enum SecurityError : ErrorType{
-    case NoKeysGenerated
-    case KeysNotFound
-    case CertNotFound
-    case CertCannotBeCreated
-    case CertCannotBeSaved
-    case CertificatePublicKeyValidationFailed
-    case SignDataFailure
-    case SigningFailure(String)
-    case unableToSavePublicKey
-    case CouldNotCreateHeaderFromPublicKey
-}
-
-internal enum MCAAuthorizationManagerError: ErrorType {
-    case ResponseHasNoStatusCode
-}
-
-internal enum AuthorizationError : ErrorType {
-    case CANNOT_ADD_CHALLANGE_HANDLER(String)
-        case CertificateDoesNotIncludeClientId
-    case ResponseDoesNotIncludeCertificate
 }
 
 internal enum AuthorizationProcessManagerError : ErrorType {
@@ -56,6 +33,12 @@ internal enum AuthorizationProcessManagerError : ErrorType {
     case FailedToCreateRegistrationParams
     case FailedToSendAuthorizationRequest
     case COULD_NOT_SAVE_TOKEN(String)
+    case CertificateDoesNotIncludeClientId
+    case ResponseDoesNotIncludeCertificate
+
 }
 
+internal enum AuthorizationError : ErrorType {
+    case CANNOT_ADD_CHALLANGE_HANDLER(String)
+}
 

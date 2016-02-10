@@ -15,48 +15,7 @@ import Foundation
 import BMSCore
 
 public class Utils {
-    
-    private static let SECURE_PATTERN_START = "/*-secure-\n"
-    private static let SECURE_PATTERN_END = "*/"
-    
-    private static let BLUEMIX_NAME = "bluemix"
-    private static let BLUEMIX_DOMAIN = "bluemix.net"
-    private static let STAGE1_NAME = "stage1"
-    
-    private static let  base64EncodingTable:[Character] = [
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-        "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
-        "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-        "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"
-    ]
-    
-    private static let base64EncodingTableUrlSafe:[Character] = [
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-        "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f",
-        "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-        "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "_"
-    ]
-    
-    
-    private static let _base64DecodingTable: [Int8] = [
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
-        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -2, -2, -2,
-        -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, -2,
-        -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-        -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
-    ]
-    
+
     
     internal static func concatenateUrls(rootUrl:String, path:String) -> String {
         guard !rootUrl.isEmpty else {
@@ -106,11 +65,11 @@ public class Utils {
             do{
                 let data = try NSJSONSerialization.dataWithJSONObject(value, options: options)
                 guard let string = NSString(data: data, encoding: NSUTF8StringEncoding) as? String else {
-                    throw Errors.JsonIsMalformed
+                    throw JsonUtilsErrors.JsonIsMalformed
                 }
                 return string
             } catch {
-                throw Errors.JsonIsMalformed
+                throw JsonUtilsErrors.JsonIsMalformed
             }
         }
         return ""
@@ -119,7 +78,7 @@ public class Utils {
     public static func parseJsonStringtoDictionary(jsonString:String) throws ->[String:AnyObject] {
         do {
             guard let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding), responseJson =  try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
-                throw Errors.JsonIsMalformed
+                throw JsonUtilsErrors.JsonIsMalformed
             }
             return responseJson as [String:AnyObject]
         }
@@ -134,11 +93,11 @@ public class Utils {
      */
     internal static func extractSecureJson(response: Response?) throws -> [String:AnyObject?] {
         
-        guard let responseText:String = response?.responseText where (responseText.hasPrefix(SECURE_PATTERN_START) && responseText.hasSuffix(SECURE_PATTERN_END)) else {
-            throw Errors.CouldNotExtractJsonFromResponse
+        guard let responseText:String = response?.responseText where (responseText.hasPrefix(BMSSecurityConstants.SECURE_PATTERN_START) && responseText.hasSuffix(BMSSecurityConstants.SECURE_PATTERN_END)) else {
+            throw JsonUtilsErrors.CouldNotExtractJsonFromResponse
         }
         
-        let jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(Utils.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(-Utils.SECURE_PATTERN_END.characters.count)))
+        let jsonString : String = responseText.substringWithRange(Range<String.Index>(start: responseText.startIndex.advancedBy(BMSSecurityConstants.SECURE_PATTERN_START.characters.count), end: responseText.endIndex.advancedBy(-BMSSecurityConstants.SECURE_PATTERN_END.characters.count)))
         
         do {
             let responseJson = try parseJsonStringtoDictionary(jsonString)
@@ -151,10 +110,10 @@ public class Utils {
         let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         let name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
         if name == nil {
-            //TODO: logger error
+            AuthorizationProcessManager.logger.error("Could not retrieve application name. Application name is set to nil")
         }
         if version == nil {
-            //TODO: logger error
+             AuthorizationProcessManager.logger.error("Could not retrieve application version. Application versionß is set to nil")
         }
         return (name, version)
         
@@ -178,11 +137,11 @@ public class Utils {
     internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
         do{
             guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
-                throw Errors.CouldNotParseDictionaryToJson
+                throw JsonUtilsErrors.CouldNotParseDictionaryToJson
             }
             return json
         } catch {
-            Errors.CouldNotParseDictionaryToJson
+            JsonUtilsErrors.CouldNotParseDictionaryToJson
         }
         return ""
     }
@@ -223,7 +182,7 @@ public class Utils {
             let stringCurrent = String(current)
             let singleValueArrayCurrent: [UInt8] = Array(stringCurrent.utf8)
             let intCurrent:Int = Int(singleValueArrayCurrent[0])
-            let int8Current = _base64DecodingTable[intCurrent]
+            let int8Current = BMSSecurityConstants.base64DecodingTable[intCurrent]
             
             if int8Current == -1 {
                 continue
@@ -311,7 +270,7 @@ public class Utils {
             default: break
             }
             for i = 0; i < ctcopy; i++ {
-                let toAppend = isSafeUrl ? base64EncodingTableUrlSafe[output[i]]: base64EncodingTable[output[i]]
+                let toAppend = isSafeUrl ? BMSSecurityConstants.base64EncodingTableUrlSafe[output[i]]: BMSSecurityConstants.base64EncodingTable[output[i]]
                 result.append(toAppend)
             }
             for i = ctcopy; i < 4; i++ {
@@ -369,7 +328,7 @@ public class Utils {
             default: break
             }
             for i = 0; i < ctcopy; i++ {
-                let toAppend = isSafeUrl ? base64EncodingTableUrlSafe[output[i]]: base64EncodingTable[output[i]]
+                let toAppend = isSafeUrl ? BMSSecurityConstants.base64EncodingTableUrlSafe[output[i]]: BMSSecurityConstants.base64EncodingTable[output[i]]
                 result.append(toAppend)
             }
             for i = ctcopy; i < 4; i++ {

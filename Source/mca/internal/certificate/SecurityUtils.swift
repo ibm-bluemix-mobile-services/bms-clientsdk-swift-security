@@ -177,7 +177,7 @@ internal class SecurityUtils {
         let base64Options = NSDataBase64EncodingOptions(rawValue:0)
         
         guard let pkModulus : NSData = getPublicKeyMod(publicKey), let pkExponent : NSData = getPublicKeyExp(publicKey) else {
-            throw SecurityError.CouldNotCreateHeaderFromPublicKey
+            throw BMSSecurityError.generalError
         }
         
         let mod:String = pkModulus.base64EncodedStringWithOptions(base64Options)
@@ -185,13 +185,13 @@ internal class SecurityUtils {
         let exp:String = pkExponent.base64EncodedStringWithOptions(base64Options)
         
         let publicKeyJSON : [String:AnyObject] = [
-            "alg" : "RSA",
-            "mod" : mod,
-            "exp" : exp
+            BMSSecurityConstants.JSON_ALG_KEY : BMSSecurityConstants.JSON_RSA_VALUE,
+            BMSSecurityConstants.JSON_MOD_KEY : mod,
+            BMSSecurityConstants.JSON_EXP_KEY : exp
         ]
         let jwsHeaderJSON :[String:AnyObject] = [
-            "alg" : "RS256",
-            "jpk" : publicKeyJSON
+            BMSSecurityConstants.JSON_ALG_KEY : BMSSecurityConstants.JSON_RS256_VALUE,
+            BMSSecurityConstants.JSON_JPK_KEY : publicKeyJSON
         ]
         return jwsHeaderJSON
         

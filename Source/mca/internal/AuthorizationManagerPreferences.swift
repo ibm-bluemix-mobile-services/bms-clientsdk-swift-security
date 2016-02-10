@@ -27,13 +27,13 @@ internal class AuthorizationManagerPreferences {
     
     
     internal init() {
-        persistencePolicy = PolicyPreference(prefName: "persistencePolicy", defaultValue: PersistencePolicy.ALWAYS)
+        persistencePolicy = PolicyPreference(prefName: BMSSecurityConstants.DEVICE_IDENTITY_LABEL, defaultValue: PersistencePolicy.ALWAYS)
         clientId = StringPreference(prefName: BMSSecurityConstants.clientIdLabel)
         accessToken  = TokenPreference(prefName: BMSSecurityConstants.accessTokenLabel, persistencePolicy: persistencePolicy)
         idToken  = TokenPreference(prefName: BMSSecurityConstants.idTokenLabel, persistencePolicy: persistencePolicy)
-        userIdentity  = JSONPreference(prefName: "userIdentity")
-        deviceIdentity  = JSONPreference(prefName : "deviceIdentity")
-        appIdentity  = JSONPreference(prefName:"appIdentity")
+        userIdentity  = JSONPreference(prefName: BMSSecurityConstants.USER_IDENTITY_LABEL)
+        deviceIdentity  = JSONPreference(prefName : BMSSecurityConstants.DEVICE_IDENTITY_LABEL)
+        appIdentity  = JSONPreference(prefName: BMSSecurityConstants.APP_IDENTITY_LABEL)
     }
 }
 
