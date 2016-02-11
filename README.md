@@ -27,7 +27,7 @@ end
 
 Connectivity and interaction between your mobile app and the Bluemix services depends on the application ID and application route that are associated with Bluemix application.
 
-The BMSClient API is the entry point for interacting with the SDK. You must invoke the **initializeWithBluemixAppRoute: bluemixAppGUID: bluemixRegionSuffix:** method before any other API calls. BMSClient provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
+The BMSClient API is the entry point for interacting with the SDK. You must invoke the `initializeWithBluemixAppRoute: bluemixAppGUID: bluemixRegionSuffix:` method before any other API calls. BMSClient provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
 
 An example of initializing the MobileFirst Platform for iOS SDK follows:
 
