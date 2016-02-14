@@ -13,7 +13,6 @@
 
 import Foundation
 
-//TODO: ilan change name?
 public protocol AuthenticationContext {
 
     /**

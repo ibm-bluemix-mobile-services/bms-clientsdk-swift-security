@@ -69,9 +69,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func clearAuthorizationData() {
         preferences.userIdentity.clear()
-        preferences.appIdentity.clear()
-        preferences.deviceIdentity.clear()
-//      af  preferences.idToken.clear()
+        preferences.idToken.clear()
+        preferences.accessToken.clear()
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {

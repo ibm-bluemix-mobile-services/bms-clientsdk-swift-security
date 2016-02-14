@@ -63,7 +63,7 @@ public class ChallengeHandler : AuthenticationContext{
         }
     }
 
-    public func  handleChallenge(request:AuthorizationRequestManager, challenge:[String:AnyObject]) {
+    internal func handleChallenge(request:AuthorizationRequestManager, challenge:[String:AnyObject]) {
         dispatch_barrier_async(lockQueue){
             if self.activeRequest == nil {
                 self.activeRequest = request

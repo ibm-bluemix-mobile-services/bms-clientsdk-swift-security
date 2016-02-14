@@ -14,7 +14,7 @@
 import Foundation
 import BMSCore
 
-public class AuthorizationRequestManager {
+internal class AuthorizationRequestManager {
     
     //MARK constants
         //MARK vars (private)
@@ -92,25 +92,6 @@ public class AuthorizationRequestManager {
         return false
         
     }
-    //
-    //    /**
-    //    * Checks server response for MFP 401 error. This kind of response should contain MFP authentication challenges.
-    //    *
-    //    * @param response Server response.
-    //    * @return <code>true</code> if the server response contains 401 status code along with MFP challenges.
-    //    */
-    //    private boolean isAuthorizationRequired(Response response) {
-    //    if (response != null && response.getStatus() == 401) {
-    //    ResponseImpl responseImpl = (ResponseImpl)response;
-    //    String challengesHeader = responseImpl.getFirstHeader(AUTHENTICATE_HEADER_NAME);
-    //
-    //    if (AUTHENTICATE_HEADER_VALUE.equalsIgnoreCase(challengesHeader)) {
-    //    return true;
-    //    }
-    //    }
-    
-    //    return false;
-    //    }
     
     internal func sendInternal(rootUrl:String, path:String, options:RequestOptions?) throws {
         self.requestOptions = options != nil ? options : RequestOptions()
@@ -154,13 +135,6 @@ public class AuthorizationRequestManager {
                     
                 }
             }
-            //            guard error != nil else {
-            //                AuthorizationRequestManager.logger.error("Error while getting response:\(error)")
-            //                return
-            //            }
-            
-            
-            //check this is error failure
             if error != nil {
                 if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
                     processResponseWrapper(response,isFailure: true)
@@ -183,9 +157,6 @@ public class AuthorizationRequestManager {
                 }
             }
         }
-        
-        //        String rewriteDomainHeaderValue = BMSClient.getInstance().getRewriteDomain();
-        //        request.addHeader("X-REWRITE-DOMAIN", val:"ng.bluemix.net");
         
         if let method = options?.requestMethod where method == HttpMethod.GET{
             request.queryParameters = options?.parameters

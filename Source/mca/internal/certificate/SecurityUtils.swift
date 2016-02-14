@@ -321,7 +321,6 @@ internal class SecurityUtils {
     
     internal static func getCertificateFromString(stringData:String) throws -> SecCertificate{
         
-        //TODO: oded : unsure about the ignoreUnknownCharacters
         if let data:NSData = NSData(base64EncodedString: stringData, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)  {
             if let certificate = SecCertificateCreateWithData(kCFAllocatorDefault, data) {
                 return certificate
