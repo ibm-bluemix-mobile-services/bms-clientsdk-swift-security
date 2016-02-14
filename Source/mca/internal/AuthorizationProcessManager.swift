@@ -217,12 +217,10 @@ internal class AuthorizationProcessManager {
                     preferences.idToken.set(idTokenFromResponse)
                     preferences.accessToken.set(accessTokenFromResponse)
                     
-                    
-                    guard let  decodedIdTokenData = Utils.decodeBase64WithString(idTokenFromResponse.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)[BMSSecurityConstants.JSON_IMF_USER_KEY] as? [String:AnyObject] else {
-                            throw AuthorizationProcessManagerError.CouldNotRetrieveUserIdentityFromToken
+                    if let decodedIdTokenData = Utils.decodeBase64WithString(idTokenFromResponse.componentsSeparatedByString(".")[1]), let _ = NSString(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), decodedIdTokenString = String(data: decodedIdTokenData, encoding: NSUTF8StringEncoding), userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)[BMSSecurityConstants.JSON_IMF_USER_KEY] as? [String:AnyObject] {
+                        
+                        preferences.userIdentity.set(userIdentity)
                     }
-                    preferences.userIdentity.set(userIdentity)
-                    
                 }
             }
         } catch  {
