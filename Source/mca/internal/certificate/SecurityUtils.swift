@@ -372,7 +372,7 @@ internal class SecurityUtils {
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
         let status = SecTrustCreateWithCertificates(certificate, policy, &trust)
-        //TODO : read documentation and decide if secTrustEvaluate is needed here
+        //TODO: read documentation and decide if secTrustEvaluate is needed here
         if let unWrappedTrust = trust where status == errSecSuccess {
             if let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust) {
                 defer {

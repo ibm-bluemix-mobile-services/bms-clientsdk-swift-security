@@ -220,7 +220,7 @@ internal class AuthorizationRequestManager {
         // at this point a server response should contain a secure JSON with challenges
         do {
             var responseJson = try Utils.extractSecureJson(response)
-            if let challenges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME]  as? [String: AnyObject]{
+            if let challenges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME] as? [String: AnyObject]{
                 try startHandleChallenges(challenges, response: response!)
             } else {
                 defaultCompletionHandler(response, nil)

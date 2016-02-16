@@ -14,20 +14,20 @@
 import BMSCore
 public class ChallengeHandler : AuthenticationContext{
     
-    private  var realm:String
-    private  var authenticationDelegate:AuthenticationDelegate?
-    private  var waitingRequests:[AuthorizationRequestManager]
-    private  var activeRequest:AuthorizationRequestManager?
+    private var realm:String
+    private var authenticationDelegate:AuthenticationDelegate?
+    private var waitingRequests:[AuthorizationRequestManager]
+    private var activeRequest:AuthorizationRequestManager?
     private var lockQueue = dispatch_queue_create("ChallengeHandlerQueue", DISPATCH_QUEUE_CONCURRENT)
     
-    internal init(realm:String , authenticationDelegate:AuthenticationDelegate) {
+    public init(realm:String , authenticationDelegate:AuthenticationDelegate) {
         self.realm = realm
         self.authenticationDelegate = authenticationDelegate
         self.activeRequest = nil
         self.waitingRequests = [AuthorizationRequestManager]()
     }
     
-    public func  submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?) {
+    public func submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?) {
         dispatch_barrier_async(lockQueue){
             guard let aRequest = self.activeRequest else {
                 return
@@ -42,7 +42,7 @@ public class ChallengeHandler : AuthenticationContext{
         }
     }
     
-    public  func submitAuthenticationSuccess () {
+    public func submitAuthenticationSuccess () {
         dispatch_barrier_async(lockQueue){
             if self.activeRequest != nil {
                 self.activeRequest!.removeExpectedAnswer(self.realm)
@@ -62,7 +62,7 @@ public class ChallengeHandler : AuthenticationContext{
             self.releaseWaitingList()
         }
     }
-
+    
     internal func handleChallenge(request:AuthorizationRequestManager, challenge:[String:AnyObject]) {
         dispatch_barrier_async(lockQueue){
             if self.activeRequest == nil {
@@ -76,7 +76,7 @@ public class ChallengeHandler : AuthenticationContext{
         }
     }
     
-    public  func handleSuccess(success:[String:AnyObject]) {
+    internal func handleSuccess(success:[String:AnyObject]) {
         dispatch_barrier_async(lockQueue){
             if let unWrappedListener = self.authenticationDelegate{
                 unWrappedListener.onAuthenticationSuccess(success)
@@ -85,7 +85,7 @@ public class ChallengeHandler : AuthenticationContext{
             self.activeRequest = nil
         }
     }
-    public  func handleFailure(failure:[String:AnyObject]) {
+    internal func handleFailure(failure:[String:AnyObject]) {
         dispatch_barrier_async(lockQueue){
             if let unWrappedListener = self.authenticationDelegate{
                 unWrappedListener.onAuthenticationFailure(failure)
@@ -94,12 +94,12 @@ public class ChallengeHandler : AuthenticationContext{
             self.activeRequest = nil
         }
     }
-    private  func setActiveRequest(request:AuthorizationRequestManager) {
+    private func setActiveRequest(request:AuthorizationRequestManager) {
         dispatch_barrier_async(lockQueue){
             self.activeRequest = request
         }
     }
-    private func  releaseWaitingList() {
+    private func releaseWaitingList() {
         dispatch_barrier_async(lockQueue){
             for request in self.waitingRequests {
                 request.removeExpectedAnswer(self.realm)
@@ -107,7 +107,7 @@ public class ChallengeHandler : AuthenticationContext{
             self.clearWaitingList()
         }
     }
-    private  func clearWaitingList() {
+    private func clearWaitingList() {
         dispatch_barrier_async(lockQueue){
             self.waitingRequests.removeAll()
         }

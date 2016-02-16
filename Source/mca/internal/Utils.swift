@@ -22,18 +22,18 @@ public class Utils {
             return path
         }
         
-        var final = rootUrl
-        if !final.hasSuffix("/") {
-            final += "/"
+        var retUrl = rootUrl
+        if !retUrl.hasSuffix("/") {
+            retUrl += "/"
         }
         
         if path.hasPrefix("/") {
-            final += path.substringWithRange(Range<String.Index>(start: path.startIndex.advancedBy(1), end: path.endIndex))
+            retUrl += path.substringWithRange(Range<String.Index>(start: path.startIndex.advancedBy(1), end: path.endIndex))
         } else {
-            final += path
+            retUrl += path
         }
         
-        return final
+        return retUrl
     }
     
     internal static func getParameterValueFromQuery(query:String?, paramName:String) -> String? {

@@ -19,7 +19,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     //lock constant
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
-   
+    
     private var challengeHandlers:[String:ChallengeHandler]
     
     public static let sharedInstance = MCAAuthorizationManager()
@@ -44,7 +44,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public func isAuthorizationRequired(httpResponse: Response) -> Bool {
         if let header = httpResponse.headers![BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
-              return false
+                return false
             }
             
             return isAuthorizationRequired(statusCode, responseAuthorizationHeader: authHeader)
@@ -56,12 +56,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
         if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(BMSSecurityConstants.BEARER){
-                return true
+            return true
         }
         
         return false
     }
-    
     
     public func isOAuthError(response: Response?) -> Bool {
         return false
@@ -76,18 +75,18 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
         MCAAuthorizationManager.addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
     }
+    
     public static func addAuthorizationHeader(request: NSMutableURLRequest, header:String?) {
-    guard let unWrappedHeader = header else {
-        return
-    }
+        guard let unWrappedHeader = header else {
+            return
+        }
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
     public func getCachedAuthorizationHeader() -> String? {
         var returnedValue:String? = nil
-        
         dispatch_barrier_sync(lockQueue){
-            if let accessToken = SecurityUtils.getItemFromKeyChain(BMSSecurityConstants.accessTokenLabel), idToken = SecurityUtils.getItemFromKeyChain(BMSSecurityConstants.idTokenLabel) {
+            if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
                 returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
             }
         }
@@ -102,7 +101,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func getUserIdentity() -> UserIdentity? {
         guard let userIdentityJson = preferences.userIdentity.getAsMap() else {
-          return nil
+            return nil
         }
         return UserIdentity(map: userIdentityJson)
     }
@@ -119,7 +118,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
             return nil
         }
         return AppIdentity(map: appIdentityJson)
-
+        
     }
     
     /**
@@ -129,7 +128,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter forRealm: The realm name
      */
     public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) throws {
-        guard realm.isEmpty == false else {
+        guard !realm.isEmpty else {
             throw AuthorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
         }
         
@@ -143,7 +142,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter realm: The realm name
      */
     public func unregisterAuthenticationDelegate(realm: String) {
-        guard realm.isEmpty == false else {
+        guard !realm.isEmpty else {
             return
         }
         
