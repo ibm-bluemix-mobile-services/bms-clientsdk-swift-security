@@ -49,7 +49,7 @@ internal class AuthorizationRequestManager {
         var rootUrl:String = ""
         var computedPath:String = path
         
-        if path.hasPrefix(BMSClient.HTTP_SCHEME) && path.characters.indexOf(":") != nil {
+        if path.hasPrefix(MCAAuthorizationManager.HTTP_SCHEME) && path.characters.indexOf(":") != nil {
             let url = NSURL(string: path)
             if let pathTemp = url?.path {
                 rootUrl = (path as NSString).stringByReplacingOccurrencesOfString(pathTemp, withString: "")
@@ -61,11 +61,11 @@ internal class AuthorizationRequestManager {
         }
         else {
             //path is relative
-            var serverHost = BMSClient.defaultProtocol
+            var serverHost = MCAAuthorizationManager.defaultProtocol
                 + "://"
                 + BMSSecurityConstants.AUTH_SERVER_NAME
                 + "."
-                + BMSClient.sharedInstance.bluemixRegionSuffix!
+                + BMSClient.sharedInstance.bluemixRegion!
             
             if let overrideServerHost = AuthorizationRequestManager.overrideServerHost {
                 serverHost = overrideServerHost

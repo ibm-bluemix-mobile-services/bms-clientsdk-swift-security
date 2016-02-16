@@ -14,6 +14,12 @@ import Foundation
 import BMSCore
 
 public class MCAAuthorizationManager : AuthorizationManager {
+//    
+    public static var defaultProtocol: String = HTTPS_SCHEME
+    public static let HTTP_SCHEME = "http"
+    public static let HTTPS_SCHEME = "https"
+    
+    public static let CONTENT_TYPE = "Content-Type"
     
     private var preferences:AuthorizationManagerPreferences
     
@@ -30,7 +36,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
         self.preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
+        
         BMSClient.sharedInstance.sharedAuthorizationManager = self
+        
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {

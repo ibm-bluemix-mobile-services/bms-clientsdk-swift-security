@@ -135,9 +135,6 @@ internal class BMSSecurityConstants {
     internal static let AUTH_SUCCESS_VALUE_NAME = "WL-Authentication-Success"
     internal static let CHALLENGES_VALUE_NAME = "challenges"
     
-
-    
-    
     //JSON keys
     internal static let JSON_CERTIFICATE_KEY = "certificate"
     internal static let JSON_CLIENT_ID_KEY = "clientId"
@@ -170,6 +167,7 @@ internal class BMSSecurityConstants {
     internal static let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
+
 }
 
 
