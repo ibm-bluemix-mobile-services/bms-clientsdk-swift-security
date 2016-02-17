@@ -17,7 +17,7 @@ import BMSCore
 internal class AuthorizationRequestManager {
     
     //MARK constants
-        //MARK vars (private)
+    //MARK vars (private)
     
     var requestPath : String?
     var requestOptions : RequestOptions?
@@ -83,7 +83,7 @@ internal class AuthorizationRequestManager {
     }
     
     internal static func isAuthorizationRequired(response: Response?) -> Bool {
-        if let header = response?.headers![BMSSecurityConstants.WWW_AUTHENTICATE_HEADER] {
+        if let header = response?.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER] {
             if let authHeader : String = header as? String where authHeader == BMSSecurityConstants.AUTHENTICATE_HEADER_VALUE{
                 return true
             }
@@ -127,12 +127,11 @@ internal class AuthorizationRequestManager {
                 else {
                     do {
                         try self.processRedirectResponse(response!)
-                    } catch {
-                        let nsError = NSError(domain: BMSSecurityConstants.IMFClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error)"])
+                    } catch (let thrownError){
+                        let nsError = NSError(domain: BMSSecurityConstants.IMFClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(thrownError)"])
                         AuthorizationRequestManager.logger.error(String(error))
                         self.defaultCompletionHandler(response, nsError)
                     }
-                    
                 }
             }
             if error != nil {
@@ -219,8 +218,8 @@ internal class AuthorizationRequestManager {
     internal func processResponse(response: Response?) {
         // at this point a server response should contain a secure JSON with challenges
         do {
-            var responseJson = try Utils.extractSecureJson(response)
-            if let challenges = responseJson[BMSSecurityConstants.CHALLENGES_VALUE_NAME] as? [String: AnyObject]{
+            let responseJson = try Utils.extractSecureJson(response)
+            if let challenges = responseJson[caseInsensitive : BMSSecurityConstants.CHALLENGES_VALUE_NAME] as? [String: AnyObject]{
                 try startHandleChallenges(challenges, response: response!)
             } else {
                 defaultCompletionHandler(response, nil)
@@ -313,7 +312,6 @@ internal class AuthorizationRequestManager {
     }
     
     internal func resendRequest() throws {
-        //        send(path:String , options:RequestOptions, completionHandler: MfpCompletionHandler?)
         try send(requestPath!, options: requestOptions!)
     }
     
@@ -334,7 +332,7 @@ internal class AuthorizationRequestManager {
             return nil
         }
         
-        guard let location =  getLocationString(response.headers?[BMSSecurityConstants.LOCATION_HEADER_NAME]) else {
+        guard let location =  getLocationString(response.headers?[caseInsensitive : BMSSecurityConstants.LOCATION_HEADER_NAME]) else {
             throw ResponseError.NoLocation("Redirect response does not contain 'Location' header.")
         }
         
@@ -345,16 +343,16 @@ internal class AuthorizationRequestManager {
         
         let query =  url.query
         
-        if let q = query where q.containsString(BMSSecurityConstants.WL_RESULT) {
-            if let result = Utils.getParameterValueFromQuery(query, paramName: BMSSecurityConstants.WL_RESULT) {
-                var jsonResult = try Utils.parseJsonStringtoDictionary(result)
+        if let q = query where q.lowercaseString.containsString(BMSSecurityConstants.WL_RESULT.lowercaseString) {
+            if let result = Utils.getParameterValueFromQuery(query, paramName: BMSSecurityConstants.WL_RESULT, caseSensitive: false) {
+                let jsonResult = try Utils.parseJsonStringtoDictionary(result)
                 // process failures if any
                 
-                if let jsonFailures = jsonResult[BMSSecurityConstants.AUTH_FAILURE_VALUE_NAME] {
+                if let jsonFailures = jsonResult[caseInsensitive : BMSSecurityConstants.AUTH_FAILURE_VALUE_NAME] {
                     processFailures(jsonFailures as? [String : AnyObject])
                 }
                 
-                if let jsonSuccesses = jsonResult[BMSSecurityConstants.AUTH_SUCCESS_VALUE_NAME] {
+                if let jsonSuccesses = jsonResult[caseInsensitive : BMSSecurityConstants.AUTH_SUCCESS_VALUE_NAME] {
                     processSuccesses(jsonSuccesses as? [String: AnyObject])
                 }
             }

@@ -14,7 +14,7 @@
 import Foundation
 
 internal class SecurityUtils {
-       
+    
     private static func savePublicKeyToKeyChain(key:SecKey,tag:String) throws {
         let publicKeyAttr : [NSString:AnyObject] = [
             kSecValueRef: key,
@@ -45,11 +45,15 @@ internal class SecurityUtils {
             throw BMSSecurityError.generalError
         }
         
-        return result! as! NSData
+        return result as! NSData
         
     }
     
     internal static func generateKeyPair(keySize:Int, publicTag:String, privateTag:String)throws -> (publicKey: SecKey, privateKey: SecKey) {
+        //make sure keys are deleted
+        SecurityUtils.deleteKeyFromKeyChain(publicTag)
+        SecurityUtils.deleteKeyFromKeyChain(privateTag)
+        
         var status:OSStatus = noErr
         var privateKey:SecKey?
         var publicKey:SecKey?
@@ -74,7 +78,6 @@ internal class SecurityUtils {
         ]
         
         status = SecKeyGeneratePair(keyPairAttr, &publicKey, &privateKey)
-        
         if (status != errSecSuccess) {
             throw BMSSecurityError.generalError
         } else {
@@ -105,7 +108,7 @@ internal class SecurityUtils {
             throw BMSSecurityError.generalError
         }
         
-        return result! as! SecKey
+        return result as! SecKey
         
     }
     
@@ -145,18 +148,16 @@ internal class SecurityUtils {
     
     internal static func signCsr(payloadJSON:[String : AnyObject], keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
         do {
-            try generateKeyPair(keySize, publicTag: ids.publicKey, privateTag: ids.privateKey)
             let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
             let keys = try getKeyPairBitsFromKeyChain(ids.publicKey, privateTag: ids.privateKey)
             let publicKey = keys.publicKey
             
             let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
-            
-            let strJwsHeaderJSON = try Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey))            
+            let strJwsHeaderJSON = try Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey))
             guard let jwsHeaderData : NSData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding), payloadJSONData : NSData = strPayloadJSON.dataUsingEncoding(NSUTF8StringEncoding) else {
                 throw BMSSecurityError.generalError
             }
-
+            
             let jwsHeaderBase64 = Utils.base64StringFromData(jwsHeaderData, isSafeUrl: true)
             let payloadJSONBase64 = Utils.base64StringFromData(payloadJSONData, isSafeUrl: true)
             
@@ -260,9 +261,7 @@ internal class SecurityUtils {
         guard let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding) else {
             throw BMSSecurityError.generalError
         }
-        
-        
-        
+   
         func doSha256(dataIn:NSData) throws -> NSData {
             guard let shaOut: NSMutableData = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH)) else {
                 throw BMSSecurityError.generalError
@@ -307,7 +306,7 @@ internal class SecurityUtils {
         
     }
     internal static func removeItemFromKeyChain(label: String) -> Bool{
-
+        
         let delQuery : [NSString:AnyObject] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: label
@@ -317,7 +316,7 @@ internal class SecurityUtils {
         return delStatus == errSecSuccess
         
     }
-
+    
     
     internal static func getCertificateFromString(stringData:String) throws -> SecCertificate{
         

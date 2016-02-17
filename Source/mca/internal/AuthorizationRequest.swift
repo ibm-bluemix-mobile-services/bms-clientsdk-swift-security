@@ -18,7 +18,7 @@ import BMSCore
 internal class AuthorizationRequest : MFPRequest {
     
     internal func send(completionHandler: MfpCompletionHandler?) {
-         super.sendWithCompletionHandler(completionHandler)
+        super.sendWithCompletionHandler(completionHandler)
     }
     
     //Add new header
@@ -41,7 +41,7 @@ internal class AuthorizationRequest : MFPRequest {
         configuration.timeoutIntervalForRequest = timeout
         networkSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
-
+    
     /**
      * Send this resource request asynchronously, with the given form parameters as the request body.
      * This method will set the content type header to "application/x-www-form-urlencoded".
@@ -55,7 +55,7 @@ internal class AuthorizationRequest : MFPRequest {
         var i = 0
         //creating body params
         for (key, val) in formParamaters {
-            body += "\(key)=\(val)"
+            body += "\(urlEncode(key))=\(urlEncode(val))"
             if i < formParamaters.count - 1 {
                 body += "&"
             }
@@ -63,5 +63,27 @@ internal class AuthorizationRequest : MFPRequest {
         }
         super.sendString(body, withCompletionHandler: callback)
     }
-    
+    private func urlEncode(str:String) -> String{
+        var encodedString = ""
+        var unchangedCharacters = ""
+        let FORM_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#&!$(),~%"
+        let range = NSMakeRange(0x20, 0x5f).toRange()!
+        range.forEach({(element:Int) in
+            if !FORM_ENCODE_SET.containsString(String(UnicodeScalar(element))) {
+                unchangedCharacters += String(Character(UnicodeScalar(element)))
+            }
+        })
+        encodedString = str.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: "\n\r\t"))
+        let charactersToRemove = ["\n", "\r", "\t"]
+        for char in charactersToRemove {
+            encodedString = encodedString.stringByReplacingOccurrencesOfString(char, withString: "")
+        }
+        if let encodedString = encodedString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet(charactersInString: unchangedCharacters)) {
+            return encodedString
+        }
+        else {
+            return ""
+            //TODO:error
+        }
+    }
 }

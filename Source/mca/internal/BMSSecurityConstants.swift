@@ -15,7 +15,7 @@ import Foundation
 
 
 internal class BMSSecurityConstants {
-
+    
     
     
     internal static let SECURE_PATTERN_START = "/*-secure-\n"
@@ -59,12 +59,12 @@ internal class BMSSecurityConstants {
         -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
     ]
     
-   
+    
     internal static var deviceInfo = Utils.getDeviceDictionary()
     internal static let nameAndVer = Utils.getApplicationDetails()
     internal static var authorizationProcessManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationProcessManager"
     internal static var authorizationRequestManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationRequestManager"
-
+    
     internal static var authorizationEndPoint = "authorization"
     internal static var tokenEndPoint = "token"
     internal static var clientsInstanceEndPoint = "clients/instance"
@@ -168,7 +168,7 @@ internal class BMSSecurityConstants {
     internal static let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-
+    
 }
 
 
