@@ -11,36 +11,19 @@
 *     limitations under the License.
 */
 import Foundation
+import BMSCore
 
-
-public class AppIdentity{
+public class MCAAppIdentity : BaseAppIdentity{
     
-    private static let ID = "id"
-    private static let VERSION = "version"
-    
-    private var jsonData : [String:String] = ([:])
-    
-    public init() {
+    public override init() {
         let appInfo = Utils.getApplicationDetails()
-        jsonData[AppIdentity.ID] =  appInfo.name
-        jsonData[AppIdentity.VERSION] =  appInfo.version
+        super.init()
+        jsonData[BaseAppIdentity.ID] =  appInfo.name
+        jsonData[BaseAppIdentity.VERSION] =  appInfo.version
     }
     
-    public func getAsJson() -> [String:String]{
-        return jsonData
-    }
-    
-    public init(map: AnyObject?) {
-        let json = map as? Dictionary<String, String>
-        jsonData = json != nil ? json! : ([:])
-    }
-    
-    public func getId() ->String? {
-        return jsonData[AppIdentity.ID]
-    }
-    
-    public func getVersion() -> String? {
-        return jsonData[AppIdentity.VERSION]
+    public override init(map: AnyObject?) {
+        super.init(map: map)
     }
     
 }

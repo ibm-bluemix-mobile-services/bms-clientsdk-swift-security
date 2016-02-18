@@ -146,8 +146,8 @@ public class Utils {
     }
     
     internal static func getDeviceDictionary() -> [String : AnyObject] {
-        let deviceIdentity = DeviceIdentity()
-        let appIdentity = AppIdentity()
+        let deviceIdentity = MCADeviceIdentity()
+        let appIdentity = MCAAppIdentity()
         var device = [String : AnyObject]()
         device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.getId()
         device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.getModel()

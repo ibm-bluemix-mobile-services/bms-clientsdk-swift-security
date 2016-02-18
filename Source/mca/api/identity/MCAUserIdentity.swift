@@ -11,32 +11,15 @@
 *     limitations under the License.
 */
 import Foundation
+import BMSCore
 
-public class UserIdentity {
-    static let ID = "id"
-    static let AUTH_BY = "authBy"
-    static let DISPLAY_NAME = "displayName"
+public class MCAUserIdentity : BaseUserIdentity{
     
-    var jsonData : [String:String] = ([:])
-    
-    public init() {
-
-    }
-    public init(map: AnyObject?) {
-        let json = map as? Dictionary<String, String>
-        jsonData = json != nil ? json! : ([:])
+    public override init() {
+        super.init()
     }
     
-    public func getId() ->String? {
-        return jsonData[UserIdentity.AUTH_BY]
+    public override init(map: AnyObject?) {
+        super.init(map: map)
     }
-    
-    public func getAuthBy() ->String? {
-        return jsonData[UserIdentity.ID]
-    }
-
-    
-    public func getDisplayName() -> String? {
-        return jsonData[UserIdentity.DISPLAY_NAME]
-    }
-}
+ }
