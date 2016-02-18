@@ -13,9 +13,27 @@
 
 import Foundation
 import BMSCore
+extension Dictionary where Key : Any {
+    subscript(caseInsensitive key : Key) -> Value? {
+        get {
+            if let stringKey = key as? String {
+                let searchKeyLowerCase = stringKey.lowercaseString
+                for currentKey in self.keys {
+                    if let stringCurrentKey = currentKey as? String {
+                        let currentKeyLowerCase = stringCurrentKey.lowercaseString
+                        if currentKeyLowerCase == searchKeyLowerCase {
+                            return self[currentKey]
+                        }
+                    }
+                }
+            }
+            return nil
+        }
+    }
+}
 
 public class Utils {
-
+    
     
     internal static func concatenateUrls(rootUrl:String, path:String) -> String {
         guard !rootUrl.isEmpty else {
@@ -36,7 +54,7 @@ public class Utils {
         return retUrl
     }
     
-    internal static func getParameterValueFromQuery(query:String?, paramName:String) -> String? {
+    internal static func getParameterValueFromQuery(query:String?, paramName:String, caseSensitive:Bool) -> String? {
         guard let myQuery = query  else {
             return nil
         }
@@ -49,8 +67,14 @@ public class Utils {
             if (pairs.endIndex != 2) {
                 continue
             }
-            if let normal = pairs[0].stringByRemovingPercentEncoding where normal == paramName {
-                return pairs[1].stringByRemovingPercentEncoding
+            if(caseSensitive) {
+                if let normal = pairs[0].stringByRemovingPercentEncoding where normal == paramName {
+                    return pairs[1].stringByRemovingPercentEncoding
+                }
+            } else {
+                if let normal = pairs[0].stringByRemovingPercentEncoding?.lowercaseString where normal == paramName.lowercaseString {
+                    return pairs[1].stringByRemovingPercentEncoding
+                }
             }
         }
         return nil
@@ -113,7 +137,7 @@ public class Utils {
             AuthorizationProcessManager.logger.error("Could not retrieve application name. Application name is set to nil")
         }
         if version == nil {
-             AuthorizationProcessManager.logger.error("Could not retrieve application version. Application versionß is set to nil")
+            AuthorizationProcessManager.logger.error("Could not retrieve application version. Application versionß is set to nil")
         }
         return (name, version)
         
@@ -132,7 +156,7 @@ public class Utils {
         
         return device
     }
-
+    
     
     internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
         do{
@@ -345,6 +369,7 @@ public class Utils {
         
         return result
     }
+    
     
     
 }

@@ -14,7 +14,7 @@ import Foundation
 import BMSCore
 
 public class MCAAuthorizationManager : AuthorizationManager {
-//    
+    //
     public static var defaultProtocol: String = HTTPS_SCHEME
     public static let HTTP_SCHEME = "http"
     public static let HTTPS_SCHEME = "https"
@@ -50,7 +50,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func isAuthorizationRequired(httpResponse: Response) -> Bool {
-        if let header = httpResponse.headers![BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
+        if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
                 return false
             }
@@ -63,21 +63,27 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
-        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.containsString(BMSSecurityConstants.BEARER){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString){
             return true
         }
         
         return false
     }
     
-    public func isOAuthError(response: Response?) -> Bool {
-        return false
+    private func clearCookies() {
+        let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        if let cookies = cookiesStorage.cookies {
+            for cookie in cookies {
+                cookiesStorage.deleteCookie(cookie)
+            }
+        }
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
-    
     public func clearAuthorizationData() {
         preferences.userIdentity.clear()
         preferences.idToken.clear()
         preferences.accessToken.clear()
+        clearCookies()
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
