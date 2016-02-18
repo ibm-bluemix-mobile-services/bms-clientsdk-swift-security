@@ -42,10 +42,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
-            preferences.deviceIdentity.set(DeviceIdentity().getAsJson())
+            preferences.deviceIdentity.set(MCADeviceIdentity().getAsJson())
         }
         if preferences.appIdentity.get() == nil {
-            preferences.appIdentity.set(AppIdentity().getAsJson())
+            preferences.appIdentity.set(MCAAppIdentity().getAsJson())
         }
     }
     
@@ -113,25 +113,19 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
-    public func getUserIdentity() -> UserIdentity? {
-        guard let userIdentityJson = preferences.userIdentity.getAsMap() else {
-            return nil
-        }
-        return UserIdentity(map: userIdentityJson)
+    public func getUserIdentity() -> BaseUserIdentity {
+        let userIdentityJson = preferences.userIdentity.getAsMap()
+        return MCAUserIdentity(map: userIdentityJson)
     }
     
-    public func getDeviceIdentity() -> DeviceIdentity? {
-        guard let deviceIdentityJson = preferences.deviceIdentity.getAsMap() else {
-            return nil
-        }
-        return DeviceIdentity(map: deviceIdentityJson)
+    public func getDeviceIdentity() -> BaseDeviceIdentity {
+        let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
+        return MCADeviceIdentity(map: deviceIdentityJson)
     }
     
-    public func getAppIdentity() -> AppIdentity? {
-        guard let appIdentityJson = preferences.appIdentity.getAsMap() else {
-            return nil
-        }
-        return AppIdentity(map: appIdentityJson)
+    public func getAppIdentity() -> BaseAppIdentity {
+        let appIdentityJson = preferences.appIdentity.getAsMap()
+        return MCAAppIdentity(map: appIdentityJson)
         
     }
     
