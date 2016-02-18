@@ -131,13 +131,15 @@ public class Utils {
     
     //Return the App Name and Version
     internal static func getApplicationDetails() -> (name:String?, version:String?) {
-        let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
-        let name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
+        var version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+        var name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
         if name == nil {
             AuthorizationProcessManager.logger.error("Could not retrieve application name. Application name is set to nil")
+            name = "nil"
         }
         if version == nil {
             AuthorizationProcessManager.logger.error("Could not retrieve application version. Application versionß is set to nil")
+            version = "nil"
         }
         return (name, version)
         

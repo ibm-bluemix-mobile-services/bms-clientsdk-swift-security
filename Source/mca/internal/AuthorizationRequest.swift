@@ -82,8 +82,7 @@ internal class AuthorizationRequest : MFPRequest {
             return encodedString
         }
         else {
-            return ""
-            //TODO:error
+            return "nil"
         }
     }
 }

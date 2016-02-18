@@ -17,7 +17,6 @@ internal class AuthorizationProcessManager {
     private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
-    internal var authorizationPersistencePolicy:PersistencePolicy
     var completionHandler: MfpCompletionHandler?
     
     internal static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
@@ -26,8 +25,8 @@ internal class AuthorizationProcessManager {
     internal init(preferences:AuthorizationManagerPreferences)
     {
         self.authorizationQueue = Queue<MfpCompletionHandler>()
-        self.authorizationPersistencePolicy = PersistencePolicy.NEVER
         self.preferences = preferences
+        self.preferences.persistencePolicy.set(PersistencePolicy.NEVER)
         //generate new random session id
         sessionId = NSUUID().UUIDString
     }

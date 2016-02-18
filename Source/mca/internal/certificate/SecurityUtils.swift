@@ -261,7 +261,7 @@ internal class SecurityUtils {
         guard let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding) else {
             throw BMSSecurityError.generalError
         }
-   
+        
         func doSha256(dataIn:NSData) throws -> NSData {
             guard let shaOut: NSMutableData = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH)) else {
                 throw BMSSecurityError.generalError
@@ -366,14 +366,14 @@ internal class SecurityUtils {
         }
     }
     internal static func checkCertificatePublicKeyValidity(certificate:SecCertificate, publicKeyTag:String) throws -> Bool{
+        
         let certificatePublicKeyTag = "checkCertificatePublicKeyValidity : publicKeyFromCertificate"
         var publicKeyBits = try getKeyBitsFromKeyChain(publicKeyTag)
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
-        let status = SecTrustCreateWithCertificates(certificate, policy, &trust)
-        //TODO: read documentation and decide if secTrustEvaluate is needed here
+        var status = SecTrustCreateWithCertificates(certificate, policy, &trust)
         if let unWrappedTrust = trust where status == errSecSuccess {
-            if let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust) {
+            if let certificatePublicKey = SecTrustCopyPublicKey(unWrappedTrust)  {
                 defer {
                     SecurityUtils.deleteKeyFromKeyChain(certificatePublicKeyTag)
                 }

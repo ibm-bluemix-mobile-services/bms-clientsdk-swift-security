@@ -13,7 +13,7 @@
 
 import BMSCore
 
-internal class AuthorizationManagerPreferences {
+internal class AuthorizationManagerPreferences : NSObject{
     
     private static var sharedPreferences:NSUserDefaults = NSUserDefaults.standardUserDefaults()
 
@@ -26,14 +26,25 @@ internal class AuthorizationManagerPreferences {
     internal var appIdentity:JSONPreference
     
     
-    internal init() {
-        persistencePolicy = PolicyPreference(prefName: BMSSecurityConstants.DEVICE_IDENTITY_LABEL, defaultValue: PersistencePolicy.ALWAYS)
+    internal override init() {
+        persistencePolicy = PolicyPreference(prefName: BMSSecurityConstants.PERSISTENCE_POLICY_LABEL, defaultValue: PersistencePolicy.ALWAYS)
         clientId = StringPreference(prefName: BMSSecurityConstants.clientIdLabel)
         accessToken  = TokenPreference(prefName: BMSSecurityConstants.accessTokenLabel, persistencePolicy: persistencePolicy)
         idToken  = TokenPreference(prefName: BMSSecurityConstants.idTokenLabel, persistencePolicy: persistencePolicy)
         userIdentity  = JSONPreference(prefName: BMSSecurityConstants.USER_IDENTITY_LABEL)
         deviceIdentity  = JSONPreference(prefName : BMSSecurityConstants.DEVICE_IDENTITY_LABEL)
         appIdentity  = JSONPreference(prefName: BMSSecurityConstants.APP_IDENTITY_LABEL)
+        super.init()
+        AuthorizationManagerPreferences.sharedPreferences.addObserver(self, forKeyPath: BMSSecurityConstants.PERSISTENCE_POLICY_LABEL, options: NSKeyValueObservingOptions.New, context: nil)
+    }
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        if keyPath == persistencePolicy.prefName {
+            accessToken.updateStateByPolicy()
+            idToken.updateStateByPolicy()
+        }
+    }
+    deinit {
+        NSUserDefaults.standardUserDefaults().removeObserver(self, forKeyPath: "keyPath")
     }
 }
 
@@ -130,6 +141,10 @@ internal class PolicyPreference {
     }
     
     internal func set(value:PersistencePolicy ) {
+        if value == PersistencePolicy.NEVER {
+            SecurityUtils.removeItemFromKeyChain(BMSSecurityConstants.idTokenLabel)
+            //delete
+        }
         self.value = value
         AuthorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
         AuthorizationManagerPreferences.sharedPreferences.synchronize()
@@ -163,7 +178,6 @@ internal class TokenPreference {
         }
         return runtimeValue
     }
-    
     internal func updateStateByPolicy() {
         if (self.persistencePolicy.get() == PersistencePolicy.ALWAYS) {
             if let unWrappedRuntimeValue = runtimeValue {
