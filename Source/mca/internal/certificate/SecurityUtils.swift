@@ -12,6 +12,7 @@
 */
 
 import Foundation
+import RNCryptor
 
 internal class SecurityUtils {
     
@@ -263,6 +264,7 @@ internal class SecurityUtils {
         }
         
         func doSha256(dataIn:NSData) throws -> NSData {
+
             guard let shaOut: NSMutableData = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH)) else {
                 throw BMSSecurityError.generalError
             }
