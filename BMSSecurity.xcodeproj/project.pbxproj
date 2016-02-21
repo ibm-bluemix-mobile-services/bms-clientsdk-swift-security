@@ -14,6 +14,7 @@
 		FD51C0151C76262F00023F37 /* MCAUserIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51C0121C76262F00023F37 /* MCAUserIdentity.swift */; };
 		FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
 		FDBDF70B1C2AD89C00185039 /* BMSCore.framework in Sources */ = {isa = PBXBuildFile; fileRef = FDBDF7091C2AD81100185039 /* BMSCore.framework */; };
+		FDE4A34A1C79FB5900593EC5 /* RNCryptor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE4A3491C79FB5900593EC5 /* RNCryptor.framework */; };
 		FDF76FEA1C635683002FC6A2 /* AuthenticationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FCF1C635683002FC6A2 /* AuthenticationContext.swift */; };
 		FDF76FEB1C635683002FC6A2 /* AuthenticationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FD01C635683002FC6A2 /* AuthenticationDelegate.swift */; };
 		FDF76FF01C635683002FC6A2 /* MCAAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF76FD61C635683002FC6A2 /* MCAAuthorizationManager.swift */; };
@@ -48,6 +49,7 @@
 		FD51C0111C76262F00023F37 /* MCADeviceIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCADeviceIdentity.swift; sourceTree = "<group>"; };
 		FD51C0121C76262F00023F37 /* MCAUserIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCAUserIdentity.swift; sourceTree = "<group>"; };
 		FDBDF7091C2AD81100185039 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = "../../bms-clientsdk-swift-core/build/Debug-iphoneos/BMSCore.framework"; sourceTree = "<group>"; };
+		FDE4A3491C79FB5900593EC5 /* RNCryptor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RNCryptor.framework; sourceTree = "<group>"; };
 		FDF76FCC1C635683002FC6A2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		FDF76FCF1C635683002FC6A2 /* AuthenticationContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationContext.swift; sourceTree = "<group>"; };
 		FDF76FD01C635683002FC6A2 /* AuthenticationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationDelegate.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE4A34A1C79FB5900593EC5 /* RNCryptor.framework in Frameworks */,
 				FDBDF70A1C2AD81100185039 /* BMSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +93,7 @@
 			children = (
 				FDF76FCB1C635683002FC6A2 /* Source */,
 				FDBDF7091C2AD81100185039 /* BMSCore.framework */,
+				FDE4A3491C79FB5900593EC5 /* RNCryptor.framework */,
 				DB2BCF941C22FB2E0063A673 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -431,6 +435,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -452,6 +460,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
