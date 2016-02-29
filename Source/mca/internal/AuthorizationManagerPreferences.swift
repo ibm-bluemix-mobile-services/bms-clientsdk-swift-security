@@ -44,7 +44,7 @@ internal class AuthorizationManagerPreferences : NSObject{
         }
     }
     deinit {
-        NSUserDefaults.standardUserDefaults().removeObserver(self, forKeyPath: "keyPath")
+        NSUserDefaults.standardUserDefaults().removeObserver(self, forKeyPath: persistencePolicy.prefName)
     }
 }
 
@@ -141,10 +141,6 @@ internal class PolicyPreference {
     }
     
     internal func set(value:PersistencePolicy ) {
-        if value == PersistencePolicy.NEVER {
-            SecurityUtils.removeItemFromKeyChain(BMSSecurityConstants.idTokenLabel)
-            //delete
-        }
         self.value = value
         AuthorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
         AuthorizationManagerPreferences.sharedPreferences.synchronize()

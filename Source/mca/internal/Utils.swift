@@ -160,17 +160,17 @@ public class Utils {
     }
     
     
-    internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
-        do{
-            guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
-                throw JsonUtilsErrors.CouldNotParseDictionaryToJson
-            }
-            return json
-        } catch {
-            JsonUtilsErrors.CouldNotParseDictionaryToJson
-        }
-        return ""
-    }
+//    internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
+//        do{
+//            guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
+//                throw JsonUtilsErrors.CouldNotParseDictionaryToJson
+//            }
+//            return json
+//        } catch {
+//            JsonUtilsErrors.CouldNotParseDictionaryToJson
+//        }
+//        return ""
+//    }
     /**
      Decode base64 code
      
@@ -316,62 +316,6 @@ public class Utils {
     
     internal static func base64StringFromData(data:NSData, isSafeUrl:Bool) -> String {
         let length = data.length
-        var ixtext:Int = 0
-        var ctremaining:Int
-        var input:[Int] = [Int](count: 3, repeatedValue: 0)
-        var output:[Int] = [Int](count: 4, repeatedValue: 0)
-        var i:Int, charsonline:Int = 0, ctcopy:Int
-        guard data.length >= 1 else {
-            return ""
-        }
-        var result:String = ""
-        let count = data.length / sizeof(Int8)
-        var raw = [Int8](count: count, repeatedValue: 0)
-        data.getBytes(&raw, length:count * sizeof(Int8))
-        while (true) {
-            ctremaining = data.length - ixtext
-            if ctremaining <= 0 {
-                break
-            }
-            for i = 0; i < 3; i++ {
-                let ix:Int = ixtext + i
-                if ix < data.length {
-                    input[i] = Int(raw[ix])
-                } else {
-                    input[i] = 0
-                }
-            }
-            output[0] = (input[0] & 0xFC) >> 2
-            output[1] = ((input[0] & 0x03) << 4) | ((input[1] & 0xF0) >> 4)
-            output[2] = ((input[1] & 0x0F) << 2) | ((input[2] & 0xC0) >> 6)
-            output[3] = input[2] & 0x3F
-            ctcopy = 4
-            switch (ctremaining) {
-            case 1:
-                ctcopy = 2
-            case 2:
-                ctcopy = 3
-            default: break
-            }
-            for i = 0; i < ctcopy; i++ {
-                let toAppend = isSafeUrl ? BMSSecurityConstants.base64EncodingTableUrlSafe[output[i]]: BMSSecurityConstants.base64EncodingTable[output[i]]
-                result.append(toAppend)
-            }
-            for i = ctcopy; i < 4; i++ {
-                result += "="
-            }
-            ixtext += 3
-            charsonline += 4
-            
-            if (length > 0) && (charsonline >= length) {
-                charsonline = 0
-            }
-            
-        }
-        
-        return result
+        return base64StringFromData(data, length: length, isSafeUrl: isSafeUrl)
     }
-    
-    
-    
 }

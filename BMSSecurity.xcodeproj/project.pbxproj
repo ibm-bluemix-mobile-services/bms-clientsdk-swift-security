@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
 		EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */; };
+		EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */; };
+		EFEB70571C841FDF00A00372 /* MCAAuthorizationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70521C841FDF00A00372 /* MCAAuthorizationManagerTest.swift */; };
+		EFEB70581C841FDF00A00372 /* QueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70531C841FDF00A00372 /* QueueTest.swift */; };
+		EFEB70591C841FDF00A00372 /* SecurityUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70541C841FDF00A00372 /* SecurityUtilsTest.swift */; };
+		EFEB705A1C841FDF00A00372 /* UtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70551C841FDF00A00372 /* UtilsTest.swift */; };
+		EFEB705C1C8436B700A00372 /* AuthoirzationRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB705B1C8436B700A00372 /* AuthoirzationRequestTest.swift */; };
+		EFEB705E1C84784600A00372 /* AuthorizationRequestManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB705D1C84784600A00372 /* AuthorizationRequestManagerTest.swift */; };
+		EFEB70601C84963400A00372 /* ChallengeHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB705F1C84963400A00372 /* ChallengeHandlerTest.swift */; };
 		FD51C0131C76262F00023F37 /* MCAAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51C0101C76262F00023F37 /* MCAAppIdentity.swift */; };
 		FD51C0141C76262F00023F37 /* MCADeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51C0111C76262F00023F37 /* MCADeviceIdentity.swift */; };
 		FD51C0151C76262F00023F37 /* MCAUserIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD51C0121C76262F00023F37 /* MCAUserIdentity.swift */; };
@@ -45,6 +53,14 @@
 		DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
+		EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationManagerPreferencesTest.swift; path = BMSSecurityTests/AuthorizationManagerPreferencesTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB70521C841FDF00A00372 /* MCAAuthorizationManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MCAAuthorizationManagerTest.swift; path = BMSSecurityTests/MCAAuthorizationManagerTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB70531C841FDF00A00372 /* QueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QueueTest.swift; path = BMSSecurityTests/QueueTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB70541C841FDF00A00372 /* SecurityUtilsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SecurityUtilsTest.swift; path = BMSSecurityTests/SecurityUtilsTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB70551C841FDF00A00372 /* UtilsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UtilsTest.swift; path = BMSSecurityTests/UtilsTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB705B1C8436B700A00372 /* AuthoirzationRequestTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthoirzationRequestTest.swift; path = BMSSecurityTests/AuthoirzationRequestTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB705D1C84784600A00372 /* AuthorizationRequestManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationRequestManagerTest.swift; path = BMSSecurityTests/AuthorizationRequestManagerTest.swift; sourceTree = SOURCE_ROOT; };
+		EFEB705F1C84963400A00372 /* ChallengeHandlerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChallengeHandlerTest.swift; path = BMSSecurityTests/ChallengeHandlerTest.swift; sourceTree = SOURCE_ROOT; };
 		FD51C0101C76262F00023F37 /* MCAAppIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCAAppIdentity.swift; sourceTree = "<group>"; };
 		FD51C0111C76262F00023F37 /* MCADeviceIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCADeviceIdentity.swift; sourceTree = "<group>"; };
 		FD51C0121C76262F00023F37 /* MCAUserIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MCAUserIdentity.swift; sourceTree = "<group>"; };
@@ -91,6 +107,7 @@
 		DB2BCF891C22FB2E0063A673 = {
 			isa = PBXGroup;
 			children = (
+				EF2CDB361C82F93F00AA0E1D /* Tests */,
 				FDF76FCB1C635683002FC6A2 /* Source */,
 				FDBDF7091C2AD81100185039 /* BMSCore.framework */,
 				FDE4A3491C79FB5900593EC5 /* RNCryptor.framework */,
@@ -105,6 +122,29 @@
 				DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EF2CDB361C82F93F00AA0E1D /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				EF2CDB3B1C82FAA700AA0E1D /* UnitTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		EF2CDB3B1C82FAA700AA0E1D /* UnitTests */ = {
+			isa = PBXGroup;
+			children = (
+				EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */,
+				EFEB70521C841FDF00A00372 /* MCAAuthorizationManagerTest.swift */,
+				EFEB70531C841FDF00A00372 /* QueueTest.swift */,
+				EFEB70541C841FDF00A00372 /* SecurityUtilsTest.swift */,
+				EFEB70551C841FDF00A00372 /* UtilsTest.swift */,
+				EFEB705B1C8436B700A00372 /* AuthoirzationRequestTest.swift */,
+				EFEB705D1C84784600A00372 /* AuthorizationRequestManagerTest.swift */,
+				EFEB705F1C84963400A00372 /* ChallengeHandlerTest.swift */,
+			);
+			name = UnitTests;
 			sourceTree = "<group>";
 		};
 		FDF76FCB1C635683002FC6A2 /* Source */ = {
@@ -322,6 +362,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */,
+				EFEB70571C841FDF00A00372 /* MCAAuthorizationManagerTest.swift in Sources */,
+				EFEB705A1C841FDF00A00372 /* UtilsTest.swift in Sources */,
+				EFEB705E1C84784600A00372 /* AuthorizationRequestManagerTest.swift in Sources */,
+				EFEB70581C841FDF00A00372 /* QueueTest.swift in Sources */,
+				EFEB70591C841FDF00A00372 /* SecurityUtilsTest.swift in Sources */,
+				EFEB70601C84963400A00372 /* ChallengeHandlerTest.swift in Sources */,
+				EFEB705C1C8436B700A00372 /* AuthoirzationRequestTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,16 +528,19 @@
 		DB2BCFAB1C22FB2F0063A673 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = BMSSecurityTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.mobilefirstplatform.clientsdk.swift.BMSSecurityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		DB2BCFAC1C22FB2F0063A673 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = BMSSecurityTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.mobilefirstplatform.clientsdk.swift.BMSSecurityTests;

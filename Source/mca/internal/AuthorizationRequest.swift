@@ -18,7 +18,7 @@ import BMSCore
 internal class AuthorizationRequest : MFPRequest {
     
     internal func send(completionHandler: MfpCompletionHandler?) {
-        super.sendWithCompletionHandler(completionHandler)
+        sendWithCompletionHandler(completionHandler)
     }
     
     //Add new header
@@ -61,7 +61,7 @@ internal class AuthorizationRequest : MFPRequest {
             }
             i++
         }
-        super.sendString(body, withCompletionHandler: callback)
+        sendString(body, withCompletionHandler: callback)
     }
     private func urlEncode(str:String) -> String{
         var encodedString = ""
