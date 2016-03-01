@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DB2BCF9E1C22FB2F0063A673 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
+		EFE85A3B1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */; };
 		EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */; };
 		EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */; };
 		EFEB70571C841FDF00A00372 /* MCAAuthorizationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70521C841FDF00A00372 /* MCAAuthorizationManagerTest.swift */; };
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationProcessManagerTest.swift; path = BMSSecurityTests/AuthorizationProcessManagerTest.swift; sourceTree = SOURCE_ROOT; };
 		EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationManagerPreferencesTest.swift; path = BMSSecurityTests/AuthorizationManagerPreferencesTest.swift; sourceTree = SOURCE_ROOT; };
 		EFEB70521C841FDF00A00372 /* MCAAuthorizationManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MCAAuthorizationManagerTest.swift; path = BMSSecurityTests/MCAAuthorizationManagerTest.swift; sourceTree = SOURCE_ROOT; };
@@ -143,6 +145,7 @@
 				EFEB705B1C8436B700A00372 /* AuthoirzationRequestTest.swift */,
 				EFEB705D1C84784600A00372 /* AuthorizationRequestManagerTest.swift */,
 				EFEB705F1C84963400A00372 /* ChallengeHandlerTest.swift */,
+				EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */,
 			);
 			name = UnitTests;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFE85A3B1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift in Sources */,
 				EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */,
 				EFEB70571C841FDF00A00372 /* MCAAuthorizationManagerTest.swift in Sources */,
 				EFEB705A1C841FDF00A00372 /* UtilsTest.swift in Sources */,

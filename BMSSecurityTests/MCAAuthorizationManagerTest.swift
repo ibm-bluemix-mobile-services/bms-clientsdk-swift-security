@@ -20,6 +20,12 @@ class MCAAuthorizationManagerTest: XCTestCase {
         mcaAuthManager.preferences = AuthorizationManagerPreferences()
         super.tearDown()
     }
+    private func stringToBase64Data(str:String) -> NSData {
+        let utf8str = str.dataUsingEncoding(NSUTF8StringEncoding)
+        let base64EncodedStr = utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+        return NSData(base64EncodedString: base64EncodedStr!, options: NSDataBase64DecodingOptions(rawValue: 0))!
+    }
+    
     func testIsAuthorizationRequired() {
         //TODO complete this
         let authHeader = "ThisIsBEARer unittest"
@@ -28,6 +34,13 @@ class MCAAuthorizationManagerTest: XCTestCase {
         XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(403, responseAuthorizationHeader: authHeader))
         XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(400, responseAuthorizationHeader: authHeader))
         XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(401, responseAuthorizationHeader: noAuthHeader))
+        let txt = "test"
+        let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer"]), isRedirect: false)
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(response1))
+        let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercaseString : "Bearer"]), isRedirect: false)
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(response2))
+        let response3:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(), isRedirect: false)
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(response3))
     }
     func testClearAuthorizationData(){
         mcaAuthManager.preferences.accessToken.set("testAccessToken")

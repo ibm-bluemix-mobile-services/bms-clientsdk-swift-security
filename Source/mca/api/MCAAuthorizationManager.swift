@@ -21,7 +21,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public static let CONTENT_TYPE = "Content-Type"
     
-    private var preferences:AuthorizationManagerPreferences
+    internal var preferences:AuthorizationManagerPreferences
     
     //lock constant
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
@@ -87,10 +87,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
-        MCAAuthorizationManager.addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
+        addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
     }
     
-    public static func addAuthorizationHeader(request: NSMutableURLRequest, header:String?) {
+    private func addAuthorizationHeader(request: NSMutableURLRequest, header:String?) {
         guard let unWrappedHeader = header else {
             return
         }

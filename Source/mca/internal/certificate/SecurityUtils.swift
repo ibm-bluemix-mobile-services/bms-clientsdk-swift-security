@@ -21,7 +21,7 @@ internal class SecurityUtils {
             kSecValueRef: key,
             kSecAttrIsPermanent : true,
             kSecAttrApplicationTag : tag,
-            kSecAttrKeyClass : kSecAttrKeyClassPrivate
+            kSecAttrKeyClass : kSecAttrKeyClassPublic
             
         ]
         let addStatus:OSStatus = SecItemAdd(publicKeyAttr, nil)
@@ -45,7 +45,6 @@ internal class SecurityUtils {
         guard status == errSecSuccess else {
             throw BMSSecurityError.generalError
         }
-        
         return result as! NSData
         
     }
@@ -149,12 +148,12 @@ internal class SecurityUtils {
     
     internal static func signCsr(payloadJSON:[String : AnyObject], keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
         do {
-            let strPayloadJSON = Utils.parseDictionaryToJson(payloadJSON)
+            let strPayloadJSON = try Utils.JSONStringify(payloadJSON)
             let keys = try getKeyPairBitsFromKeyChain(ids.publicKey, privateTag: ids.privateKey)
             let publicKey = keys.publicKey
             
             let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
-            let strJwsHeaderJSON = try Utils.parseDictionaryToJson(getJWSHeaderForPublicKey(publicKey))
+            let strJwsHeaderJSON = try Utils.JSONStringify(getJWSHeaderForPublicKey(publicKey))
             guard let jwsHeaderData : NSData = strJwsHeaderJSON.dataUsingEncoding(NSUTF8StringEncoding), payloadJSONData : NSData = strPayloadJSON.dataUsingEncoding(NSUTF8StringEncoding) else {
                 throw BMSSecurityError.generalError
             }
@@ -258,7 +257,7 @@ internal class SecurityUtils {
         return ret
     }
     
-    internal static func signData(payload:String, privateKey:SecKey) throws -> NSData {
+    private static func signData(payload:String, privateKey:SecKey) throws -> NSData {
         guard let data:NSData = payload.dataUsingEncoding(NSUTF8StringEncoding) else {
             throw BMSSecurityError.generalError
         }
