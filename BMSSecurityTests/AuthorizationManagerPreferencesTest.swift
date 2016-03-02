@@ -9,16 +9,19 @@
 import XCTest
 @testable import BMSCore
 @testable import BMSSecurity
+
 class AuthorizationManagerPreferencesTest: XCTestCase {
     var preferences:AuthorizationManagerPreferences = AuthorizationManagerPreferences()
     var idToken = "123"
     var accessToken = "456"
     var clientId = "id2"
+    
     override func setUp() {
         preferences = AuthorizationManagerPreferences()
-
+        SecItemDelete([ kSecClass as String : kSecClassGenericPassword ]) //clears tokens from keychain
         super.setUp()
     }
+    
     func testClientIdPreference() {
         preferences.clientId.set(clientId)
         XCTAssertEqual(preferences.clientId.get(),clientId)
@@ -26,8 +29,8 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertNil(preferences.clientId.get())
         
     }
+    
     func testIdentityPreferences() {
-        //TODO: maybe split this one and just push random identity
         preferences.appIdentity.set(MCAAppIdentity().getAsJson())
         var appId = preferences.appIdentity.getAsMap()
         XCTAssertEqual(appId?[BaseAppIdentity.ID] as? String, Utils.getApplicationDetails().name)
@@ -43,26 +46,17 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertEqual(userId?["item2"] as? String, "two")
         
     }
+    
     func testTokenPreferences(){
         preferences = AuthorizationManagerPreferences()
         preferences.persistencePolicy.set(PersistencePolicy.ALWAYS)
         preferences.accessToken.set(accessToken)
         preferences.idToken.set(idToken)
-        XCTAssertEqual(preferences.accessToken.get(),accessToken)
-        XCTAssertEqual(preferences.idToken.get(),idToken)
-        XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),idToken)
-        XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName),accessToken)
+        assertTokens(true)
         preferences.persistencePolicy.set(PersistencePolicy.NEVER)
-        XCTAssertEqual(preferences.accessToken.get(),accessToken)
-        XCTAssertEqual(preferences.idToken.get(),idToken)
-        XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName))
-        XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
+        assertTokens(false)
         preferences.persistencePolicy.set(PersistencePolicy.ALWAYS)
-//       NSThread.sleepForTimeInterval(5)
-        XCTAssertEqual(preferences.accessToken.get(),accessToken)
-        XCTAssertEqual(preferences.idToken.get(),idToken)
-        XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),idToken)
-        XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName),accessToken)
+        assertTokens(true)
         preferences.idToken.clear()
         preferences.accessToken.clear()
         XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),nil)
@@ -70,17 +64,18 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertNil(preferences.accessToken.get())
         XCTAssertNil(preferences.idToken.get())
     }
-//    private func assertTokens(TokensShouldExistInKeyChain:Bool) {
-//        XCTAssertEqual(preferences.accessToken.get(),accessToken)
-//        XCTAssertEqual(preferences.idToken.get(),idToken)
-//        if TokensShouldExistInKeyChain {
-//            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),idToken)
-//            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName),accessToken)
-//        } else {
-//            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName))
-//            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
-//        }
-//        
-//        
-//    }
+    
+    private func assertTokens(TokensShouldExistInKeyChain:Bool) {
+        XCTAssertEqual(preferences.accessToken.get(),accessToken)
+        XCTAssertEqual(preferences.idToken.get(),idToken)
+        if TokensShouldExistInKeyChain {
+            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),idToken)
+            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName),accessToken)
+        } else {
+            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName))
+            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
+        }
+        
+        
+    }
 }

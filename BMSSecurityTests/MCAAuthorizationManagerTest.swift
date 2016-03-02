@@ -17,7 +17,7 @@ class MCAAuthorizationManagerTest: XCTestCase {
     }
     
     override func tearDown() {
-        mcaAuthManager.preferences = AuthorizationManagerPreferences()
+        mcaAuthManager.preferences = MockAuthorizationManagerPreference()
         super.tearDown()
     }
     private func stringToBase64Data(str:String) -> NSData {
@@ -46,17 +46,42 @@ class MCAAuthorizationManagerTest: XCTestCase {
         mcaAuthManager.preferences.accessToken.set("testAccessToken")
         mcaAuthManager.preferences.idToken.set("testAccessToken")
         mcaAuthManager.preferences.userIdentity.set("testUserIdentity")
+        let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        cookiesStorage.cookieAcceptPolicy = NSHTTPCookieAcceptPolicy.Always
+        let cookieProperties:[String : AnyObject] = [
+            NSHTTPCookieName : "JSESSIONID",
+            NSHTTPCookieValue : "value",
+            NSHTTPCookieDomain : "www.test.com",
+            NSHTTPCookieOriginURL : "www.test.com",
+            NSHTTPCookiePath : "/",
+            NSHTTPCookieVersion : "0"
+        ]
+        cookiesStorage.setCookie(NSHTTPCookie(properties: cookieProperties)!)
+        XCTAssertEqual(numberOfCookiesForName("JSESSIONID"), 1)
         mcaAuthManager.clearAuthorizationData()
+        XCTAssertEqual(numberOfCookiesForName("JSESSIONID"), 0)
         XCTAssertNil(mcaAuthManager.preferences.userIdentity.get())
         XCTAssertNil(mcaAuthManager.preferences.idToken.get())
         XCTAssertNil(mcaAuthManager.preferences.accessToken.get())
-        //TODO: check cookies are cleared
+    }
+    
+    private func numberOfCookiesForName(name:String) -> Int {
+        var count = 0
+        let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        if let cookies = cookiesStorage.cookies {
+            for cookie in cookies {
+                if cookie.name == name {
+                    count++
+                }
+            }
+        }
+        return count
     }
     
     func testPersistencePolicy(){
-        mcaAuthManager.setAuthorizationPersistensePolicy(PersistencePolicy.ALWAYS)
+        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.ALWAYS)
         XCTAssertEqual(mcaAuthManager.getAuthorizationPersistencePolicy(),PersistencePolicy.ALWAYS)
-        mcaAuthManager.setAuthorizationPersistensePolicy(PersistencePolicy.NEVER)
+        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.NEVER)
         XCTAssertEqual(mcaAuthManager.getAuthorizationPersistencePolicy(),PersistencePolicy.NEVER)
     }
     
@@ -85,10 +110,10 @@ class MCAAuthorizationManagerTest: XCTestCase {
             func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject?){
             }
             func onAuthenticationSuccess(info: AnyObject?) {
-               
+                
             }
             func onAuthenticationFailure(info: AnyObject?){
-               
+                
             }
         }
         let delegate = MyAuthDelegate()
@@ -102,24 +127,95 @@ class MCAAuthorizationManagerTest: XCTestCase {
     }
     
     func testGetIdentities(){
+        mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
         var appId = mcaAuthManager.getAppIdentity().jsonData
-        XCTAssertEqual(appId[BaseAppIdentity.ID], Utils.getApplicationDetails().name)
-        XCTAssertEqual(appId[BaseAppIdentity.VERSION], Utils.getApplicationDetails().version)
+        XCTAssertEqual(appId["item1app"], "one")
+        XCTAssertEqual(appId["item2app"], "two")
+        mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" , "item2device" : "two"])
         var deviceId = mcaAuthManager.getDeviceIdentity().jsonData
-        XCTAssertEqual(deviceId[BaseDeviceIdentity.ID], UIDevice.currentDevice().identifierForVendor?.UUIDString)
-        XCTAssertEqual(deviceId[BaseDeviceIdentity.OS], UIDevice.currentDevice().systemVersion)
-        XCTAssertEqual(deviceId[BaseDeviceIdentity.MODEL], UIDevice.currentDevice().model)
-        mcaAuthManager.preferences.userIdentity.set(["item1" : "one" , "item2" : "two"])
+        XCTAssertEqual(deviceId["item1device"], "one")
+        XCTAssertEqual(deviceId["item2device"], "two")
+        mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" , "item2user" : "two"])
         var userId = mcaAuthManager.getUserIdentity().jsonData
-        XCTAssertEqual(userId["item1"], "one")
-        XCTAssertEqual(userId["item2"], "two")
+        XCTAssertEqual(userId["item1user"], "one")
+        XCTAssertEqual(userId["item2user"], "two")
     }
     
-    func testObtainAuthorization(){
-        //no need to check, it just calls AuthoriztionProcessManager's method - startAuthorizationProcess
+    class MockAuthorizationManagerPreference: AuthorizationManagerPreferences {
+        
+        override init(){
+            super.init()
+            persistencePolicy = MockPolicyPreference()
+            idToken = MockTokenPreference()
+            idToken.persistencePolicy = persistencePolicy
+            accessToken = MockTokenPreference()
+            accessToken.persistencePolicy = persistencePolicy
+            clientId = MockStringPreference()
+            userIdentity = MockJSONPreference()
+            appIdentity = MockJSONPreference()
+            deviceIdentity = MockJSONPreference()
+        }
+        class MockPolicyPreference : PolicyPreference{
+            var mockValue:PersistencePolicy
+            init() {
+                self.mockValue = PersistencePolicy.ALWAYS
+                super.init(prefName: "", defaultValue: PersistencePolicy.ALWAYS, idToken: nil, accessToken: nil)
+            }
+            override func set(value: PersistencePolicy) {
+                self.mockValue = value
+            }
+            override func get() -> PersistencePolicy {
+                return self.mockValue
+            }
+        }
+        class MockTokenPreference : TokenPreference {
+            var mockValue:String? = nil
+            init()
+            {
+                super.init(prefName: "", persistencePolicy: MockPolicyPreference())
+            }
+            override func set(value: String) {
+                self.mockValue = value
+            }
+            override func get() -> String? {
+                return self.mockValue
+            }
+            override func clear() {
+                mockValue = nil
+            }
+        }
+        class MockStringPreference : StringPreference {
+            var mockValue:String? = nil
+            init()
+            {
+                super.init(prefName: "", defaultValue: nil)
+            }
+            override func set(value: String?) {
+                self.mockValue = value
+            }
+            override func get() -> String? {
+                return self.mockValue
+            }
+            override func clear() {
+                mockValue = nil
+            }
+        }
+        class MockJSONPreference: JSONPreference {
+            var mockValue:String? = nil
+            init()
+            {
+                super.init(prefName: "")
+            }
+            override func set(value: String?) {
+                self.mockValue = value
+            }
+            override func get() -> String? {
+                return self.mockValue
+            }
+            override func clear() {
+                mockValue = nil
+            }
+            
+        }
     }
-    
-    
-    
-   
 }

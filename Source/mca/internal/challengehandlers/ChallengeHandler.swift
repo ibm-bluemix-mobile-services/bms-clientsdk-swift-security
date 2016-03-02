@@ -14,12 +14,12 @@
 import BMSCore
 public class ChallengeHandler : AuthenticationContext{
     
-    private var realm:String
-    private var authenticationDelegate:AuthenticationDelegate?
-    private var waitingRequests:[AuthorizationRequestManager]
-    private var activeRequest:AuthorizationRequestManager?
-    private var lockQueue = dispatch_queue_create("ChallengeHandlerQueue", DISPATCH_QUEUE_CONCURRENT)
-    
+    internal var realm:String
+    internal var authenticationDelegate:AuthenticationDelegate?
+    internal var waitingRequests:[AuthorizationRequestManager]
+    internal var activeRequest:AuthorizationRequestManager?
+    internal var lockQueue = dispatch_queue_create("ChallengeHandlerQueue", DISPATCH_QUEUE_CONCURRENT)
+
     public init(realm:String , authenticationDelegate:AuthenticationDelegate) {
         self.realm = realm
         self.authenticationDelegate = authenticationDelegate
@@ -94,22 +94,13 @@ public class ChallengeHandler : AuthenticationContext{
             self.activeRequest = nil
         }
     }
-    private func setActiveRequest(request:AuthorizationRequestManager) {
-        dispatch_barrier_async(lockQueue){
-            self.activeRequest = request
-        }
-    }
     private func releaseWaitingList() {
-        dispatch_barrier_async(lockQueue){
-            for request in self.waitingRequests {
-                request.removeExpectedAnswer(self.realm)
-            }
-            self.clearWaitingList()
+        for request in self.waitingRequests {
+            request.removeExpectedAnswer(self.realm)
         }
+        self.clearWaitingList()
     }
     private func clearWaitingList() {
-        dispatch_barrier_async(lockQueue){
-            self.waitingRequests.removeAll()
-        }
+        self.waitingRequests.removeAll()
     }
 }

@@ -70,14 +70,14 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return false
     }
     
-    private func clearCookies() {
+    private func clearCookies() {  
         let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = cookiesStorage.cookies {
-            for cookie in cookies {
+            let jSessionCookies = cookies.filter() {$0.name == "JSESSIONID"}
+            for cookie in jSessionCookies {
                 cookiesStorage.deleteCookie(cookie)
             }
         }
-        NSUserDefaults.standardUserDefaults().synchronize()
     }
     public func clearAuthorizationData() {
         preferences.userIdentity.clear()
@@ -171,7 +171,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      
      - parameter policy: <#policy description#>
      */
-    public func setAuthorizationPersistensePolicy(policy: PersistencePolicy) {
+    public func setAuthorizationPersistencePolicy(policy: PersistencePolicy) {
         if preferences.persistencePolicy.get() != policy {
             preferences.persistencePolicy.set(policy)
             preferences.accessToken.updateStateByPolicy()

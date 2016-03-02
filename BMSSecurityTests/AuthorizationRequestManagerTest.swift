@@ -78,12 +78,8 @@ class AuthorizationRequestManagerTest: XCTestCase {
         class MockAuthorizationRequestManager: AuthorizationRequestManager {
             static var override = false
             static var fullPath = false
-            static var onlyPath = false
             override func sendInternal(rootUrl: String, path: String, options: RequestOptions?) throws {
-                if MockAuthorizationRequestManager.onlyPath {
-                    XCTAssertEqual(rootUrl, "")
-                    XCTAssertEqual(path, "http://www.test.com")
-                } else if !MockAuthorizationRequestManager.fullPath {
+                 if !MockAuthorizationRequestManager.fullPath {
                     let prefix = MockAuthorizationRequestManager.override ? "override" : MCAAuthorizationManager.defaultProtocol
                         + "://"
                         + BMSSecurityConstants.AUTH_SERVER_NAME
@@ -112,9 +108,6 @@ class AuthorizationRequestManagerTest: XCTestCase {
         XCTAssertNotNil(try? mockRequestManager.send(endPoint, options: RequestOptions()))
         var path = MCAAuthorizationManager.HTTP_SCHEME + "://www.test.com/a/b/c" + endPoint
         MockAuthorizationRequestManager.fullPath = true
-        XCTAssertNotNil(try? mockRequestManager.send(path, options: RequestOptions()))
-        path = MCAAuthorizationManager.HTTP_SCHEME + "://www.test.com"
-        MockAuthorizationRequestManager.onlyPath = true
         XCTAssertNotNil(try? mockRequestManager.send(path, options: RequestOptions()))
        
     }
