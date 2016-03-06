@@ -27,7 +27,6 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertEqual(preferences.clientId.get(),clientId)
         preferences.clientId.clear()
         XCTAssertNil(preferences.clientId.get())
-        
     }
     
     func testIdentityPreferences() {
@@ -44,7 +43,6 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         var userId = preferences.userIdentity.getAsMap()
         XCTAssertEqual(userId?["item1"] as? String, "one")
         XCTAssertEqual(userId?["item2"] as? String, "two")
-        
     }
     
     func testTokenPreferences(){
@@ -75,7 +73,5 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
             XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName))
             XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
         }
-        
-        
     }
 }

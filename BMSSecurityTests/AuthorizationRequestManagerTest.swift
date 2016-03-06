@@ -18,10 +18,6 @@ class AuthorizationRequestManagerTest: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
     private func stringToBase64Data(str:String) -> NSData {
         let utf8str = str.dataUsingEncoding(NSUTF8StringEncoding)
         let base64EncodedStr = utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))

@@ -27,7 +27,6 @@ class MCAAuthorizationManagerTest: XCTestCase {
     }
     
     func testIsAuthorizationRequired() {
-        //TODO complete this
         let authHeader = "ThisIsBEARer unittest"
         let noAuthHeader = "ThisIsBearr unittest"
         XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(401, responseAuthorizationHeader: authHeader))
