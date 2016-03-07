@@ -139,6 +139,7 @@ internal class AuthorizationRequestManager {
                     processResponseWrapper(response,isFailure: true)
                 } else {
                     self.defaultCompletionHandler(response, error)
+                    return
                 }
             }
             
@@ -153,6 +154,7 @@ internal class AuthorizationRequestManager {
                     processResponseWrapper(response,isFailure: true)
                 } else {
                     self.defaultCompletionHandler(response, error)
+                    return
                 }
             }
         }
