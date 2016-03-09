@@ -18,7 +18,7 @@ internal class AuthorizationProcessManager {
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
     var completionHandler: MfpCompletionHandler?
-    
+    private var authorizationFailureCount = 0
     internal static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
@@ -142,6 +142,14 @@ internal class AuthorizationProcessManager {
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.GET
             let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+                guard response?.statusCode != 400 else {
+                    if self.authorizationFailureCount++ < 1 {
+                        SecurityUtils.clearKeyChain()
+                        self.preferences.clientId.clear()
+                        self.startAuthorizationProcess(self.authorizationQueue.remove())
+                    }
+                    return
+                }
                 if error == nil {
                     if let unWrappedResponse = response {
                         do {
@@ -319,7 +327,7 @@ internal class AuthorizationProcessManager {
     }
     
     private func handleAuthorizationFailure(error: ErrorType) {
-        self.handleAuthorizationFailure(nil, error: NSError(domain: BMSSecurityConstants.IMFClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error)"]))
+        self.handleAuthorizationFailure(nil, error: NSError(domain: BMSSecurityConstants.BMSClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error)"]))
     }
     
     private func handleAuthorizationFailure(response: Response?,  error: NSError?)

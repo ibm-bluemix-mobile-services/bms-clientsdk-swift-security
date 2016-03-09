@@ -161,7 +161,7 @@ internal class BMSSecurityConstants {
     internal static let DEVICE_IDENTITY_LABEL = "deviceIdentity"
     internal static let USER_IDENTITY_LABEL = "userIdentity"
     //labels
-    internal static let IMFClientErrorDomain = "com.ibm.mobilefoundation.client"
+    internal static let BMSClientErrorDomain = "com.ibm.mobilefoundation.client"
     internal static let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
