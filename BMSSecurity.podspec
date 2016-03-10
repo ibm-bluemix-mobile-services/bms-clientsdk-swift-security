@@ -6,8 +6,7 @@ Pod::Spec.new do |s|
     s.license      = 'Apache License, Version 2.0'
     s.author       = { "IBM Bluemix Services Mobile SDK" => "mobilsdk@us.ibm.com" }
 
-    #s.source       = { :git => 'https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-security.git', :tag => "v#{s.version}" }
-    s.source       = { :git => 'https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-security.git', :branch => 'mca_team_dev' }
+    s.source       = { :git => 'https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-security.git', :tag => "v#{s.version}" }    
     s.requires_arc = true
     s.dependency 'BMSCore'
     s.dependency 'RNCryptor', '~> 4.0.0-beta'
