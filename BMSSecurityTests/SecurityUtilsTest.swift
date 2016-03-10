@@ -31,6 +31,7 @@ class SecurityUtilsTest: XCTestCase {
     
     
     func testKeyPairGeneration() {
+        SecurityUtils.clearDictValuesFromKeyChain([publicKeyTag : kSecClassKey, privateKeyTag : kSecClassKey])
         XCTAssertNotNil(try? SecurityUtils.generateKeyPair(keySize, publicTag: publicKeyTag, privateTag: privateKeyTag))
     }
     
