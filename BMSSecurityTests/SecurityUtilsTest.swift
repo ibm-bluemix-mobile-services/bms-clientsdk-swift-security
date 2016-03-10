@@ -17,8 +17,6 @@ class SecurityUtilsTest: XCTestCase {
     
     var publicKeyData:NSData = NSData(base64EncodedString: "MEgCQQDh/pwAlN3AqKQM+v0sybg7VMjeJx4Z5PcnxfQxYhj3LVz28DF6H2b3fVnGEKrcPsN1lf8obovT6zlX1QYZOgpjAgMBAAE=", options: NSDataBase64DecodingOptions(rawValue:0))!
     var privateKeyData:NSData = NSData(base64EncodedString: "MIIBOgIBAAJBAOH+nACU3cCopAz6/SzJuDtUyN4nHhnk9yfF9DFiGPctXPbwMXofZvd9WcYQqtw+w3WV/yhui9PrOVfVBhk6CmMCAwEAAQJAJ4H8QbnEnoacz0wdcHP/ShgDWZrbD0nQz1oy22M73BHidwDvy1rIeM6PgkK1tyHNWrqyo1kAnp7DuNVmfGbJ0QIhAc3gVBJCrVbiO23OasUuYTN2y2KrZ2DUcjLp5ZOID1/LAiB9Qo1mx3yz4HT4wJvddb9AqSTlmSrrdXcNGNhWFRT8yQIhAbepkD3lrL2lEy8+q9JRiQOFVKvzP7Aj6yVeE0Sx4virAiAk2ITbrOajyuzdl1rCBDbkAF1YJHwZkw4YDizk9YKc8QIhAV0VZFoZidVBTsoi7xeufS0GSDqPxskq7gJGY70p4dco", options: NSDataBase64DecodingOptions(rawValue:0))!
-    var savedPublicKeyTag = "savedPublicKeyTag"
-    var savedPrivateKeyTag = "savedPrivateKeyTag"
     var jws = "eyJqcGsiOnsibW9kIjoiQU9IK25BQ1UzY0NvcEF6NlwvU3pKdUR0VXlONG5IaG5rOXlmRjlERmlHUGN0WFBid01Yb2ZadmQ5V2NZUXF0dyt3M1dWXC95aHVpOVByT1ZmVkJoazZDbU09IiwiYWxnIjoiUlNBIiwiZXhwIjoiQVFBQiJ9LCJhbGciOiJSUzI1NiJ9.eyJjb2RlIjoiNTBzcWthZER6bTl6TjdFTEpDWXR1bnlLb3Raa1Y3SEJKdFBMSHJmZzAzY2Qtbk5JOEhnU1VicnpoNmJpa2ZLYl9MeVUwQU54UGkyWDA4OUNqV0syT3RDR3djRHJ2RjNlcEM5WFFHMXlwTlVMZHo4c2dWZWVmYkxob2JsZ2ltZ2JwN3M1X0dLSllWWmVGZ2JpbnFlWWhmMXpudEZOdHA0dVhsNmVaX1h1aTMwZ2VwTEEyT2pUcUhnM1VadV9xRVk0In0=.xQfcPyBLST41cqNBu8kfJKALayLlffJiy4qKRCqdAOvz30pcz5Je0pGto4E1pUAtgLMsM8003qaUSaS2fVhsdw=="
     var certificateLabel = "certificateLabel"
     var itemLabel = "itemLabel"
@@ -26,14 +24,13 @@ class SecurityUtilsTest: XCTestCase {
     var grantCode = "50sqkadDzm9zN7ELJCYtunyKotZkV7HBJtPLHrfg03cd-nNI8HgSUbrzh6bikfKb_LyU0ANxPi2X089CjWK2OtCGwcDrvF3epC9XQG1ypNULdz8sgVeefbLhoblgimgbp7s5_GKJYVZeFgbinqeYhf1zntFNtp4uXl6eZ_Xui30gepLA2OjTqHg3UZu_qEY4"
     override func setUp() {
         super.setUp()
-        SecurityUtils.clearKeyChain()
+        SecurityUtils.clearDictValuesFromKeyChain([certificateLabel : kSecClassCertificate, publicKeyTag : kSecClassKey, privateKeyTag : kSecClassKey])
         savePublicKeyDataToKeyChain(publicKeyData, tag: publicKeyTag)
         savePrivateKeyDataToKeyChain(privateKeyData, tag: privateKeyTag)
     }
     
     
     func testKeyPairGeneration() {
-        SecurityUtils.clearKeyChain()
         XCTAssertNotNil(try? SecurityUtils.generateKeyPair(keySize, publicTag: publicKeyTag, privateTag: privateKeyTag))
     }
     
@@ -68,7 +65,6 @@ class SecurityUtilsTest: XCTestCase {
         XCTAssertNil(SecurityUtils.getItemFromKeyChain(itemLabel))
     }
     override func tearDown() {
-        SecurityUtils.clearKeyChain()
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }

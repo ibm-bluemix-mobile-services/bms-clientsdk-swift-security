@@ -102,7 +102,7 @@ class AuthorizationRequestManagerTest: XCTestCase {
         MockAuthorizationRequestManager.overrideServerHost = "override"
         MockAuthorizationRequestManager.override = true
         XCTAssertNotNil(try? mockRequestManager.send(endPoint, options: RequestOptions()))
-        var path = MCAAuthorizationManager.HTTP_SCHEME + "://www.test.com/a/b/c" + endPoint
+        let path = MCAAuthorizationManager.HTTP_SCHEME + "://www.test.com/a/b/c" + endPoint
         MockAuthorizationRequestManager.fullPath = true
         XCTAssertNotNil(try? mockRequestManager.send(path, options: RequestOptions()))
        
