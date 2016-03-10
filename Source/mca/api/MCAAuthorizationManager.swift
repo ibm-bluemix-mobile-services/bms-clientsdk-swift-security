@@ -83,6 +83,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         preferences.userIdentity.clear()
         preferences.idToken.clear()
         preferences.accessToken.clear()
+        processManager.authorizationFailureCount = 0
         clearCookies()
     }
     

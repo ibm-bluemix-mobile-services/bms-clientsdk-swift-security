@@ -18,7 +18,7 @@ internal class AuthorizationProcessManager {
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
     var completionHandler: MfpCompletionHandler?
-    private var authorizationFailureCount = 0
+    internal var authorizationFailureCount = 0
     internal static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
