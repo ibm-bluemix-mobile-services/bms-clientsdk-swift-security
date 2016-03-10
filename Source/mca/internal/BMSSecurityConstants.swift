@@ -150,25 +150,28 @@ internal class BMSSecurityConstants {
     internal static let JSON_ID_TOKEN_KEY = "id_token"
     
     //label names
-    internal static let OAUTH_CERT_LABEL = "com.worklight.oauth.certificate"
-    internal static let _PUBLIC_KEY_LABEL = "com.worklight.oauth.publickey"
-    internal static let CLIENT_ID_KEY_LABEL = "com.worklight.oauth.clientid"
-    internal static let _PRIVATE_KEY_LABEL = "com.worklight.oauth.privatekey"
-    internal static let OAUTH_ACCESS_TOKEN_LABEL = "com.worklight.oauth.accesstoken"
-    internal static let OAUTH_ID_TOKEN_LABEL = "com.worklight.oauth.idtoken"
+    internal static let KEY_CHAIN_PREFIX = "com.ibm.bms.mca.oauth"
+    internal static let OAUTH_CERT_LABEL = "\(KEY_CHAIN_PREFIX).certificate"
+    internal static let _PUBLIC_KEY_LABEL = "\(KEY_CHAIN_PREFIX).publickey"
+    internal static let CLIENT_ID_KEY_LABEL = "\(KEY_CHAIN_PREFIX).clientid"
+    internal static let _PRIVATE_KEY_LABEL = "\(KEY_CHAIN_PREFIX).privatekey"
+    internal static let OAUTH_ACCESS_TOKEN_LABEL = "\(KEY_CHAIN_PREFIX).accesstoken"
+    internal static let OAUTH_ID_TOKEN_LABEL = "\(KEY_CHAIN_PREFIX).idtoken"
     internal static let PERSISTENCE_POLICY_LABEL = "persistencePolicy"
     internal static let APP_IDENTITY_LABEL = "appIdentity"
     internal static let DEVICE_IDENTITY_LABEL = "deviceIdentity"
     internal static let USER_IDENTITY_LABEL = "userIdentity"
     //labels
-    internal static let BMSClientErrorDomain = "com.ibm.mobilefoundation.client"
+
+    internal static let BMSClientErrorDomain = "com.ibm.bms.mca.client"
     internal static let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let accessTokenLabel = "\(OAUTH_ACCESS_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let clientIdLabel = "\(CLIENT_ID_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let certificateIdentifier = "\(OAUTH_CERT_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
-    
+    internal static let AuthorizationKeyChainTagsDictionary = [privateKeyIdentifier : kSecClassKey, publicKeyIdentifier : kSecClassKey, idTokenLabel : kSecClassGenericPassword, accessTokenLabel : kSecClassGenericPassword, certificateIdentifier : kSecClassCertificate]
+
 }
 
 

@@ -263,7 +263,7 @@ internal class SecurityUtils {
         }
         
         func doSha256(dataIn:NSData) throws -> NSData {
-
+            
             guard let shaOut: NSMutableData = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH)) else {
                 throw BMSSecurityError.generalError
             }
@@ -389,12 +389,15 @@ internal class SecurityUtils {
         throw BMSSecurityError.generalError
     }
     
-    internal static func clearKeyChain()  {
-        let availableKSecClasses = [kSecClassCertificate, kSecClassGenericPassword, kSecClassIdentity, kSecClassInternetPassword, kSecClassKey]
-        for availableKSecClass in availableKSecClasses {
-            let query = [ kSecClass as String : availableKSecClass ]
-            SecItemDelete(query)
+    internal static func clearDictValuesFromKeyChain(dict : [String : NSString])  {
+        for (tag, kSecClassName) in dict {
+            if kSecClassName == kSecClassCertificate {
+                deleteCertificateFromKeyChain(tag)
+            } else if kSecClassName == kSecClassKey {
+                deleteKeyFromKeyChain(tag)
+            } else if kSecClassName == kSecClassGenericPassword {
+                removeItemFromKeyChain(tag)
+            }
         }
     }
-    
 }

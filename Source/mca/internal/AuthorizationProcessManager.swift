@@ -144,7 +144,7 @@ internal class AuthorizationProcessManager {
             let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
                 guard response?.statusCode != 400 else {
                     if self.authorizationFailureCount++ < 1 {
-                        SecurityUtils.clearKeyChain()
+                        SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary)
                         self.preferences.clientId.clear()
                         self.startAuthorizationProcess(self.authorizationQueue.remove())
                     }
