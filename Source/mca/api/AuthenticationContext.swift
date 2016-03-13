@@ -15,20 +15,20 @@ import Foundation
 
 public protocol AuthenticationContext {
 
-    /**
-    * Submits authentication challenge response
-    @param answer Dictionary with challenge responses
+    /*!
+        @brief Submits authentication challenge response
+        @param answer Dictionary with challenge responses
     */
     func submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?)
 
-    /**
-    * Informs client about successful authentication
+    /*!
+        @brief Informs client about successful authentication
     */
     func submitAuthenticationSuccess ()
 
-    /**
-    * Informs client about failed authentication
-    @param userInfo Dictionary with extended information about failure
+    /*!
+        Informs client about failed authentication
+        @param userInfo Dictionary with extended information about failure
     */
     func submitAuthenticationFailure (info:[String:AnyObject]?)
 }

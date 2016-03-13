@@ -14,7 +14,8 @@ import Foundation
 import BMSCore
 
 public class MCAAuthorizationManager : AuthorizationManager {
-    //
+    
+    /// Default scheme to use (default is https)
     public static var defaultProtocol: String = HTTPS_SCHEME
     public static let HTTP_SCHEME = "http"
     public static let HTTPS_SCHEME = "https"
@@ -28,6 +29,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     private var challengeHandlers:[String:ChallengeHandler]
     
+    /// @return the singelton instance
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
@@ -49,6 +51,14 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
+    /*!
+        A response is an OAuth error response only if,
+        1. it's status is 401 or 403
+        2. The value of the "WWW-Authenticate" header contains 'Bearer'
+    
+        @param httpResponse response to check the authorization conditions for.
+        @return true if the response satisfies both conditions
+     */
     public func isAuthorizationRequired(httpResponse: Response) -> Bool {
         if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
@@ -61,6 +71,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return false
     }
     
+    /*!
+        @brief Check if the params came from response that requires authorization
+        @param statusCode of the response
+        @param headers response headers
+        @return true if status is 401 or 403 and The value of the header contains 'Bearer'
+     */
     public func isAuthorizationRequired(statusCode: Int, responseAuthorizationHeader: String) -> Bool {
         
         if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString){
@@ -79,6 +95,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
             }
         }
     }
+    
+    /*!
+        Clear the local stored authorization data
+    */
     public func clearAuthorizationData() {
         preferences.userIdentity.clear()
         preferences.idToken.clear()
@@ -87,6 +107,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
         clearCookies()
     }
     
+    /*!
+        @brief Adds the cached authorization header to the given URL connection object.
+        int the cached authorization header is equals to null then this operation has no effect.
+        @param request The request to add the header to.
+    */
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
         addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
     }
@@ -98,6 +123,9 @@ public class MCAAuthorizationManager : AuthorizationManager {
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
+    /*!
+        @return the locally stored authorization header or null if the value is not exist.
+    */
     public func getCachedAuthorizationHeader() -> String? {
         var returnedValue:String? = nil
         dispatch_barrier_sync(lockQueue){
@@ -108,22 +136,33 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return returnedValue
     }
     
+    /*!
+        Invoke process for obtaining authorization header. during this process
+     */
     public func obtainAuthorization(completionHandler: MfpCompletionHandler?) {
         dispatch_barrier_async(lockQueue){
             self.processManager.startAuthorizationProcess(completionHandler)
         }
     }
     
+    /*!
+        return user identity
+    */
     public func getUserIdentity() -> BaseUserIdentity {
         let userIdentityJson = preferences.userIdentity.getAsMap()
         return MCAUserIdentity(map: userIdentityJson)
     }
     
+    /*!
+        return device identity
+    */
     public func getDeviceIdentity() -> BaseDeviceIdentity {
         let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
         return MCADeviceIdentity(map: deviceIdentityJson)
     }
-    
+    /*!
+         @return application identity
+     */
     public func getAppIdentity() -> BaseAppIdentity {
         let appIdentityJson = preferences.appIdentity.getAsMap()
         return MCAAppIdentity(map: appIdentityJson)
@@ -159,7 +198,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     /**
-     <#Description#>
+     
      
      - returns: <#return value description#>
      */
@@ -181,7 +220,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     }
     
     /**
-     <#Description#>
+     
      
      - parameter realm: <#realm description#>
      

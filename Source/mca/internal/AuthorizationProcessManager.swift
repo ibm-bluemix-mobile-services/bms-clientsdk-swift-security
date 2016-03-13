@@ -263,9 +263,6 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    
-    
-    
     private func createRegistrationHeaders() -> [String:String]{
         var headers = [String:String]()
         addSessionIdHeader(&headers)
