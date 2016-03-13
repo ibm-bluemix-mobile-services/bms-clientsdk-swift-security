@@ -15,26 +15,29 @@ import Foundation
 import BMSCore
 
 public protocol AuthenticationDelegate{
-    /*!
-        @brief Called when authentication challenge was received. The implementor should handle the challenge and call
-        {@see AuthenticationContext#submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?)}
-        with authentication challenge answer.
+   
+    /**
+        Called when authentication challenge was received. The implementor should handle the challenge and call AuthenticationContext:submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?)}
+             with authentication challenge answer.
      
-        @param authContext Authentication context the answer should be sent to
-        @param challenge Information about authentication challenge.
+        - Parameter authContext  - Authentication context the answer should be sent to.
+        - Parameter challenge - Information about authentication challenge.
      */
+    
     func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject?)
     
-    /*!
-        @brief Called when authentication succeeded.
-        @param info Extended data describing the authentication success.
+    /**
+        Called when authentication succeeded.
+        - Parameter info - Extended data describing the authentication success.
     */
+    
     func onAuthenticationSuccess(info : AnyObject?)
     
-    /*!
+    /**
         Called when authentication fails.
-        @param info Extended data describing authentication failure.
+        - Parameter info - Extended data describing authentication failure.
     */
+    
     func onAuthenticationFailure(info : AnyObject?)
 
 }

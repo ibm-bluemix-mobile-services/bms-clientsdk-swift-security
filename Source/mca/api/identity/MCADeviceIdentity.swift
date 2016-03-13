@@ -14,6 +14,8 @@
 import Foundation
 import BMSCore
 
+/// This class represents the base device identity class, with default methods and keys
+
 public class MCADeviceIdentity : BaseDeviceIdentity {
     
     public override init() {
