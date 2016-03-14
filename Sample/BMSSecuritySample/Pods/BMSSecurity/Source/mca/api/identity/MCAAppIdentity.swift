@@ -13,15 +13,17 @@
 import Foundation
 import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
-
-public class MCAUserIdentity : BaseUserIdentity{
+public class MCAAppIdentity : BaseAppIdentity{
     
     public override init() {
+        let appInfo = Utils.getApplicationDetails()
         super.init()
+        jsonData[BaseAppIdentity.ID] =  appInfo.name
+        jsonData[BaseAppIdentity.VERSION] =  appInfo.version
     }
     
     public override init(map: AnyObject?) {
         super.init(map: map)
     }
- }
+    
+}

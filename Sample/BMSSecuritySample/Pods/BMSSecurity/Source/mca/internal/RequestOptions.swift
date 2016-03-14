@@ -10,18 +10,20 @@
 *     See the License for the specific language governing permissions and
 *     limitations under the License.
 */
+
+//  Created by Ilan Klein on 12/21/2015.
+
 import Foundation
 import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
-
-public class MCAUserIdentity : BaseUserIdentity{
+internal class RequestOptions {
     
-    public override init() {
-        super.init()
-    }
+    internal var requestMethod : HttpMethod
+    internal var timeout : Double = 0
+    internal var headers = [String : String]()
+    internal var parameters = [String : String]()
     
-    public override init(map: AnyObject?) {
-        super.init(map: map)
+    internal init(requestMethod : HttpMethod = HttpMethod.GET) {
+        self.requestMethod = requestMethod
     }
- }
+}

@@ -10,18 +10,20 @@
 *     See the License for the specific language governing permissions and
 *     limitations under the License.
 */
+
 import Foundation
 import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
-
-public class MCAUserIdentity : BaseUserIdentity{
+public class MCADeviceIdentity : BaseDeviceIdentity {
     
     public override init() {
         super.init()
+        jsonData[BaseDeviceIdentity.ID] = UIDevice.currentDevice().identifierForVendor?.UUIDString
+        jsonData[BaseDeviceIdentity.OS] =  UIDevice.currentDevice().systemVersion
+        jsonData[BaseDeviceIdentity.MODEL] =  UIDevice.currentDevice().model
     }
     
     public override init(map: AnyObject?) {
         super.init(map: map)
     }
- }
+}

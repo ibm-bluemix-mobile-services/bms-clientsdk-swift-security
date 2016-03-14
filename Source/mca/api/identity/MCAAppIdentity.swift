@@ -13,6 +13,8 @@
 import Foundation
 import BMSCore
 
+/// This class represents the base app identity class, with default methods and keys
+
 public class MCAAppIdentity : BaseAppIdentity{
     
     public override init() {

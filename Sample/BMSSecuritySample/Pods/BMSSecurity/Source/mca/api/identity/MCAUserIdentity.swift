@@ -13,8 +13,6 @@
 import Foundation
 import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
-
 public class MCAUserIdentity : BaseUserIdentity{
     
     public override init() {

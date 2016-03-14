@@ -1,5 +1,5 @@
 /*
-*     Copyright 2015 IBM Corp.
+*     Copyright 2016 IBM Corp.
 *     Licensed under the Apache License, Version 2.0 (the "License");
 *     you may not use this file except in compliance with the License.
 *     You may obtain a copy of the License at
@@ -10,18 +10,16 @@
 *     See the License for the specific language governing permissions and
 *     limitations under the License.
 */
-import Foundation
-import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
 
-public class MCAUserIdentity : BaseUserIdentity{
+/**
+    These error codes indicate a failure that occurred within the BMSCore framework.
+*/
+public enum BMSCoreError: Int {
     
-    public override init() {
-        super.init()
-    }
+    case MalformedUrl
+    case ClientNotInitialized
     
-    public override init(map: AnyObject?) {
-        super.init(map: map)
-    }
- }
+    static let domain = "com.ibm.mobilefirstplatform.clientsdk.swift.BMSCore"
+}
+

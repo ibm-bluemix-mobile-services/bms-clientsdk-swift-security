@@ -1,0 +1,970 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0E8E7A8E765829F512B4188F2998752B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */; };
+		0FCC22DA6EFAD18C75E77937357F2AB4 /* BMSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4E6F381C26889F5CDCB3D0362E76E9 /* BMSClient.swift */; };
+		10CD2E6D7788CD93FA91C556301A1867 /* BaseAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8400E083424DC110AB2B2174B1381B50 /* BaseAuthorizationManager.swift */; };
+		11321E6E07878A0D5B2ED86618DDF21E /* BMSSecurityError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA5502773C76301F7A87B8F95B577B1 /* BMSSecurityError.swift */; };
+		1848BA34D885B97CCAB5523F3F93CAC4 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85A60B98A687270B4D2F1F7E6A1B470 /* Error.swift */; };
+		200F095A59ED64268EF192A1FC8CE86E /* MFPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A2BF9737EE252A9B2DDA2B27B942BB /* MFPClient.swift */; };
+		32CAD46870DF503F410E1CCDBA910211 /* RNCryptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 261A94856D23E48F18ABCA820A3F03CB /* RNCryptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3675033C7836C2113889CDDD94E96B12 /* SecurityUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D87C2369E6209F9D4D5B20D4CC054F /* SecurityUtils.swift */; };
+		37E52CB21686FEF8FCBDD5AF2040F3DC /* AuthorizationProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AB1AA383D6DBF3F98F85041A0FD9FF /* AuthorizationProcessManager.swift */; };
+		43955FB7397EDF3A351D0A6C4F1CF987 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */; };
+		449CF55AEFC423DD9F5071231A17B89C /* AuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA78E5771379C295BD74F4066A5842 /* AuthorizationManager.swift */; };
+		4B2A0EF870DB765E4B064EDE8B0AA287 /* BaseAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F27BEE0B8A68A2B6C9A98437B5611D3 /* BaseAppIdentity.swift */; };
+		4B66CF42E8FC0EBC90E69E1391112978 /* Pods-BMSSecuritySample-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F812717EDB9113D28B40007373C666 /* Pods-BMSSecuritySample-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CAB3D7FC67F0F357502DD0141098A53 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80962048651B1C8331CDA3DF359B775 /* AuthorizationManagerPreferences.swift */; };
+		4D292B863476030AB5E0602D1DD053C2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */; };
+		50C8BCB42104A0761B3D56D9695BE229 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEEAB40E9E7F7CFDF79D4BCAC6AB6AF /* Queue.swift */; };
+		5FED0C45BC5C862B3CC5F39875EE3481 /* BMSSecurityConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C49680B3FCD5DD5F94E025198B875B /* BMSSecurityConstants.swift */; };
+		604F597A888C55CE008F8A932A50961E /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42C8984A3C8D642B0F223D4A41A09485 /* BMSCore.framework */; };
+		629F6A36283922FDE5419C69B947E2D2 /* BaseDeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE542F1C641A6E6156066E463B1007DD /* BaseDeviceIdentity.swift */; };
+		6D2F3559AAD2826734D5712FF2C74018 /* ChallengeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B1839CE65430231F852EE32AF90DC40 /* ChallengeHandler.swift */; };
+		8520CE9EA88B13ABBA03E6C373C8958E /* AuthenticationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8918357A55EADC9643CE03E3A4DEF1 /* AuthenticationContext.swift */; };
+		8739C4757F850CA4CD2F1BE793F0ABD3 /* BMSSecurity-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4383F79A01E97FD89A57D23BA367109F /* BMSSecurity-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8E690D5719F8A14458884A8B4D4A37ED /* AuthorizationRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8ECA5B330D3EC33391C583EBA4E7FB1 /* AuthorizationRequestManager.swift */; };
+		92267036E68D2804AA77DA9CBCD9C30E /* MCAAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BACCD866FE1D314786B7E5AAF1274 /* MCAAppIdentity.swift */; };
+		96635FE1449E395645B1BBB920719CCB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */; };
+		9C97C7157712412609AAEEF5F9276A45 /* MCADeviceIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17081F3E2FD8758127A7FD91D806DAB5 /* MCADeviceIdentity.swift */; };
+		A071FBB6B6E3597028B32D8888DFEC79 /* BMSSecurity-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CCE939232EB32D99D26E6EAAD85EC24F /* BMSSecurity-dummy.m */; };
+		A0B5EACA7A7D3ECAB78489095388FBDE /* Pods-BMSSecuritySample-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CA2503042831A1A1518C8F50FC61896A /* Pods-BMSSecuritySample-dummy.m */; };
+		B20E760258363D47044C1A2AF2CDE037 /* RNCryptor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 671D28BC5F6F85753244AB2C8FEC2EFA /* RNCryptor.framework */; };
+		B8A4804173B3D3AF3DC89125BB9F42F5 /* RNCryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC46C206A70BD4E9DDAA47E6B8AEF81F /* RNCryptor.swift */; };
+		B8C691E594DB150051999B05D85226E3 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F58D0053873CC267F3B80065E52570 /* Request.swift */; };
+		C60D83F693D2BFC330D2D09D73DBE290 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F5A321D2227EBBC60586BB960BC43D /* Utils.swift */; };
+		C8C5800AAED7637363D256D5ADDC293F /* RNCryptor-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C42FF58A287269312B112020B45C30C2 /* RNCryptor-dummy.m */; };
+		CD5EF69A20EFE4DF6F1E3FC3D6501475 /* RNCryptor-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 82EAAE1DCDD223E048CBD21D1DD68F22 /* RNCryptor-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D087DAF4E6B6A7C3E0BE0567FC0FD24E /* RequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00DF4B61B467430DBE9441889904726 /* RequestOptions.swift */; };
+		D7CB64F8243290E9DF191369CE5E9F4F /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1057D8280D472203B159389F1C816B /* Response.swift */; };
+		DA5EE4E26A55BA0D2470BEFE12EF2CC1 /* AuthenticationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7752EB3E9B2655EBA2E77045853C1DAD /* AuthenticationDelegate.swift */; };
+		DFFA3AEC5ED3623F88164A8C79C85428 /* MFPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4119606004249C7E82FBF27F5BF6B3B1 /* MFPRequest.swift */; };
+		E0A268E03C417A932F638B3E8A736AF4 /* BMSCore-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D1E3C97017E31F7D97C1B6FBCBCCDA32 /* BMSCore-dummy.m */; };
+		E1CB6B3AF04D1D950B7BA34D5DBE1BB5 /* MCAUserIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7366FA0D1058B6E71741DEB7C92376 /* MCAUserIdentity.swift */; };
+		E2071E0CC3BB29325D3878BD5E091646 /* BMSCore-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C72C735F7650AB97813638C24F446B37 /* BMSCore-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E3F7E80D7AEBE0B18EE935DFC05099B9 /* BMSSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = F1A6B58553E551AF4E967D50F91740C2 /* BMSSecurity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E87FE365CB288B6733E96455EA5A68CE /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66F9DFF2229E84B95B04DD1176AEEF8 /* AuthorizationRequest.swift */; };
+		F1E791A35DBC85345C3C1DDA1DF0EC33 /* MCAAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCBCA28328FD03E56C060A4BA082000 /* MCAAuthorizationManager.swift */; };
+		F47A707F9373901511ED868E32824EBD /* BaseUserIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FC8028D4828B26771DCE5D0219283 /* BaseUserIdentity.swift */; };
+		FEB4DD76CA245C476C33C513637A1BED /* MFPLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D2061266AE4064E392DD349F16D4E8 /* MFPLogger.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1325C9174F737519EE0220EC991713F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6C8DA950DEFDF9B049FC30BD64028C59;
+			remoteInfo = BMSSecurity;
+		};
+		229F482BA9D0016798ED79BB0A02C192 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0BA11E79362A2D4A99F2EF3B2F9A3FD1;
+			remoteInfo = RNCryptor;
+		};
+		76EC5C9D4AF8924655B9076D9591ECB8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0BA11E79362A2D4A99F2EF3B2F9A3FD1;
+			remoteInfo = RNCryptor;
+		};
+		C5C2C7E693A9A6336796159362F4200A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DCD3FADEC316703151FB3CC5A08BC24;
+			remoteInfo = BMSCore;
+		};
+		CBB3AE6AA178FE497CB74B9895AF4647 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DCD3FADEC316703151FB3CC5A08BC24;
+			remoteInfo = BMSCore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05C49680B3FCD5DD5F94E025198B875B /* BMSSecurityConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BMSSecurityConstants.swift; path = Source/mca/internal/BMSSecurityConstants.swift; sourceTree = "<group>"; };
+		05FABA7520D63BA960B384F4C2487A8C /* BMSCore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = BMSCore.xcconfig; sourceTree = "<group>"; };
+		0E55495D7204A018B3AF27C5FBF0BCD9 /* RNCryptor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RNCryptor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		17081F3E2FD8758127A7FD91D806DAB5 /* MCADeviceIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MCADeviceIdentity.swift; path = Source/mca/api/identity/MCADeviceIdentity.swift; sourceTree = "<group>"; };
+		1F7FC8028D4828B26771DCE5D0219283 /* BaseUserIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseUserIdentity.swift; path = Source/Security/identity/BaseUserIdentity.swift; sourceTree = "<group>"; };
+		1FF295A071448DCEAB0C2B0DB5B49FA8 /* Pods-BMSSecuritySample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-BMSSecuritySample.release.xcconfig"; sourceTree = "<group>"; };
+		261A94856D23E48F18ABCA820A3F03CB /* RNCryptor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RNCryptor.h; sourceTree = "<group>"; };
+		2C8B3B796E1AAE007028E6BBEF56D72A /* Pods-BMSSecuritySample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-BMSSecuritySample.debug.xcconfig"; sourceTree = "<group>"; };
+		34A07BC38D34FE4AA7F2C382146382C1 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3FCBCA28328FD03E56C060A4BA082000 /* MCAAuthorizationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MCAAuthorizationManager.swift; path = Source/mca/api/MCAAuthorizationManager.swift; sourceTree = "<group>"; };
+		4119606004249C7E82FBF27F5BF6B3B1 /* MFPRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MFPRequest.swift; path = "Source/Network Requests/MFPRequest.swift"; sourceTree = "<group>"; };
+		42C8984A3C8D642B0F223D4A41A09485 /* BMSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4383F79A01E97FD89A57D23BA367109F /* BMSSecurity-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "BMSSecurity-umbrella.h"; sourceTree = "<group>"; };
+		480B521E9BF8CFA29B572CA1AF2CCA7D /* BMSCore.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = BMSCore.modulemap; sourceTree = "<group>"; };
+		497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		55E33443A0CDD878F82307F5C0A11DF9 /* BMSCore-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "BMSCore-prefix.pch"; sourceTree = "<group>"; };
+		57050F5C0D6BFC5652AA2DC0E79458DD /* RNCryptor.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = RNCryptor.xcconfig; sourceTree = "<group>"; };
+		65449D6D558ECCD6E34E75AA9EA1EECA /* Pods-BMSSecuritySample-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-BMSSecuritySample-acknowledgements.plist"; sourceTree = "<group>"; };
+		671D28BC5F6F85753244AB2C8FEC2EFA /* RNCryptor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RNCryptor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		69727D634A2780F5C1ADB15F01BB23E4 /* BMSSecurity.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = BMSSecurity.xcconfig; sourceTree = "<group>"; };
+		6A95B759CC42E6CC28EB4B0D7B13FFC8 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6B1839CE65430231F852EE32AF90DC40 /* ChallengeHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChallengeHandler.swift; path = Source/mca/internal/challengehandlers/ChallengeHandler.swift; sourceTree = "<group>"; };
+		74983393D8D09DC0635C63D4D3534857 /* BMSSecurity.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = BMSSecurity.modulemap; sourceTree = "<group>"; };
+		74D87C2369E6209F9D4D5B20D4CC054F /* SecurityUtils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SecurityUtils.swift; path = Source/mca/internal/certificate/SecurityUtils.swift; sourceTree = "<group>"; };
+		7752EB3E9B2655EBA2E77045853C1DAD /* AuthenticationDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthenticationDelegate.swift; path = Source/mca/api/AuthenticationDelegate.swift; sourceTree = "<group>"; };
+		78D2061266AE4064E392DD349F16D4E8 /* MFPLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MFPLogger.swift; path = Source/Logger/MFPLogger.swift; sourceTree = "<group>"; };
+		7C690CD930A4708C7A98A828AF57DC16 /* Pods-BMSSecuritySample-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-BMSSecuritySample-acknowledgements.markdown"; sourceTree = "<group>"; };
+		7EEEAB40E9E7F7CFDF79D4BCAC6AB6AF /* Queue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Queue.swift; path = Source/mca/internal/Queue.swift; sourceTree = "<group>"; };
+		82EAAE1DCDD223E048CBD21D1DD68F22 /* RNCryptor-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RNCryptor-umbrella.h"; sourceTree = "<group>"; };
+		8400E083424DC110AB2B2174B1381B50 /* BaseAuthorizationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseAuthorizationManager.swift; path = Source/Security/BaseAuthorizationManager.swift; sourceTree = "<group>"; };
+		87AB1AA383D6DBF3F98F85041A0FD9FF /* AuthorizationProcessManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthorizationProcessManager.swift; path = Source/mca/internal/AuthorizationProcessManager.swift; sourceTree = "<group>"; };
+		8C1057D8280D472203B159389F1C816B /* Response.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Response.swift; path = "Source/Network Requests/Response.swift"; sourceTree = "<group>"; };
+		8D9DCBA8AC9DDBA919B6CC522D8E581B /* RNCryptor-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RNCryptor-prefix.pch"; sourceTree = "<group>"; };
+		8DA5502773C76301F7A87B8F95B577B1 /* BMSSecurityError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BMSSecurityError.swift; path = Source/mca/internal/Encryption/BMSSecurityError.swift; sourceTree = "<group>"; };
+		9A0399FB49719DB966A0E2A8FCB06D6F /* BMSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F27BEE0B8A68A2B6C9A98437B5611D3 /* BaseAppIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseAppIdentity.swift; path = Source/Security/identity/BaseAppIdentity.swift; sourceTree = "<group>"; };
+		A58DD59FBC5E27337DC5B8EF626B43B8 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A66F9DFF2229E84B95B04DD1176AEEF8 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthorizationRequest.swift; path = Source/mca/internal/AuthorizationRequest.swift; sourceTree = "<group>"; };
+		A8FA78E5771379C295BD74F4066A5842 /* AuthorizationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthorizationManager.swift; path = Source/Security/AuthorizationManager.swift; sourceTree = "<group>"; };
+		AC46C206A70BD4E9DDAA47E6B8AEF81F /* RNCryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RNCryptor.swift; sourceTree = "<group>"; };
+		B4A2BF9737EE252A9B2DDA2B27B942BB /* MFPClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MFPClient.swift; path = "Source/Network Requests/MFPClient.swift"; sourceTree = "<group>"; };
+		B644177953C9BB27D278A5C520A02A63 /* Pods-BMSSecuritySample.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-BMSSecuritySample.modulemap"; sourceTree = "<group>"; };
+		B94644E65CB9AED990B8E5A9FAE746D2 /* RNCryptor.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = RNCryptor.modulemap; sourceTree = "<group>"; };
+		C42FF58A287269312B112020B45C30C2 /* RNCryptor-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "RNCryptor-dummy.m"; sourceTree = "<group>"; };
+		C4DB66BFC2ED8D4C8070DDF4F5AE6C3E /* BMSSecurity-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "BMSSecurity-prefix.pch"; sourceTree = "<group>"; };
+		C72C735F7650AB97813638C24F446B37 /* BMSCore-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "BMSCore-umbrella.h"; sourceTree = "<group>"; };
+		C80962048651B1C8331CDA3DF359B775 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthorizationManagerPreferences.swift; path = Source/mca/internal/AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
+		CA2503042831A1A1518C8F50FC61896A /* Pods-BMSSecuritySample-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-BMSSecuritySample-dummy.m"; sourceTree = "<group>"; };
+		CAC16F060AEF3F2A7580348C76C8B4E1 /* Pods-BMSSecuritySample-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-BMSSecuritySample-resources.sh"; sourceTree = "<group>"; };
+		CCE939232EB32D99D26E6EAAD85EC24F /* BMSSecurity-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "BMSSecurity-dummy.m"; sourceTree = "<group>"; };
+		CD1EDCA48DFF3951A5DE6150EBBA2CA4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE542F1C641A6E6156066E463B1007DD /* BaseDeviceIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseDeviceIdentity.swift; path = Source/Security/identity/BaseDeviceIdentity.swift; sourceTree = "<group>"; };
+		CE8918357A55EADC9643CE03E3A4DEF1 /* AuthenticationContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthenticationContext.swift; path = Source/mca/api/AuthenticationContext.swift; sourceTree = "<group>"; };
+		D1E3C97017E31F7D97C1B6FBCBCCDA32 /* BMSCore-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "BMSCore-dummy.m"; sourceTree = "<group>"; };
+		D2722E3391F32D4BFDAC720EB8BEA17A /* Pods-BMSSecuritySample-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-BMSSecuritySample-frameworks.sh"; sourceTree = "<group>"; };
+		D2F58D0053873CC267F3B80065E52570 /* Request.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Request.swift; path = "Source/Network Requests/Request.swift"; sourceTree = "<group>"; };
+		D5B09C5924E65744AA8549376A940919 /* Pods_BMSSecuritySample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BMSSecuritySample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D85A60B98A687270B4D2F1F7E6A1B470 /* Error.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Error.swift; path = Source/Error.swift; sourceTree = "<group>"; };
+		DA0BACCD866FE1D314786B7E5AAF1274 /* MCAAppIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MCAAppIdentity.swift; path = Source/mca/api/identity/MCAAppIdentity.swift; sourceTree = "<group>"; };
+		EA7366FA0D1058B6E71741DEB7C92376 /* MCAUserIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MCAUserIdentity.swift; path = Source/mca/api/identity/MCAUserIdentity.swift; sourceTree = "<group>"; };
+		EF0CE0501C96F5280094EA90 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		EF4E6F381C26889F5CDCB3D0362E76E9 /* BMSClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BMSClient.swift; path = "Source/Network Requests/BMSClient.swift"; sourceTree = "<group>"; };
+		F00DF4B61B467430DBE9441889904726 /* RequestOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RequestOptions.swift; path = Source/mca/internal/RequestOptions.swift; sourceTree = "<group>"; };
+		F1A6B58553E551AF4E967D50F91740C2 /* BMSSecurity.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = BMSSecurity.h; path = Source/Resources/BMSSecurity.h; sourceTree = "<group>"; };
+		F3F812717EDB9113D28B40007373C666 /* Pods-BMSSecuritySample-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-BMSSecuritySample-umbrella.h"; sourceTree = "<group>"; };
+		F684C30FF21AEDC2FC1C0E4EB18B4A75 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7F5A321D2227EBBC60586BB960BC43D /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Source/mca/internal/Utils.swift; sourceTree = "<group>"; };
+		F8ECA5B330D3EC33391C583EBA4E7FB1 /* AuthorizationRequestManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthorizationRequestManager.swift; path = Source/mca/internal/AuthorizationRequestManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		386CA45D21082887CA189E765DB53350 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E8E7A8E765829F512B4188F2998752B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99A4ED22AD2C43F7D9472AF231733611 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96635FE1449E395645B1BBB920719CCB /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A99410FC6046897B780932D41A2009F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				604F597A888C55CE008F8A932A50961E /* BMSCore.framework in Frameworks */,
+				43955FB7397EDF3A351D0A6C4F1CF987 /* Foundation.framework in Frameworks */,
+				B20E760258363D47044C1A2AF2CDE037 /* RNCryptor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B306FC48E1F2A62A0CA740C357ED58B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D292B863476030AB5E0602D1DD053C2 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		23942E53CBC784D0FBD6E9F792C4695E /* BMSCore */ = {
+			isa = PBXGroup;
+			children = (
+				A8FA78E5771379C295BD74F4066A5842 /* AuthorizationManager.swift */,
+				9F27BEE0B8A68A2B6C9A98437B5611D3 /* BaseAppIdentity.swift */,
+				8400E083424DC110AB2B2174B1381B50 /* BaseAuthorizationManager.swift */,
+				CE542F1C641A6E6156066E463B1007DD /* BaseDeviceIdentity.swift */,
+				1F7FC8028D4828B26771DCE5D0219283 /* BaseUserIdentity.swift */,
+				EF4E6F381C26889F5CDCB3D0362E76E9 /* BMSClient.swift */,
+				D85A60B98A687270B4D2F1F7E6A1B470 /* Error.swift */,
+				B4A2BF9737EE252A9B2DDA2B27B942BB /* MFPClient.swift */,
+				78D2061266AE4064E392DD349F16D4E8 /* MFPLogger.swift */,
+				4119606004249C7E82FBF27F5BF6B3B1 /* MFPRequest.swift */,
+				D2F58D0053873CC267F3B80065E52570 /* Request.swift */,
+				8C1057D8280D472203B159389F1C816B /* Response.swift */,
+				FBCAFF1545D0ACFA735A59434E5EDF79 /* Support Files */,
+			);
+			path = BMSCore;
+			sourceTree = "<group>";
+		};
+		7030CD887F4509C3925AB111514DF1E2 /* RNCryptor */ = {
+			isa = PBXGroup;
+			children = (
+				261A94856D23E48F18ABCA820A3F03CB /* RNCryptor.h */,
+				AC46C206A70BD4E9DDAA47E6B8AEF81F /* RNCryptor.swift */,
+				9FA0B2AC7EFCE912A635C7E197F9CF93 /* Support Files */,
+			);
+			path = RNCryptor;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				EF0CE0501C96F5280094EA90 /* Podfile */,
+				7EF74C1286CB43EDC664F9E64C7553DB /* Frameworks */,
+				D11C55108B803C474D1ED204F048DBA4 /* Pods */,
+				BFEC55EF363E8CFC126A6D65023B99ED /* Products */,
+				B155E9F0460163FFC446D5982309A9AC /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		7EF74C1286CB43EDC664F9E64C7553DB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				42C8984A3C8D642B0F223D4A41A09485 /* BMSCore.framework */,
+				671D28BC5F6F85753244AB2C8FEC2EFA /* RNCryptor.framework */,
+				CC8D4ECBCA46CDD66729C7EBBF8D8F37 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9FA0B2AC7EFCE912A635C7E197F9CF93 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6A95B759CC42E6CC28EB4B0D7B13FFC8 /* Info.plist */,
+				B94644E65CB9AED990B8E5A9FAE746D2 /* RNCryptor.modulemap */,
+				57050F5C0D6BFC5652AA2DC0E79458DD /* RNCryptor.xcconfig */,
+				C42FF58A287269312B112020B45C30C2 /* RNCryptor-dummy.m */,
+				8D9DCBA8AC9DDBA919B6CC522D8E581B /* RNCryptor-prefix.pch */,
+				82EAAE1DCDD223E048CBD21D1DD68F22 /* RNCryptor-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/RNCryptor";
+			sourceTree = "<group>";
+		};
+		A00FD5212B2E67E0CFAD5FAFAA54DD7D /* Pods-BMSSecuritySample */ = {
+			isa = PBXGroup;
+			children = (
+				CD1EDCA48DFF3951A5DE6150EBBA2CA4 /* Info.plist */,
+				B644177953C9BB27D278A5C520A02A63 /* Pods-BMSSecuritySample.modulemap */,
+				7C690CD930A4708C7A98A828AF57DC16 /* Pods-BMSSecuritySample-acknowledgements.markdown */,
+				65449D6D558ECCD6E34E75AA9EA1EECA /* Pods-BMSSecuritySample-acknowledgements.plist */,
+				CA2503042831A1A1518C8F50FC61896A /* Pods-BMSSecuritySample-dummy.m */,
+				D2722E3391F32D4BFDAC720EB8BEA17A /* Pods-BMSSecuritySample-frameworks.sh */,
+				CAC16F060AEF3F2A7580348C76C8B4E1 /* Pods-BMSSecuritySample-resources.sh */,
+				F3F812717EDB9113D28B40007373C666 /* Pods-BMSSecuritySample-umbrella.h */,
+				2C8B3B796E1AAE007028E6BBEF56D72A /* Pods-BMSSecuritySample.debug.xcconfig */,
+				1FF295A071448DCEAB0C2B0DB5B49FA8 /* Pods-BMSSecuritySample.release.xcconfig */,
+			);
+			name = "Pods-BMSSecuritySample";
+			path = "Target Support Files/Pods-BMSSecuritySample";
+			sourceTree = "<group>";
+		};
+		B155E9F0460163FFC446D5982309A9AC /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				A00FD5212B2E67E0CFAD5FAFAA54DD7D /* Pods-BMSSecuritySample */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		BFEC55EF363E8CFC126A6D65023B99ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9A0399FB49719DB966A0E2A8FCB06D6F /* BMSCore.framework */,
+				F684C30FF21AEDC2FC1C0E4EB18B4A75 /* BMSSecurity.framework */,
+				D5B09C5924E65744AA8549376A940919 /* Pods_BMSSecuritySample.framework */,
+				0E55495D7204A018B3AF27C5FBF0BCD9 /* RNCryptor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CC8D4ECBCA46CDD66729C7EBBF8D8F37 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				497E89C2676D6EAE167767420A10BD7A /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		D11C55108B803C474D1ED204F048DBA4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				23942E53CBC784D0FBD6E9F792C4695E /* BMSCore */,
+				DD58ED73C7308F5C5AAE4BCE5B930879 /* BMSSecurity */,
+				7030CD887F4509C3925AB111514DF1E2 /* RNCryptor */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		DD58ED73C7308F5C5AAE4BCE5B930879 /* BMSSecurity */ = {
+			isa = PBXGroup;
+			children = (
+				CE8918357A55EADC9643CE03E3A4DEF1 /* AuthenticationContext.swift */,
+				7752EB3E9B2655EBA2E77045853C1DAD /* AuthenticationDelegate.swift */,
+				C80962048651B1C8331CDA3DF359B775 /* AuthorizationManagerPreferences.swift */,
+				87AB1AA383D6DBF3F98F85041A0FD9FF /* AuthorizationProcessManager.swift */,
+				A66F9DFF2229E84B95B04DD1176AEEF8 /* AuthorizationRequest.swift */,
+				F8ECA5B330D3EC33391C583EBA4E7FB1 /* AuthorizationRequestManager.swift */,
+				F1A6B58553E551AF4E967D50F91740C2 /* BMSSecurity.h */,
+				05C49680B3FCD5DD5F94E025198B875B /* BMSSecurityConstants.swift */,
+				8DA5502773C76301F7A87B8F95B577B1 /* BMSSecurityError.swift */,
+				6B1839CE65430231F852EE32AF90DC40 /* ChallengeHandler.swift */,
+				DA0BACCD866FE1D314786B7E5AAF1274 /* MCAAppIdentity.swift */,
+				3FCBCA28328FD03E56C060A4BA082000 /* MCAAuthorizationManager.swift */,
+				17081F3E2FD8758127A7FD91D806DAB5 /* MCADeviceIdentity.swift */,
+				EA7366FA0D1058B6E71741DEB7C92376 /* MCAUserIdentity.swift */,
+				7EEEAB40E9E7F7CFDF79D4BCAC6AB6AF /* Queue.swift */,
+				F00DF4B61B467430DBE9441889904726 /* RequestOptions.swift */,
+				74D87C2369E6209F9D4D5B20D4CC054F /* SecurityUtils.swift */,
+				F7F5A321D2227EBBC60586BB960BC43D /* Utils.swift */,
+				FC4A277AE932E7BA2FD3D44666AAC6EE /* Support Files */,
+			);
+			path = BMSSecurity;
+			sourceTree = "<group>";
+		};
+		FBCAFF1545D0ACFA735A59434E5EDF79 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				480B521E9BF8CFA29B572CA1AF2CCA7D /* BMSCore.modulemap */,
+				05FABA7520D63BA960B384F4C2487A8C /* BMSCore.xcconfig */,
+				D1E3C97017E31F7D97C1B6FBCBCCDA32 /* BMSCore-dummy.m */,
+				55E33443A0CDD878F82307F5C0A11DF9 /* BMSCore-prefix.pch */,
+				C72C735F7650AB97813638C24F446B37 /* BMSCore-umbrella.h */,
+				A58DD59FBC5E27337DC5B8EF626B43B8 /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/BMSCore";
+			sourceTree = "<group>";
+		};
+		FC4A277AE932E7BA2FD3D44666AAC6EE /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				74983393D8D09DC0635C63D4D3534857 /* BMSSecurity.modulemap */,
+				69727D634A2780F5C1ADB15F01BB23E4 /* BMSSecurity.xcconfig */,
+				CCE939232EB32D99D26E6EAAD85EC24F /* BMSSecurity-dummy.m */,
+				C4DB66BFC2ED8D4C8070DDF4F5AE6C3E /* BMSSecurity-prefix.pch */,
+				4383F79A01E97FD89A57D23BA367109F /* BMSSecurity-umbrella.h */,
+				34A07BC38D34FE4AA7F2C382146382C1 /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/BMSSecurity";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		075F2587A1DA69C0DEFD3C4B268E9E77 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B66CF42E8FC0EBC90E69E1391112978 /* Pods-BMSSecuritySample-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85777781E05B7115EBAE77846D542D0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD5EF69A20EFE4DF6F1E3FC3D6501475 /* RNCryptor-umbrella.h in Headers */,
+				32CAD46870DF503F410E1CCDBA910211 /* RNCryptor.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB80FAD65DD5CF4CEF53F02B959336F7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8739C4757F850CA4CD2F1BE793F0ABD3 /* BMSSecurity-umbrella.h in Headers */,
+				E3F7E80D7AEBE0B18EE935DFC05099B9 /* BMSSecurity.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F181C32E9FD46C7833CD4375629D238D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2071E0CC3BB29325D3878BD5E091646 /* BMSCore-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0BA11E79362A2D4A99F2EF3B2F9A3FD1 /* RNCryptor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9968EC3519603E811D0360A4FDB081EE /* Build configuration list for PBXNativeTarget "RNCryptor" */;
+			buildPhases = (
+				46BF0AE88B53B9D9A87CBBB5F4088B4D /* Sources */,
+				386CA45D21082887CA189E765DB53350 /* Frameworks */,
+				D85777781E05B7115EBAE77846D542D0 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RNCryptor;
+			productName = RNCryptor;
+			productReference = 0E55495D7204A018B3AF27C5FBF0BCD9 /* RNCryptor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		5DCD3FADEC316703151FB3CC5A08BC24 /* BMSCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08521280AF1A75F7933BB14F542507D6 /* Build configuration list for PBXNativeTarget "BMSCore" */;
+			buildPhases = (
+				EC349FB79D5338879E585C9EDA0F1680 /* Sources */,
+				B306FC48E1F2A62A0CA740C357ED58B7 /* Frameworks */,
+				F181C32E9FD46C7833CD4375629D238D /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BMSCore;
+			productName = BMSCore;
+			productReference = 9A0399FB49719DB966A0E2A8FCB06D6F /* BMSCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		6C8DA950DEFDF9B049FC30BD64028C59 /* BMSSecurity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2EAE1AE42925A2AEBA2CCCF991DA5AE /* Build configuration list for PBXNativeTarget "BMSSecurity" */;
+			buildPhases = (
+				A465E48FE31285FAAAD5C2668E949074 /* Sources */,
+				A99410FC6046897B780932D41A2009F0 /* Frameworks */,
+				DB80FAD65DD5CF4CEF53F02B959336F7 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96E6C9B25B444E212BB28B1C1A0D3AC7 /* PBXTargetDependency */,
+				317233DA27D9395F044E317BD9CE8004 /* PBXTargetDependency */,
+			);
+			name = BMSSecurity;
+			productName = BMSSecurity;
+			productReference = F684C30FF21AEDC2FC1C0E4EB18B4A75 /* BMSSecurity.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		718B38484F620232CDD923C6F6FA96EF /* Pods-BMSSecuritySample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8C6EEB9FB21BEA2B6A5F3638F283B10 /* Build configuration list for PBXNativeTarget "Pods-BMSSecuritySample" */;
+			buildPhases = (
+				E09F1301CAF7690593E48F3A0FCEFB44 /* Sources */,
+				99A4ED22AD2C43F7D9472AF231733611 /* Frameworks */,
+				075F2587A1DA69C0DEFD3C4B268E9E77 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EA38DB10C57869985FDBB353C82EA26F /* PBXTargetDependency */,
+				8C144C45CFC7D88146DEA17520C26613 /* PBXTargetDependency */,
+				B96A3BD651EF4F115D3660E2A26A9933 /* PBXTargetDependency */,
+			);
+			name = "Pods-BMSSecuritySample";
+			productName = "Pods-BMSSecuritySample";
+			productReference = D5B09C5924E65744AA8549376A940919 /* Pods_BMSSecuritySample.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = BFEC55EF363E8CFC126A6D65023B99ED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DCD3FADEC316703151FB3CC5A08BC24 /* BMSCore */,
+				6C8DA950DEFDF9B049FC30BD64028C59 /* BMSSecurity */,
+				718B38484F620232CDD923C6F6FA96EF /* Pods-BMSSecuritySample */,
+				0BA11E79362A2D4A99F2EF3B2F9A3FD1 /* RNCryptor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		46BF0AE88B53B9D9A87CBBB5F4088B4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8C5800AAED7637363D256D5ADDC293F /* RNCryptor-dummy.m in Sources */,
+				B8A4804173B3D3AF3DC89125BB9F42F5 /* RNCryptor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A465E48FE31285FAAAD5C2668E949074 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8520CE9EA88B13ABBA03E6C373C8958E /* AuthenticationContext.swift in Sources */,
+				DA5EE4E26A55BA0D2470BEFE12EF2CC1 /* AuthenticationDelegate.swift in Sources */,
+				4CAB3D7FC67F0F357502DD0141098A53 /* AuthorizationManagerPreferences.swift in Sources */,
+				37E52CB21686FEF8FCBDD5AF2040F3DC /* AuthorizationProcessManager.swift in Sources */,
+				E87FE365CB288B6733E96455EA5A68CE /* AuthorizationRequest.swift in Sources */,
+				8E690D5719F8A14458884A8B4D4A37ED /* AuthorizationRequestManager.swift in Sources */,
+				A071FBB6B6E3597028B32D8888DFEC79 /* BMSSecurity-dummy.m in Sources */,
+				5FED0C45BC5C862B3CC5F39875EE3481 /* BMSSecurityConstants.swift in Sources */,
+				11321E6E07878A0D5B2ED86618DDF21E /* BMSSecurityError.swift in Sources */,
+				6D2F3559AAD2826734D5712FF2C74018 /* ChallengeHandler.swift in Sources */,
+				92267036E68D2804AA77DA9CBCD9C30E /* MCAAppIdentity.swift in Sources */,
+				F1E791A35DBC85345C3C1DDA1DF0EC33 /* MCAAuthorizationManager.swift in Sources */,
+				9C97C7157712412609AAEEF5F9276A45 /* MCADeviceIdentity.swift in Sources */,
+				E1CB6B3AF04D1D950B7BA34D5DBE1BB5 /* MCAUserIdentity.swift in Sources */,
+				50C8BCB42104A0761B3D56D9695BE229 /* Queue.swift in Sources */,
+				D087DAF4E6B6A7C3E0BE0567FC0FD24E /* RequestOptions.swift in Sources */,
+				3675033C7836C2113889CDDD94E96B12 /* SecurityUtils.swift in Sources */,
+				C60D83F693D2BFC330D2D09D73DBE290 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E09F1301CAF7690593E48F3A0FCEFB44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0B5EACA7A7D3ECAB78489095388FBDE /* Pods-BMSSecuritySample-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC349FB79D5338879E585C9EDA0F1680 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				449CF55AEFC423DD9F5071231A17B89C /* AuthorizationManager.swift in Sources */,
+				4B2A0EF870DB765E4B064EDE8B0AA287 /* BaseAppIdentity.swift in Sources */,
+				10CD2E6D7788CD93FA91C556301A1867 /* BaseAuthorizationManager.swift in Sources */,
+				629F6A36283922FDE5419C69B947E2D2 /* BaseDeviceIdentity.swift in Sources */,
+				F47A707F9373901511ED868E32824EBD /* BaseUserIdentity.swift in Sources */,
+				0FCC22DA6EFAD18C75E77937357F2AB4 /* BMSClient.swift in Sources */,
+				E0A268E03C417A932F638B3E8A736AF4 /* BMSCore-dummy.m in Sources */,
+				1848BA34D885B97CCAB5523F3F93CAC4 /* Error.swift in Sources */,
+				200F095A59ED64268EF192A1FC8CE86E /* MFPClient.swift in Sources */,
+				FEB4DD76CA245C476C33C513637A1BED /* MFPLogger.swift in Sources */,
+				DFFA3AEC5ED3623F88164A8C79C85428 /* MFPRequest.swift in Sources */,
+				B8C691E594DB150051999B05D85226E3 /* Request.swift in Sources */,
+				D7CB64F8243290E9DF191369CE5E9F4F /* Response.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		317233DA27D9395F044E317BD9CE8004 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RNCryptor;
+			target = 0BA11E79362A2D4A99F2EF3B2F9A3FD1 /* RNCryptor */;
+			targetProxy = 76EC5C9D4AF8924655B9076D9591ECB8 /* PBXContainerItemProxy */;
+		};
+		8C144C45CFC7D88146DEA17520C26613 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BMSSecurity;
+			target = 6C8DA950DEFDF9B049FC30BD64028C59 /* BMSSecurity */;
+			targetProxy = 1325C9174F737519EE0220EC991713F6 /* PBXContainerItemProxy */;
+		};
+		96E6C9B25B444E212BB28B1C1A0D3AC7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BMSCore;
+			target = 5DCD3FADEC316703151FB3CC5A08BC24 /* BMSCore */;
+			targetProxy = C5C2C7E693A9A6336796159362F4200A /* PBXContainerItemProxy */;
+		};
+		B96A3BD651EF4F115D3660E2A26A9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RNCryptor;
+			target = 0BA11E79362A2D4A99F2EF3B2F9A3FD1 /* RNCryptor */;
+			targetProxy = 229F482BA9D0016798ED79BB0A02C192 /* PBXContainerItemProxy */;
+		};
+		EA38DB10C57869985FDBB353C82EA26F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BMSCore;
+			target = 5DCD3FADEC316703151FB3CC5A08BC24 /* BMSCore */;
+			targetProxy = CBB3AE6AA178FE497CB74B9895AF4647 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1D74F07BCF34ABACCA1D5BDE979DF1EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 05FABA7520D63BA960B384F4C2487A8C /* BMSCore.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/BMSCore/BMSCore-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/BMSCore/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/BMSCore/BMSCore.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = BMSCore;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		24817F889616076D85A6167DE16F76B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69727D634A2780F5C1ADB15F01BB23E4 /* BMSSecurity.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/BMSSecurity/BMSSecurity-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/BMSSecurity/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/BMSSecurity/BMSSecurity.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = BMSSecurity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		3731CD4228616DAF03928347F102F3C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FF295A071448DCEAB0C2B0DB5B49FA8 /* Pods-BMSSecuritySample.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-BMSSecuritySample/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-BMSSecuritySample/Pods-BMSSecuritySample.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_BMSSecuritySample;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5F4DE9D16F8FED0B5974B3A6CB610B55 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 05FABA7520D63BA960B384F4C2487A8C /* BMSCore.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/BMSCore/BMSCore-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/BMSCore/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/BMSCore/BMSCore.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = BMSCore;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6DEF6AF04C17B8DC9B2EFA4601A9CBC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69727D634A2780F5C1ADB15F01BB23E4 /* BMSSecurity.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/BMSSecurity/BMSSecurity-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/BMSSecurity/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/BMSSecurity/BMSSecurity.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = BMSSecurity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		8D1534490D941DCA47C62AC4314182AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		B9E8E234C9F5FD165BC63D3458F5153A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2C8B3B796E1AAE007028E6BBEF56D72A /* Pods-BMSSecuritySample.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-BMSSecuritySample/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-BMSSecuritySample/Pods-BMSSecuritySample.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_BMSSecuritySample;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		C5A18280E9321A9268D1C80B7DA43967 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C93ECC5F6604C552DF162914A1D634C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57050F5C0D6BFC5652AA2DC0E79458DD /* RNCryptor.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/RNCryptor/RNCryptor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RNCryptor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/RNCryptor/RNCryptor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = RNCryptor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D7CE942160E2820238620A3E2303E968 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57050F5C0D6BFC5652AA2DC0E79458DD /* RNCryptor.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/RNCryptor/RNCryptor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/RNCryptor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/RNCryptor/RNCryptor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = RNCryptor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		08521280AF1A75F7933BB14F542507D6 /* Build configuration list for PBXNativeTarget "BMSCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F4DE9D16F8FED0B5974B3A6CB610B55 /* Debug */,
+				1D74F07BCF34ABACCA1D5BDE979DF1EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D1534490D941DCA47C62AC4314182AF /* Debug */,
+				C5A18280E9321A9268D1C80B7DA43967 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9968EC3519603E811D0360A4FDB081EE /* Build configuration list for PBXNativeTarget "RNCryptor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C93ECC5F6604C552DF162914A1D634C3 /* Debug */,
+				D7CE942160E2820238620A3E2303E968 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A8C6EEB9FB21BEA2B6A5F3638F283B10 /* Build configuration list for PBXNativeTarget "Pods-BMSSecuritySample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9E8E234C9F5FD165BC63D3458F5153A /* Debug */,
+				3731CD4228616DAF03928347F102F3C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2EAE1AE42925A2AEBA2CCCF991DA5AE /* Build configuration list for PBXNativeTarget "BMSSecurity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24817F889616076D85A6167DE16F76B8 /* Debug */,
+				6DEF6AF04C17B8DC9B2EFA4601A9CBC6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

@@ -108,6 +108,13 @@ public class Utils {
         }
     }
     
+    /**
+     <#Description#>
+     
+     - parameter response: <#response description#>
+     
+     - returns: <#return value description#>
+     */
     internal static func extractSecureJson(response: Response?) throws -> [String:AnyObject?] {
         
         guard let responseText:String = response?.responseText where (responseText.hasPrefix(BMSSecurityConstants.SECURE_PATTERN_START) && responseText.hasSuffix(BMSSecurityConstants.SECURE_PATTERN_END)) else {
@@ -152,6 +159,18 @@ public class Utils {
         return device
     }
     
+    
+//    internal static func parseDictionaryToJson(dict: [String:AnyObject] ) -> String{
+//        do{
+//            guard let jsonData:NSData =  try NSJSONSerialization.dataWithJSONObject(dict, options: []), json = String(data: jsonData, encoding:NSUTF8StringEncoding) else {
+//                throw JsonUtilsErrors.CouldNotParseDictionaryToJson
+//            }
+//            return json
+//        } catch {
+//            JsonUtilsErrors.CouldNotParseDictionaryToJson
+//        }
+//        return ""
+//    }
     /**
      Decode base64 code
      
@@ -159,7 +178,6 @@ public class Utils {
      
      - returns: return decoded String
      */
-    
     internal static func decodeBase64WithString(strBase64:String) -> NSData? {
         
         guard let objPointerHelper = strBase64.cStringUsingEncoding(NSASCIIStringEncoding), objPointer = String(UTF8String: objPointerHelper) else {

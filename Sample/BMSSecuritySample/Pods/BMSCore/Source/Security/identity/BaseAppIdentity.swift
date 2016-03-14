@@ -10,18 +10,36 @@
 *     See the License for the specific language governing permissions and
 *     limitations under the License.
 */
-import Foundation
-import BMSCore
 
-/// This class represents the base user identity class, with default methods and keys
 
-public class MCAUserIdentity : BaseUserIdentity{
+public class BaseAppIdentity{
     
-    public override init() {
-        super.init()
+    public static let ID = "id"
+    public static let VERSION = "version"
+    
+    public var jsonData : [String:String] = ([:])
+    
+    public init() {}
+    
+    public func getAsJson() -> [String:String]{
+        return jsonData
     }
     
-    public override init(map: AnyObject?) {
-        super.init(map: map)
+    public init(map: AnyObject?) {
+        guard let json = map as? Dictionary<String, String> else {
+            jsonData = ([:])
+            return
+        }
+
+        jsonData = json
     }
- }
+    
+    public func getId() ->String? {
+        return jsonData[BaseAppIdentity.ID]
+    }
+    
+    public func getVersion() -> String? {
+        return jsonData[BaseAppIdentity.VERSION]
+    }
+    
+}
