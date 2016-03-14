@@ -64,7 +64,6 @@ internal class AuthorizationRequestManager {
             var serverHost = MCAAuthorizationManager.defaultProtocol
                 + "://"
                 + BMSSecurityConstants.AUTH_SERVER_NAME
-                + "."
                 + BMSClient.sharedInstance.bluemixRegion!
             
             if let overrideServerHost = AuthorizationRequestManager.overrideServerHost {
