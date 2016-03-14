@@ -15,7 +15,7 @@ import Foundation
 import BMSCore
 
 //AuthorizationRequest is used internally to send authorization requests.
-internal class AuthorizationRequest : MFPRequest {
+internal class AuthorizationRequest : BaseRequest {
     
     internal func send(completionHandler: MfpCompletionHandler?) {
         sendWithCompletionHandler(completionHandler)
@@ -50,7 +50,7 @@ internal class AuthorizationRequest : MFPRequest {
      * @param listener       The listener whose onSuccess or onFailure methods will be called when this request finishes.
      */
     internal func sendWithCompletionHandler(formParamaters : [String : String], callback: MfpCompletionHandler?) {
-        headers[MFPRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+        headers[BaseRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
         var body = ""
         var i = 0
         //creating body params
