@@ -131,7 +131,7 @@ public class Utils {
             name = "nil"
         }
         if version == nil {
-            AuthorizationProcessManager.logger.error("Could not retrieve application version. Application versionß is set to nil")
+            AuthorizationProcessManager.logger.error("Could not retrieve application version. Application version is set to nil")
             version = "nil"
         }
         return (name, version)

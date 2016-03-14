@@ -128,7 +128,7 @@ internal class AuthorizationRequestManager {
                     do {
                         try self.processRedirectResponse(response!)
                     } catch (let thrownError){
-                        let nsError = NSError(domain: BMSSecurityConstants.BMSClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(thrownError)"])
+                        let nsError = NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(thrownError)"])
                         AuthorizationRequestManager.logger.error(String(error))
                         self.defaultCompletionHandler(response, nsError)
                     }
@@ -191,7 +191,7 @@ internal class AuthorizationRequestManager {
     
     internal func requestFailed(info:[String:AnyObject]?) {
         AuthorizationRequestManager.logger.error("BaseRequest failed with info: \(info == nil ? "info is nil" : String(info))")
-        defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSClientErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
+        defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
     }
     
     

@@ -41,7 +41,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
         
-        BMSClient.sharedInstance.sharedAuthorizationManager = self
+        BMSClient.sharedInstance.authorizationManager = self
         
         challengeHandlers = [String:ChallengeHandler]()
         
@@ -160,7 +160,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: User identity
      */
     
-    public func getUserIdentity() -> BaseUserIdentity {
+    public func getUserIdentity() -> UserIdentity? {
         let userIdentityJson = preferences.userIdentity.getAsMap()
         return MCAUserIdentity(map: userIdentityJson)
     }
@@ -169,7 +169,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: Device identity
      */
     
-    public func getDeviceIdentity() -> BaseDeviceIdentity {
+    public func getDeviceIdentity() -> DeviceIdentity {
         let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
         return MCADeviceIdentity(map: deviceIdentityJson)
     }
@@ -178,7 +178,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: Application identity
      */
     
-    public func getAppIdentity() -> BaseAppIdentity {
+    public func getAppIdentity() -> AppIdentity {
         let appIdentityJson = preferences.appIdentity.getAsMap()
         return MCAAppIdentity(map: appIdentityJson)
         

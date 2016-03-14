@@ -12,7 +12,7 @@
 */
 
 import Foundation
-
+import BMSCore
 
 internal class BMSSecurityConstants {
     
@@ -20,10 +20,6 @@ internal class BMSSecurityConstants {
     
     internal static let SECURE_PATTERN_START = "/*-secure-\n"
     internal static let SECURE_PATTERN_END = "*/"
-    
-    internal static let BLUEMIX_NAME = "bluemix"
-    internal static let BLUEMIX_DOMAIN = "bluemix.net"
-    internal static let STAGE1_NAME = "stage1"
     
     internal static let  base64EncodingTable:[Character] = [
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
@@ -62,8 +58,8 @@ internal class BMSSecurityConstants {
     
     internal static var deviceInfo = Utils.getDeviceDictionary()
     internal static let nameAndVer = Utils.getApplicationDetails()
-    internal static var authorizationProcessManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationProcessManager"
-    internal static var authorizationRequestManagerLoggerName = BMSSecurityConstants.MFP_PACKAGE_PREFIX+"AuthorizationRequestManager"
+    internal static var authorizationProcessManagerLoggerName = Logger.mfpLoggerPrefix+"AuthorizationProcessManager"
+    internal static var authorizationRequestManagerLoggerName = Logger.mfpLoggerPrefix+"AuthorizationRequestManager"
     
     internal static var authorizationEndPoint = "authorization"
     internal static var tokenEndPoint = "token"
@@ -90,8 +86,7 @@ internal class BMSSecurityConstants {
     internal static var JSON_CODE_KEY = "code"
     internal static var JSON_GRANT_TYPE_KEY = "grant_type"
     
-    internal static let MFP_PACKAGE_PREFIX = "mfpsdk."
-    internal static let MFP_SECURITY_PACKAGE = MFP_PACKAGE_PREFIX + "security"
+    internal static let MFP_SECURITY_PACKAGE = Logger.mfpLoggerPrefix + "security"
     
     internal static let BEARER = "Bearer"
     internal static let AUTHORIZATION_HEADER = "Authorization"
@@ -108,11 +103,6 @@ internal class BMSSecurityConstants {
      * The name of "result" parameter returned from authorization endpoint.
      */
     internal static let WL_RESULT = "wl_result";
-    
-    /**
-     * Name of rewrite domain header. This header is added to authorization requests.
-     */
-    internal static let REWRITE_DOMAIN_HEADER_NAME = "X-REWRITE-DOMAIN"
     
     /**
      * Name of location header.
@@ -150,7 +140,7 @@ internal class BMSSecurityConstants {
     internal static let JSON_ID_TOKEN_KEY = "id_token"
     
     //label names
-    internal static let KEY_CHAIN_PREFIX = "com.ibm.bms.mca.oauth"
+    internal static let KEY_CHAIN_PREFIX = "com.ibm.mobilefirstplatform.clientsdk.swift.bmssecurity"
     internal static let OAUTH_CERT_LABEL = "\(KEY_CHAIN_PREFIX).certificate"
     internal static let _PUBLIC_KEY_LABEL = "\(KEY_CHAIN_PREFIX).publickey"
     internal static let CLIENT_ID_KEY_LABEL = "\(KEY_CHAIN_PREFIX).clientid"
@@ -163,7 +153,7 @@ internal class BMSSecurityConstants {
     internal static let USER_IDENTITY_LABEL = "userIdentity"
     //labels
 
-    internal static let BMSClientErrorDomain = "com.ibm.bms.mca.client"
+    internal static let BMSSecurityErrorDomain = "com.ibm.mobilefirstplatform.clientsdk.swift.bmssecurity"
     internal static let privateKeyIdentifier = "\(_PRIVATE_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let publicKeyIdentifier = "\(_PUBLIC_KEY_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
     internal static let idTokenLabel = "\(OAUTH_ID_TOKEN_LABEL):\(nameAndVer.name):\(nameAndVer.version)"
