@@ -40,9 +40,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         self.preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
-        
-        BMSClient.sharedInstance.authorizationManager = self
-        
+    
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
