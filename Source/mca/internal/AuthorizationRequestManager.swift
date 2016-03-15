@@ -179,7 +179,7 @@ internal class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in failures {
-            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleFailure(unWrappedChallenge)
             }
             else {
@@ -202,7 +202,7 @@ internal class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in successes {
-            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject]{
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject]{
                 handler.handleSuccess(unWrappedChallenge)
             }
             else {
@@ -238,7 +238,7 @@ internal class AuthorizationRequestManager {
         }
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in jsonChallenges {
-            if let handler = mcaAuthManager.getChallengeHandler(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleChallenge(self, challenge:  unWrappedChallenge)
             }
             else {

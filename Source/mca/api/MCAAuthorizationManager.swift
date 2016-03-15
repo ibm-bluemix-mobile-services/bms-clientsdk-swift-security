@@ -37,6 +37,51 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
+	
+	/**
+	- returns: The locally stored authorization header or nil if the value does not exist.
+	*/
+	public var cachedAuthorizationHeader:String? {
+		get{
+			var returnedValue:String? = nil
+			dispatch_barrier_sync(lockQueue){
+				if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
+					returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
+				}
+			}
+			return returnedValue
+		}
+	}
+		
+	/**
+	- returns: User identity
+	*/
+	public var userIdentity:UserIdentity? {
+		get{
+			let userIdentityJson = preferences.userIdentity.getAsMap()
+			return MCAUserIdentity(map: userIdentityJson)
+		}
+	}
+	
+	/**
+	- returns: Device identity
+	*/
+	public var deviceIdentity:DeviceIdentity {
+		get{
+			let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
+			return MCADeviceIdentity(map: deviceIdentityJson)
+		}
+	}
+	
+	/**
+	- returns: Application identity
+	*/
+	public var appIdentity:AppIdentity {
+		get{
+			let appIdentityJson = preferences.appIdentity.getAsMap()
+			return MCAAppIdentity(map: appIdentityJson)
+		}
+	}
     
     private init() {
         self.preferences = AuthorizationManagerPreferences()
@@ -93,7 +138,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return false
     }
     
-    private func clearCookies() {
+    private func clearSessionCookie() {
         let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = cookiesStorage.cookies {
             let jSessionCookies = cookies.filter() {$0.name == "JSESSIONID"}
@@ -112,7 +157,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         preferences.idToken.clear()
         preferences.accessToken.clear()
         processManager.authorizationFailureCount = 0
-        clearCookies()
+        clearSessionCookie()
     }
     
     /**
@@ -122,7 +167,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     
     public func addCachedAuthorizationHeader(request: NSMutableURLRequest) {
-        addAuthorizationHeader(request, header: getCachedAuthorizationHeader())
+        addAuthorizationHeader(request, header: cachedAuthorizationHeader)
     }
     
     private func addAuthorizationHeader(request: NSMutableURLRequest, header:String?) {
@@ -132,20 +177,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
-    /**
-     - returns: The locally stored authorization header or nil if the value does not exist.
-     */
-    
-    public func getCachedAuthorizationHeader() -> String? {
-        var returnedValue:String? = nil
-        dispatch_barrier_sync(lockQueue){
-            if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
-                returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
-            }
-        }
-        return returnedValue
-    }
-    
+	
     /**
      Invoke process for obtaining authorization header.
      */
@@ -156,34 +188,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
-    /**
-     - returns: User identity
-     */
-    
-    public func getUserIdentity() -> UserIdentity? {
-        let userIdentityJson = preferences.userIdentity.getAsMap()
-        return MCAUserIdentity(map: userIdentityJson)
-    }
-    
-    /**
-     - returns: Device identity
-     */
-    
-    public func getDeviceIdentity() -> DeviceIdentity {
-        let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
-        return MCADeviceIdentity(map: deviceIdentityJson)
-    }
-    
-    /**
-     - returns: Application identity
-     */
-    
-    public func getAppIdentity() -> AppIdentity {
-        let appIdentityJson = preferences.appIdentity.getAsMap()
-        return MCAAppIdentity(map: appIdentityJson)
-        
-    }
-    
+	
     /**
      Registers a delegate that will handle authentication for the specified realm.
      
@@ -218,7 +223,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: The current persistence policy
      */
     
-    public func getAuthorizationPersistencePolicy() -> PersistencePolicy {
+    public func authorizationPersistencePolicy() -> PersistencePolicy {
         return preferences.persistencePolicy.get()
     }
     
@@ -242,7 +247,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: Challenge handler for the input's realm.
      */
     
-    public func getChallengeHandler(realm:String) -> ChallengeHandler?{
+    public func challengeHandlerForRealm(realm:String) -> ChallengeHandler?{
         return challengeHandlers[realm]
     }
     
