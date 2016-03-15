@@ -1,9 +1,7 @@
 IBM Bluemix Mobile Services - Client SDK Swift Security
 ===================================================
 
-This is the security component of the Swift SDK for IBM Bluemix Mobile Services.
-
-https://console.ng.bluemix.net/solutions/mobilefirst
+This is the security component of the Swift SDK for [IBM Bluemix Mobile Services](https://console.ng.bluemix.net/docs/services/mobile.html)
 
 ## Requirements
 * iOS 8.0+
