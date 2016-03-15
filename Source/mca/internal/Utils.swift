@@ -142,11 +142,11 @@ public class Utils {
         let deviceIdentity = MCADeviceIdentity()
         let appIdentity = MCAAppIdentity()
         var device = [String : AnyObject]()
-        device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.getId()
-        device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.getModel()
-        device[BMSSecurityConstants.JSON_OS_KEY] = deviceIdentity.getOS()
-        device[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] =  appIdentity.getId()
-        device[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] =  appIdentity.getVersion()
+        device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.id
+        device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.model
+        device[BMSSecurityConstants.JSON_OS_KEY] = deviceIdentity.OS
+        device[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] =  appIdentity.id
+        device[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] =  appIdentity.version
         device[BMSSecurityConstants.JSON_ENVIRONMENT_KEY] =  BMSSecurityConstants.JSON_IOS_ENVIRONMENT_VALUE
         
         return device

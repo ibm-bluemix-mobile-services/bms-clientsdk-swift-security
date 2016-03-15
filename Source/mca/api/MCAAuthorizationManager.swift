@@ -21,9 +21,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let HTTPS_SCHEME = "https"
     
     public static let CONTENT_TYPE = "Content-Type"
-    
+	
+	private static let logger = Logger.loggerForName(Logger.mfpLoggerPrefix + "MCAAuthorizationManager")
+	
     internal var preferences:AuthorizationManagerPreferences
-    
+
     //lock constant
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     
@@ -189,10 +191,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - Parameter realm -  The realm name
      */
     public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) throws {
-        guard !realm.isEmpty else {
-            throw AuthorizationError.CANNOT_ADD_CHALLANGE_HANDLER("The realm name can't be empty.")
-        }
-        
+		guard !realm.isEmpty else {
+			MCAAuthorizationManager.logger.error("The realm name can't be empty")
+			return;
+		}
+		
         let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
         challengeHandlers[realm] = handler
     }

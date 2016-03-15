@@ -33,6 +33,7 @@ import BMSSecurity
 Connectivity and interaction between your mobile app and the Bluemix services depends on the application ID and application route that are associated with Bluemix application.
 
 The BMSClient API is the entry point for interacting with the SDK. You must invoke the
+
 ```Swift
 initializeWithBluemixAppRoute(bluemixAppRoute: String?, bluemixAppGUID: String?, bluemixRegion: String)
 ```
@@ -43,17 +44,24 @@ initializeWithBluemixAppRoute(bluemixAppRoute: String?, bluemixAppGUID: String?,
 An example of initializing the MobileFirst Platform for iOS SDK follows:
 
 Initialize SDK with IBM Bluemix application route, ID and the region where your Bluemix application is hosted.
+
 ```Swift
 BMSClient.sharedInstance.initializeWithBluemixAppRoute(<app route>, bluemixAppGUID: <app guid>, bluemixRegion: BMSClient.<region>)
 ```
 
 Then you have to register an Authentication Delegate to the MCAAuthorizationManager as follows:
+
 ```Swift
-let mcaAuthManager = MCAAuthorizationManager.sharedInstance
-mcaAuthManager.registerAuthenticationDelegate(<delegate>, realm: <realm>)
+		let mcaAuthManager = MCAAuthorizationManager.sharedInstance
+		BMSClient.sharedInstance.authorizationManager = mcaAuthManager
+
+		// If using custom authentication you need to register an Authentication Delegate
+		mcaAuthManager.registerAuthenticationDelegate(self, realm: "customAuthRealm_1")
+				
 ```
+
 =======================
-Copyright 2015 IBM Corp.
+Copyright 2016 IBM Corp.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

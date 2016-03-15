@@ -27,7 +27,7 @@ internal class AuthorizationRequestManager {
     internal static var overrideServerHost: String?
     
     
-    private static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
+    private static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
     internal var defaultCompletionHandler : MfpCompletionHandler
     

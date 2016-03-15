@@ -19,7 +19,7 @@ internal class AuthorizationProcessManager {
     private var preferences:AuthorizationManagerPreferences
     var completionHandler: MfpCompletionHandler?
     internal var authorizationFailureCount = 0
-    internal static let logger = Logger.getLoggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
+    internal static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
     internal init(preferences:AuthorizationManagerPreferences)
