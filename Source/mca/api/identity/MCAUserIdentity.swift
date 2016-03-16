@@ -21,7 +21,7 @@ public class MCAUserIdentity : BaseUserIdentity{
         super.init()
     }
     
-    public override init(map: AnyObject?) {
+    public override init(map: [String : AnyObject]?) {
         super.init(map: map)
     }
  }

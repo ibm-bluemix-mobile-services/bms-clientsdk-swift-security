@@ -19,12 +19,14 @@ public class MCAAppIdentity : BaseAppIdentity{
     
     public override init() {
         let appInfo = Utils.getApplicationDetails()
-        super.init()
-        jsonData[BaseAppIdentity.ID] =  appInfo.name
-        jsonData[BaseAppIdentity.VERSION] =  appInfo.version
+        let dict:[String : String] = [
+            BaseAppIdentity.ID : appInfo.name,
+            BaseAppIdentity.VERSION : appInfo.version
+        ]
+        super.init(map: dict)
     }
     
-    public override init(map: AnyObject?) {
+    public override init(map: [String : AnyObject]?) {
         super.init(map: map)
     }
     

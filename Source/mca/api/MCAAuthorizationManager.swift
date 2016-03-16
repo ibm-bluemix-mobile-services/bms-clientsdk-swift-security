@@ -91,10 +91,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
-            preferences.deviceIdentity.set(MCADeviceIdentity().getAsJson())
+            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData)
         }
         if preferences.appIdentity.get() == nil {
-            preferences.appIdentity.set(MCAAppIdentity().getAsJson())
+            preferences.appIdentity.set(MCAAppIdentity().jsonData)
         }
     }
     

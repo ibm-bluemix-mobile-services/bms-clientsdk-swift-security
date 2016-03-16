@@ -128,11 +128,11 @@ class MCAAuthorizationManagerTest: XCTestCase {
     
     func testGetIdentities(){
         mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
-        var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.getAsJson()
+        var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.jsonData
         XCTAssertEqual(appId?["item1app"], "one")
         XCTAssertEqual(appId?["item2app"], "two")
         mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" , "item2device" : "two"])
-        var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.getAsJson()
+        var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.jsonData
         XCTAssertEqual(deviceId?["item1device"], "one")
         XCTAssertEqual(deviceId?["item2device"], "two")
         mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" , "item2user" : "two"])

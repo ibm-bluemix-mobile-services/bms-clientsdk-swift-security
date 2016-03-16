@@ -30,11 +30,11 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
     }
     
     func testIdentityPreferences() {
-        preferences.appIdentity.set(MCAAppIdentity().getAsJson())
+        preferences.appIdentity.set(MCAAppIdentity().jsonData)
         var appId = preferences.appIdentity.getAsMap()
         XCTAssertEqual(appId?[BaseAppIdentity.ID] as? String, Utils.getApplicationDetails().name)
         XCTAssertEqual(appId?[BaseAppIdentity.VERSION] as? String, Utils.getApplicationDetails().version)
-        preferences.deviceIdentity.set(MCADeviceIdentity().getAsJson())
+        preferences.deviceIdentity.set(MCADeviceIdentity().jsonData)
         var deviceId = preferences.deviceIdentity.getAsMap()
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.ID] as? String, UIDevice.currentDevice().identifierForVendor?.UUIDString)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.OS] as? String, UIDevice.currentDevice().systemName)

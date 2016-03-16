@@ -19,21 +19,26 @@ import BMSCore
 public class MCADeviceIdentity : BaseDeviceIdentity {
     
     public override init() {
-        super.init()
-		#if os(watchOS)
-			jsonData[BaseDeviceIdentity.ID] = nil
-			jsonData[BaseDeviceIdentity.OS] =  WKInterfaceDevice.currentDevice().systemName
-			jsonData[BaseDeviceIdentity.OS_VERSION] = WKInterfaceDevice.currentDevice().systemVersion
-			jsonData[BaseDeviceIdentity.MODEL] =  WKInterfaceDevice.currentDevice().model
-		#else
-			jsonData[BaseDeviceIdentity.ID] = UIDevice.currentDevice().identifierForVendor?.UUIDString
-			jsonData[BaseDeviceIdentity.OS] =  UIDevice.currentDevice().systemName
-			jsonData[BaseDeviceIdentity.OS_VERSION] = UIDevice.currentDevice().systemVersion
-			jsonData[BaseDeviceIdentity.MODEL] =  UIDevice.currentDevice().model
-		#endif
+        var dict:[String : String] = [:]
+        #if os(watchOS)
+            dict = [
+                BaseDeviceIdentity.ID : "Not Available",
+                BaseDeviceIdentity.OS :  WKInterfaceDevice.currentDevice().systemName,
+                BaseDeviceIdentity.OS_VERSION : WKInterfaceDevice.currentDevice().systemVersion,
+                BaseDeviceIdentity.MODEL :  WKInterfaceDevice.currentDevice().model
+            ]
+        #else
+            dict = [
+                BaseDeviceIdentity.ID : (UIDevice.currentDevice().identifierForVendor?.UUIDString)!,
+                BaseDeviceIdentity.OS :  UIDevice.currentDevice().systemName,
+                BaseDeviceIdentity.OS_VERSION : UIDevice.currentDevice().systemVersion,
+                BaseDeviceIdentity.MODEL :  UIDevice.currentDevice().model
+            ]
+        #endif
+        super.init(map: dict)
     }
     
-    public override init(map: AnyObject?) {
+    public override init(map: [String : AnyObject]?) {
         super.init(map: map)
     }
 }
