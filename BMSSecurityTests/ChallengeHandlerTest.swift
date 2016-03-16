@@ -226,7 +226,7 @@ class MyAuthDelegate : AuthenticationDelegate {
     static let sucDictionary = ["a" : 1 , "b" : "2"]
     static let failDictionary = ["c" : 1 , "d" : "2"]
     static let challenge = ["realm1" : "q1"]
-    func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject?){
+    func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
         XCTAssertTrue(MyAuthDelegate.received)
     }
     func onAuthenticationSuccess(info: AnyObject?) {

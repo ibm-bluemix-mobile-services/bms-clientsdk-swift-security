@@ -79,19 +79,19 @@ class MCAAuthorizationManagerTest: XCTestCase {
     
     func testPersistencePolicy(){
         mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.ALWAYS)
-        XCTAssertEqual(mcaAuthManager.getAuthorizationPersistencePolicy(),PersistencePolicy.ALWAYS)
+        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.ALWAYS)
         mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.NEVER)
-        XCTAssertEqual(mcaAuthManager.getAuthorizationPersistencePolicy(),PersistencePolicy.NEVER)
+        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.NEVER)
     }
     
     func testGetCachedAuthorizationHeader(){
-        XCTAssertNil(mcaAuthManager.getCachedAuthorizationHeader())
+        XCTAssertNil(mcaAuthManager.cachedAuthorizationHeader)
         mcaAuthManager.preferences.idToken.set("testIdToken")
-        XCTAssertNil(mcaAuthManager.getCachedAuthorizationHeader())
+        XCTAssertNil(mcaAuthManager.cachedAuthorizationHeader)
         mcaAuthManager.preferences.accessToken.set("testAccessToken")
-        XCTAssertEqual(mcaAuthManager.getCachedAuthorizationHeader(), "\(BMSSecurityConstants.BEARER) testAccessToken testIdToken")
+        XCTAssertEqual(mcaAuthManager.cachedAuthorizationHeader, "\(BMSSecurityConstants.BEARER) testAccessToken testIdToken")
         mcaAuthManager.preferences.idToken.clear()
-        XCTAssertNil(mcaAuthManager.getCachedAuthorizationHeader())
+        XCTAssertNil(mcaAuthManager.cachedAuthorizationHeader)
         
     }
     
@@ -106,7 +106,7 @@ class MCAAuthorizationManagerTest: XCTestCase {
     func testRegisterAndUnregisterAuthenticationDelegate(){
         
         class MyAuthDelegate : AuthenticationDelegate {
-            func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject?){
+            func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
             }
             func onAuthenticationSuccess(info: AnyObject?) {
                 
@@ -117,27 +117,28 @@ class MCAAuthorizationManagerTest: XCTestCase {
         }
         let delegate = MyAuthDelegate()
         let realm = "testRealm"
-        XCTAssertNil(try? mcaAuthManager.registerAuthenticationDelegate(delegate, realm: ""))
+        mcaAuthManager.registerAuthenticationDelegate(delegate, realm: "")
+        XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(""))
         mcaAuthManager.unregisterAuthenticationDelegate("")
-        XCTAssertNotNil(try? mcaAuthManager.registerAuthenticationDelegate(delegate, realm: realm))
-        XCTAssertNotNil(mcaAuthManager.getChallengeHandler(realm))
+        XCTAssertNotNil(mcaAuthManager.registerAuthenticationDelegate(delegate, realm: realm))
+        XCTAssertNotNil(mcaAuthManager.challengeHandlerForRealm(realm))
         mcaAuthManager.unregisterAuthenticationDelegate(realm)
-        XCTAssertNil(mcaAuthManager.getChallengeHandler(realm))
+        XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(realm))
     }
     
     func testGetIdentities(){
         mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
-        var appId = mcaAuthManager.getAppIdentity().jsonData
-        XCTAssertEqual(appId["item1app"], "one")
-        XCTAssertEqual(appId["item2app"], "two")
+        var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.getAsJson()
+        XCTAssertEqual(appId?["item1app"], "one")
+        XCTAssertEqual(appId?["item2app"], "two")
         mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" , "item2device" : "two"])
-        var deviceId = mcaAuthManager.getDeviceIdentity().jsonData
-        XCTAssertEqual(deviceId["item1device"], "one")
-        XCTAssertEqual(deviceId["item2device"], "two")
+        var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.getAsJson()
+        XCTAssertEqual(deviceId?["item1device"], "one")
+        XCTAssertEqual(deviceId?["item2device"], "two")
         mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" , "item2user" : "two"])
-        var userId = mcaAuthManager.getUserIdentity().jsonData
-        XCTAssertEqual(userId["item1user"], "one")
-        XCTAssertEqual(userId["item2user"], "two")
+        var userId = (mcaAuthManager.userIdentity as? MCAUserIdentity)?.jsonData
+        XCTAssertEqual(userId?["item1user"], "one")
+        XCTAssertEqual(userId?["item2user"], "two")
     }
     
     class MockAuthorizationManagerPreference: AuthorizationManagerPreferences {

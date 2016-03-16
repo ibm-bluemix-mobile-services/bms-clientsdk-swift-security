@@ -81,11 +81,11 @@ class UtilsTest: XCTestCase {
         let deviceIdentity = MCADeviceIdentity()
         let appIdentity = MCAAppIdentity()
         var dictionary = Utils.getDeviceDictionary()
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_DEVICE_ID_KEY] as? String, deviceIdentity.getId())
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_MODEL_KEY] as? String, deviceIdentity.getModel())
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_OS_KEY] as? String, deviceIdentity.getOS())
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] as? String, appIdentity.getId())
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] as? String, appIdentity.getVersion())
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_DEVICE_ID_KEY] as? String, deviceIdentity.id)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_MODEL_KEY] as? String, deviceIdentity.model)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_OS_KEY] as? String, deviceIdentity.OS)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] as? String, appIdentity.id)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] as? String, appIdentity.version)
         XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_ENVIRONMENT_KEY] as? String, BMSSecurityConstants.JSON_IOS_ENVIRONMENT_VALUE)
     }
     func testDecodeBase64WithString(){

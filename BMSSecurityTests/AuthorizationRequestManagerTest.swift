@@ -79,7 +79,6 @@ class AuthorizationRequestManagerTest: XCTestCase {
                     let prefix = MockAuthorizationRequestManager.override ? "override" : MCAAuthorizationManager.defaultProtocol
                         + "://"
                         + BMSSecurityConstants.AUTH_SERVER_NAME
-                        + "."
                         + BMSClient.sharedInstance.bluemixRegion!
                     
                     XCTAssertEqual(rootUrl, prefix
