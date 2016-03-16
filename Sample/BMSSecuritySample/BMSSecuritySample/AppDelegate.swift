@@ -51,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let delegate = MyAuthDelegate()
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
+        BMSClient.sharedInstance.authorizationManager = MCAAuthorizationManager.sharedInstance
         do {
             try mcaAuthManager.registerAuthenticationDelegate(delegate, realm: AppDelegate.customRealm)
         } catch {
