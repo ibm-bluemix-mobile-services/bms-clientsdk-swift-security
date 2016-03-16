@@ -225,8 +225,12 @@ internal class AuthorizationRequestManager {
             } else {
                 defaultCompletionHandler(response, nil)
             }
-        } catch {
-            defaultCompletionHandler(response, nil)
+        } catch (let error){
+            if let responseError = error as? ResponseError {
+                defaultCompletionHandler(response, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(responseError)"]))
+            } else {
+                defaultCompletionHandler(response, nil)
+            }
         }
     }
     
