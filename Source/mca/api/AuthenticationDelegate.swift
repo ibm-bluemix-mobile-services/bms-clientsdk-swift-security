@@ -24,7 +24,7 @@ public protocol AuthenticationDelegate{
         - Parameter challenge - Information about authentication challenge.
      */
     
-    func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject?)
+    func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject)
     
     /**
         Called when authentication succeeded.
