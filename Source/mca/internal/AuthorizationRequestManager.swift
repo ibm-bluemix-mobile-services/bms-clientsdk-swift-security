@@ -14,7 +14,7 @@
 import Foundation
 import BMSCore
 
-internal class AuthorizationRequestManager {
+public class AuthorizationRequestManager {
     
     //MARK constants
     //MARK vars (private)
@@ -24,8 +24,7 @@ internal class AuthorizationRequestManager {
     
     var answers: [String : AnyObject]?
     
-    internal static var overrideServerHost: String?
-    
+    public static var overrideServerHost: String?     
     
     private static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
