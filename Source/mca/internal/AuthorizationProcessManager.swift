@@ -12,26 +12,27 @@
 */
 
 import BMSCore
+import BMSAnalyticsSpec
 
 internal class AuthorizationProcessManager {
-    private var authorizationQueue:Queue<MfpCompletionHandler> = Queue<MfpCompletionHandler>()
+    private var authorizationQueue:Queue<BmsCompletionHandler> = Queue<BmsCompletionHandler>()
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
-    var completionHandler: MfpCompletionHandler?
+    var completionHandler: BmsCompletionHandler?
     internal var authorizationFailureCount = 0
     internal static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
     internal init(preferences:AuthorizationManagerPreferences)
     {
-        self.authorizationQueue = Queue<MfpCompletionHandler>()
+        self.authorizationQueue = Queue<BmsCompletionHandler>()
         self.preferences = preferences
         self.preferences.persistencePolicy.set(PersistencePolicy.NEVER)
         //generate new random session id
         sessionId = NSUUID().UUIDString
     }
     
-    internal func startAuthorizationProcess(callback:MfpCompletionHandler?) {
+    internal func startAuthorizationProcess(callback:BmsCompletionHandler?) {
         
         guard let unWrappedCallBack = callback else {
             self.handleAuthorizationFailure(AuthorizationProcessManagerError.CallBackFunctionIsNil)
@@ -68,7 +69,7 @@ internal class AuthorizationProcessManager {
         options.headers = createRegistrationHeaders()
         options.requestMethod = HttpMethod.POST
         
-        let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
                 if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                     do {
@@ -141,7 +142,7 @@ internal class AuthorizationProcessManager {
             options.headers = [String:String]()
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.GET
-            let callBack:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+            let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
                 guard response?.statusCode != 400 else {
                     if self.authorizationFailureCount++ < 1 {
                         SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary)
@@ -183,7 +184,7 @@ internal class AuthorizationProcessManager {
             options.headers = try createTokenRequestHeaders(grantCode)
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.POST
-            let callback:MfpCompletionHandler = {(response: Response?, error: NSError?) in
+            let callback:BmsCompletionHandler = {(response: Response?, error: NSError?) in
                 if error == nil {
                     if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                         do {
@@ -206,7 +207,7 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: MfpCompletionHandler?)  throws {
+    private func authorizationRequestSend(path:String, options:RequestOptions, completionHandler: BmsCompletionHandler?)  throws {
         
         do {
             let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
@@ -317,7 +318,7 @@ internal class AuthorizationProcessManager {
     }
     private func handleAuthorizationSuccess(response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {
-            if let next:MfpCompletionHandler = authorizationQueue.remove() {
+            if let next:BmsCompletionHandler = authorizationQueue.remove() {
                 next(response, error)
             }
         }
@@ -334,13 +335,13 @@ internal class AuthorizationProcessManager {
             AuthorizationProcessManager.logger.error(unwrappedError.debugDescription)
         }
         while !self.authorizationQueue.isEmpty() {
-            if let next:MfpCompletionHandler = authorizationQueue.remove() {
+            if let next:BmsCompletionHandler = authorizationQueue.remove() {
                 next(response, error)
             }
         }
         
     }
-    internal func logout(completionHandler: MfpCompletionHandler?) {
+    internal func logout(completionHandler: BmsCompletionHandler?) {
         let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
         let options:RequestOptions  = RequestOptions()
         guard let clientId = preferences.clientId.get() else {

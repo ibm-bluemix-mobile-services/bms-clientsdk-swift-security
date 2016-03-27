@@ -12,6 +12,7 @@
 */
 import Foundation
 import BMSCore
+import BMSAnalyticsSpec
 
 public class MCAAuthorizationManager : AuthorizationManager {
     
@@ -22,7 +23,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public static let CONTENT_TYPE = "Content-Type"
     
-    private static let logger = Logger.loggerForName(Logger.mfpLoggerPrefix + "MCAAuthorizationManager")
+    private static let logger = Logger.loggerForName(Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
     
     internal var preferences:AuthorizationManagerPreferences
     
@@ -182,7 +183,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      Invoke process for obtaining authorization header.
      */
     
-    public func obtainAuthorization(completionHandler: MfpCompletionHandler?) {
+    public func obtainAuthorization(completionHandler: BmsCompletionHandler?) {
         dispatch_barrier_async(lockQueue){
             self.processManager.startAuthorizationProcess(completionHandler)
         }
@@ -256,7 +257,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter completionHandler - This is an optional parameter. A completion handler that the app is calling this function wants to be called.
      */
     
-    public func logout(completionHandler: MfpCompletionHandler?){
+    public func logout(completionHandler: BmsCompletionHandler?){
         processManager.logout(completionHandler)
         self.clearAuthorizationData()
     }

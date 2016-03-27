@@ -13,6 +13,7 @@
 
 import Foundation
 import BMSCore
+import BMSAnalyticsSpec
 
 public class AuthorizationRequestManager {
     
@@ -28,9 +29,9 @@ public class AuthorizationRequestManager {
     
     private static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
-    internal var defaultCompletionHandler : MfpCompletionHandler
+    internal var defaultCompletionHandler : BmsCompletionHandler
     
-    internal init(completionHandler: MfpCompletionHandler?) {
+    internal init(completionHandler: BmsCompletionHandler?) {
         
         if let handler = completionHandler {
             defaultCompletionHandler = handler
@@ -111,7 +112,7 @@ public class AuthorizationRequestManager {
             request.addHeader(BMSSecurityConstants.AUTHORIZATION_HEADER, val: authorizationHeaderValue)
         }
         
-        let callback: MfpCompletionHandler = { (response: Response?, error: NSError?) in
+        let callback: BmsCompletionHandler = { (response: Response?, error: NSError?) in
             
             func isRedirect(response: Response?) -> Bool{
                 return 300..<399 ~= (response?.statusCode)!

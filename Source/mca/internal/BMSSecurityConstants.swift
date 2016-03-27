@@ -13,6 +13,7 @@
 
 import Foundation
 import BMSCore
+import BMSAnalyticsSpec
 
 internal class BMSSecurityConstants {
     
@@ -58,8 +59,8 @@ internal class BMSSecurityConstants {
     
     internal static var deviceInfo = Utils.getDeviceDictionary()
     internal static let nameAndVer = Utils.getApplicationDetails()
-    internal static var authorizationProcessManagerLoggerName = Logger.mfpLoggerPrefix+"AuthorizationProcessManager"
-    internal static var authorizationRequestManagerLoggerName = Logger.mfpLoggerPrefix+"AuthorizationRequestManager"
+    internal static var authorizationProcessManagerLoggerName = Logger.bmsLoggerPrefix + "AuthorizationProcessManager"
+    internal static var authorizationRequestManagerLoggerName = Logger.bmsLoggerPrefix + "AuthorizationRequestManager"
     
     internal static var authorizationEndPoint = "authorization"
     internal static var tokenEndPoint = "token"
@@ -86,7 +87,7 @@ internal class BMSSecurityConstants {
     internal static var JSON_CODE_KEY = "code"
     internal static var JSON_GRANT_TYPE_KEY = "grant_type"
     
-    internal static let MFP_SECURITY_PACKAGE = Logger.mfpLoggerPrefix + "security"
+    internal static let MFP_SECURITY_PACKAGE = Logger.bmsLoggerPrefix + "security"
     
     internal static let BEARER = "Bearer"
     internal static let AUTHORIZATION_HEADER = "Authorization"

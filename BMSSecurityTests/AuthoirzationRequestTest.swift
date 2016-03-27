@@ -34,12 +34,12 @@ class AuthoirzationRequestTest: XCTestCase {
     
     func testSend(){
          class AuthorizationRequestMock : AuthorizationRequest {
-            override func sendString(requestBody: String, withCompletionHandler callback: MfpCompletionHandler?) {
+            override func sendString(requestBody: String, withCompletionHandler callback: BmsCompletionHandler?) {
                 let cond = (requestBody == "param2=value2&param%3F1=value%3A1" || requestBody == "param%3F1=value%3A1&param2=value2")
                 XCTAssertTrue(cond)
                 XCTAssertNotNil(callback)
             }
-            override func sendWithCompletionHandler(callback: MfpCompletionHandler?) {
+            override func sendWithCompletionHandler(callback: BmsCompletionHandler?) {
                XCTAssertNotNil(callback)
             }
         }
