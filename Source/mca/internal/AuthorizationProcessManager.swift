@@ -224,7 +224,7 @@ internal class AuthorizationProcessManager {
                         //save the tokens
                         preferences.idToken.set(idTokenFromResponse)
                         preferences.accessToken.set(accessTokenFromResponse)
-                        AuthorizationProcessManager.logger.debug("token successfully saved")       
+                        AuthorizationProcessManager.logger.debug("token successfully saved")
                         if let userIdentity = getUserIdentityFromToken(idTokenFromResponse)
                         {
                             preferences.userIdentity.set(userIdentity)
@@ -340,6 +340,21 @@ internal class AuthorizationProcessManager {
         }
         
     }
-    
-    
+    internal func logout(completionHandler: MfpCompletionHandler?) {
+        let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
+        let options:RequestOptions  = RequestOptions()
+        guard let clientId = preferences.clientId.get() else {
+            AuthorizationProcessManager.logger.info("Client id is nil, could not log out")
+            return
+        }
+        options.headers = [String:String]()
+        self.addSessionIdHeader(&options.headers)
+        options.parameters = [BMSSecurityConstants.client_id_String :  clientId]
+        options.requestMethod = HttpMethod.GET
+        do {
+            try authorizationRequestManager.send("logout", options: options)
+        } catch {
+           AuthorizationProcessManager.logger.info("Could not log out")
+        }
+    }
 }

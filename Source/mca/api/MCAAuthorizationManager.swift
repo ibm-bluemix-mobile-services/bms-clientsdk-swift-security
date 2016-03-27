@@ -21,11 +21,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let HTTPS_SCHEME = "https"
     
     public static let CONTENT_TYPE = "Content-Type"
-	
-	private static let logger = Logger.loggerForName(Logger.mfpLoggerPrefix + "MCAAuthorizationManager")
-	
+    
+    private static let logger = Logger.loggerForName(Logger.mfpLoggerPrefix + "MCAAuthorizationManager")
+    
     internal var preferences:AuthorizationManagerPreferences
-
+    
     //lock constant
     private var lockQueue = dispatch_queue_create("MCAAuthorizationManagerQueue", DISPATCH_QUEUE_CONCURRENT)
     
@@ -37,57 +37,57 @@ public class MCAAuthorizationManager : AuthorizationManager {
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
-	
-	/**
-	- returns: The locally stored authorization header or nil if the value does not exist.
-	*/
-	public var cachedAuthorizationHeader:String? {
-		get{
-			var returnedValue:String? = nil
-			dispatch_barrier_sync(lockQueue){
-				if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
-					returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
-				}
-			}
-			return returnedValue
-		}
-	}
-		
-	/**
-	- returns: User identity
-	*/
-	public var userIdentity:UserIdentity? {
-		get{
-			let userIdentityJson = preferences.userIdentity.getAsMap()
-			return MCAUserIdentity(map: userIdentityJson)
-		}
-	}
-	
-	/**
-	- returns: Device identity
-	*/
-	public var deviceIdentity:DeviceIdentity {
-		get{
-			let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
-			return MCADeviceIdentity(map: deviceIdentityJson)
-		}
-	}
-	
-	/**
-	- returns: Application identity
-	*/
-	public var appIdentity:AppIdentity {
-		get{
-			let appIdentityJson = preferences.appIdentity.getAsMap()
-			return MCAAppIdentity(map: appIdentityJson)
-		}
-	}
+    
+    /**
+     - returns: The locally stored authorization header or nil if the value does not exist.
+     */
+    public var cachedAuthorizationHeader:String? {
+        get{
+            var returnedValue:String? = nil
+            dispatch_barrier_sync(lockQueue){
+                if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
+                    returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
+                }
+            }
+            return returnedValue
+        }
+    }
+    
+    /**
+     - returns: User identity
+     */
+    public var userIdentity:UserIdentity? {
+        get{
+            let userIdentityJson = preferences.userIdentity.getAsMap()
+            return MCAUserIdentity(map: userIdentityJson)
+        }
+    }
+    
+    /**
+     - returns: Device identity
+     */
+    public var deviceIdentity:DeviceIdentity {
+        get{
+            let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
+            return MCADeviceIdentity(map: deviceIdentityJson)
+        }
+    }
+    
+    /**
+     - returns: Application identity
+     */
+    public var appIdentity:AppIdentity {
+        get{
+            let appIdentityJson = preferences.appIdentity.getAsMap()
+            return MCAAppIdentity(map: appIdentityJson)
+        }
+    }
     
     private init() {
         self.preferences = AuthorizationManagerPreferences()
         processManager = AuthorizationProcessManager(preferences: preferences)
         self.challengeHandlers = [String:ChallengeHandler]()
-    
+        
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
@@ -177,7 +177,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
-	
+    
     /**
      Invoke process for obtaining authorization header.
      */
@@ -188,7 +188,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         }
     }
     
-	
+    
     /**
      Registers a delegate that will handle authentication for the specified realm.
      
@@ -196,11 +196,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - Parameter realm -  The realm name
      */
     public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) {
-		guard !realm.isEmpty else {
-			MCAAuthorizationManager.logger.error("The realm name can't be empty")
-			return;
-		}
-		
+        guard !realm.isEmpty else {
+            MCAAuthorizationManager.logger.error("The realm name can't be empty")
+            return;
+        }
+        
         let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
         challengeHandlers[realm] = handler
     }
@@ -249,6 +249,16 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func challengeHandlerForRealm(realm:String) -> ChallengeHandler?{
         return challengeHandlers[realm]
+    }
+    
+    /**
+     Logs out user from MCA
+     - parameter completionHandler - This is an optional parameter. A completion handler that the app is calling this function wants to be called.
+     */
+    
+    public func logout(completionHandler: MfpCompletionHandler?){
+        processManager.logout(completionHandler)
+        self.clearAuthorizationData()
     }
     
     
