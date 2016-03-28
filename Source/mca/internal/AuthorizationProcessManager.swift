@@ -349,7 +349,7 @@ internal class AuthorizationProcessManager {
         options.parameters = [BMSSecurityConstants.client_id_String :  clientId]
         options.requestMethod = HttpMethod.GET
         do {
-            authorizationRequestSend(path:"logout", options:options, completionHandler: completionHandler)
+            try authorizationRequestSend("logout", options:options, completionHandler: completionHandler)
         } catch {
            AuthorizationProcessManager.logger.info("Could not log out")
         }
