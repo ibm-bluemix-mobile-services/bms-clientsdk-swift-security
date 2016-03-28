@@ -247,11 +247,7 @@ internal class AuthorizationProcessManager {
         }
         return nil
     }
-    /**
-     <#Description#>
-     
-     - returns: <#return value description#>
-     */
+
     private func createRegistrationParams() throws -> [String:String]{
         do {
             var params = [String:String]()
@@ -342,7 +338,7 @@ internal class AuthorizationProcessManager {
         
     }
     internal func logout(completionHandler: BmsCompletionHandler?) {
-        let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
+        
         let options:RequestOptions  = RequestOptions()
         guard let clientId = preferences.clientId.get() else {
             AuthorizationProcessManager.logger.info("Client id is nil, could not log out")
@@ -353,9 +349,10 @@ internal class AuthorizationProcessManager {
         options.parameters = [BMSSecurityConstants.client_id_String :  clientId]
         options.requestMethod = HttpMethod.GET
         do {
-            try authorizationRequestManager.send("logout", options: options)
+            authorizationRequestSend(path:"logout", options:options, completionHandler: completionHandler)
         } catch {
            AuthorizationProcessManager.logger.info("Could not log out")
         }
+        
     }
 }
