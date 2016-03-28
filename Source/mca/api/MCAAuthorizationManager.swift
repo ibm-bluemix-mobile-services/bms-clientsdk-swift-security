@@ -258,8 +258,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     
     public func logout(completionHandler: BmsCompletionHandler?){
-        processManager.logout(completionHandler)
         self.clearAuthorizationData()
+        processManager.logout(completionHandler)
     }
     
     
