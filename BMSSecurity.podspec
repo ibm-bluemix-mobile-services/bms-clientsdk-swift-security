@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "BMSSecurity"
-    s.version      = '0.0.30'
+    s.version      = '0.0.31'
     s.summary      = "The security component of the Swift client SDK for IBM Bluemix Mobile Services"
     s.homepage     = "https://github.com/ibm-bluemix-mobile-services/bms-clientsdk-swift-security"
     s.license      = 'Apache License, Version 2.0'
