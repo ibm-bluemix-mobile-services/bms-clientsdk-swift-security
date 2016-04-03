@@ -59,6 +59,11 @@ Then you have to register an Authentication Delegate to the MCAAuthorizationMana
 let mcaAuthManager = MCAAuthorizationManager.sharedInstance
 mcaAuthManager.registerAuthenticationDelegate(<delegate>, realm: <realm>)
 ```
+
+In order to logout the current logged in user, you can use the following code:
+```Swift
+mcaAuthManager.logout(<callBack>)
+```
 =======================
 Copyright 2015 IBM Corp.
 
