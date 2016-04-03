@@ -341,7 +341,7 @@ internal class AuthorizationProcessManager {
         
         let options:RequestOptions  = RequestOptions()
         guard let clientId = preferences.clientId.get() else {
-            AuthorizationProcessManager.logger.info("Could not log out because client id is nil. Device is either not registered or client id has been deletd.")
+            AuthorizationProcessManager.logger.info("Could not log out because client id is nil. Device is either not registered or client id has been deleted.")
             return
         }
         options.headers = [String:String]()
