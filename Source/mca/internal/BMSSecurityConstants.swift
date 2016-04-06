@@ -13,7 +13,7 @@
 
 import Foundation
 import BMSCore
-import BMSAnalyticsSpec
+import BMSAnalyticsAPI
 
 internal class BMSSecurityConstants {
     

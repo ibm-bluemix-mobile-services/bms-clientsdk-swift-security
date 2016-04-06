@@ -12,7 +12,7 @@
 */
 import Foundation
 import BMSCore
-import BMSAnalyticsSpec
+import BMSAnalyticsAPI
 
 public class MCAAuthorizationManager : AuthorizationManager {
     

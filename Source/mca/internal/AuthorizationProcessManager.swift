@@ -12,7 +12,7 @@
 */
 
 import BMSCore
-import BMSAnalyticsSpec
+import BMSAnalyticsAPI
 
 internal class AuthorizationProcessManager {
     private var authorizationQueue:Queue<BmsCompletionHandler> = Queue<BmsCompletionHandler>()
