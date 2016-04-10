@@ -64,7 +64,12 @@ In order to logout the current logged in user, you can use the following code:
 ```Swift
 mcaAuthManager.logout(<callBack>)
 ```
+
+## Sample app
+You can use 'pod try BMSSecurity' to get a sample application. A readme file with details on how to run the sample application is available in the app's folder.
+
 =======================
+
 Copyright 2016 IBM Corp.
 
 Licensed under the Apache License, Version 2.0 (the "License");
