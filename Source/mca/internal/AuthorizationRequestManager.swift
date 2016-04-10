@@ -27,7 +27,7 @@ public class AuthorizationRequestManager {
     
     public static var overrideServerHost: String?     
     
-    private static let logger = Logger.loggerForName(BMSSecurityConstants.authorizationRequestManagerLoggerName)
+    private static let logger = Logger.logger(forName: BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
     internal var defaultCompletionHandler : BmsCompletionHandler
     

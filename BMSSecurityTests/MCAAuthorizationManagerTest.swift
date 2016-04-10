@@ -29,17 +29,17 @@ class MCAAuthorizationManagerTest: XCTestCase {
     func testIsAuthorizationRequired() {
         let authHeader = "ThisIsBEARer unittest"
         let noAuthHeader = "ThisIsBearr unittest"
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(401, responseAuthorizationHeader: authHeader))
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(403, responseAuthorizationHeader: authHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(400, responseAuthorizationHeader: authHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(401, responseAuthorizationHeader: noAuthHeader))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: authHeader))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: authHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 400, httpResponseAuthorizationHeader: authHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: noAuthHeader))
         let txt = "test"
         let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer"]), isRedirect: false)
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(response1))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response1))
         let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercaseString : "Bearer"]), isRedirect: false)
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(response2))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response2))
         let response3:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(), isRedirect: false)
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(response3))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response3))
     }
     func testClearAuthorizationData(){
         mcaAuthManager.preferences.accessToken.set("testAccessToken")

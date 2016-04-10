@@ -61,7 +61,7 @@ internal class AuthorizationRequest : BaseRequest {
             }
             i++
         }
-        sendString(body, withCompletionHandler: callback)
+        sendString(body, completionHandler: callback)
     }
     private func urlEncode(str:String) -> String{
         var encodedString = ""
