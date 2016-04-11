@@ -8,7 +8,7 @@
 
 import UIKit
 import BMSCore
-
+import BMSSecurity
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
@@ -22,9 +22,12 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    @IBAction func loginToGoogle(sender: AnyObject) {
+    @IBAction func logout(sender: AnyObject) {
+        MCAAuthorizationManager.sharedInstance.logout(nil)
+    }
+    @IBAction func login(sender: AnyObject) {
         let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
+            
             var ans:String = "";
             if error == nil {
                 ans="response:\(response?.responseText), no error"

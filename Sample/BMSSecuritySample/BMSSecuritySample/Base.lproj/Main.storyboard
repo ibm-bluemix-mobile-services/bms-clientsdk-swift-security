@@ -30,7 +30,14 @@
                                     <color key="titleShadowColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="loginToGoogle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="woT-XN-geH"/>
+                                    <action selector="login:" destination="BYZ-38-t0r" eventType="touchUpInside" id="agp-Di-d5H"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6xN-lQ-04k">
+                                <rect key="frame" x="247" y="373" width="48" height="30"/>
+                                <state key="normal" title="Logout"/>
+                                <connections>
+                                    <action selector="logout:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BT1-a6-xfq"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -51,4 +58,5 @@
             <point key="canvasLocation" x="305" y="346"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
 </document>
