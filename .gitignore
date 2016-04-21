@@ -1,2 +1,6 @@
-
+xcuserdata/
 *.xcuserstate
+.DS_Store
+Build/
+DerivedData/
+.idea/
