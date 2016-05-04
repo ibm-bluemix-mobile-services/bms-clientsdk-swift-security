@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import BMSCore
+import BMSCore
 @testable import BMSSecurity
 class SecurityUtilsTest: XCTestCase {
     var keySize = 512
