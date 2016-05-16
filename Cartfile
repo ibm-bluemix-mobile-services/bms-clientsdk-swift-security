@@ -1,0 +1,2 @@
+github "ibm-bluemix-mobile-services/bms-clientsdk-swift-core" ~> 1.0
+github "RNCryptor/RNCryptor" "205b714ce96807cb9a86362282082714255db2bb"

@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import BMSCore
+import BMSCore
 @testable import BMSSecurity
 
 class AuthoirzationRequestTest: XCTestCase {
