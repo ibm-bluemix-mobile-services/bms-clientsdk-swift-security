@@ -18,8 +18,8 @@ To install, add the `BMSSecurity` pod to your Podfile.
 use_frameworks!
 
 target 'MyApp' do
-    platform :ios, '8.0'
-    pod 'BMSSecurity'
+platform :ios, '8.0'
+pod 'BMSSecurity'
 end
 ```
 ## Getting started
@@ -39,7 +39,7 @@ The BMSClient API is the entry point for interacting with the SDK. You must invo
 initializeWithBluemixAppRoute(bluemixAppRoute: String?, bluemixAppGUID: String?, bluemixRegion: String)
 ```
 
- The BMSClient API provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
+The BMSClient API provides information about the current SDK level and access to service SDKs. This method is usually in the application delegate of your mobile app.
 
 An example of initializing the Bluemix Mobile Services Swift SDK follows:
 
@@ -67,6 +67,9 @@ mcaAuthManager.logout(<callBack>)
 
 ## Sample app
 You can use 'pod try BMSSecurity' to get a sample application. A readme file with details on how to run the sample application is available in the app's folder.
+
+## Known limitation
+Currently Swift SDK does not submit monitoring data. This is a work in progress and will be delivered in following months. If you’d like to continue receiving monitoring data in the service dashboard you can continue using Objective-C SDK.
 
 =======================
 
