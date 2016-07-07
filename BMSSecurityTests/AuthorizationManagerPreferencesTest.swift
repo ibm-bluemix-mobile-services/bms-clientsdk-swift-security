@@ -48,13 +48,13 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
     
     func testTokenPreferences(){
         preferences = AuthorizationManagerPreferences()
-        preferences.persistencePolicy.set(PersistencePolicy.ALWAYS)
+        preferences.persistencePolicy.set(PersistencePolicy.ALWAYS, shouldUpdateTokens: true)
         preferences.accessToken.set(accessToken)
         preferences.idToken.set(idToken)
         assertTokens(true)
-        preferences.persistencePolicy.set(PersistencePolicy.NEVER)
+        preferences.persistencePolicy.set(PersistencePolicy.NEVER, shouldUpdateTokens: true)
         assertTokens(false)
-        preferences.persistencePolicy.set(PersistencePolicy.ALWAYS)
+        preferences.persistencePolicy.set(PersistencePolicy.ALWAYS, shouldUpdateTokens: true)
         assertTokens(true)
         preferences.idToken.clear()
         preferences.accessToken.clear()

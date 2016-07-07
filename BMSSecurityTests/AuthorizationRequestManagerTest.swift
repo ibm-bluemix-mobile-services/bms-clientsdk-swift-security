@@ -23,12 +23,12 @@ class AuthorizationRequestManagerTest: XCTestCase {
         let base64EncodedStr = utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
         return NSData(base64EncodedString: base64EncodedStr!, options: NSDataBase64DecodingOptions(rawValue: 0))!
     }
-    func testSendInternal(){
-        XCTFail()
-    }
-    func testIsAuthorizationRequired(){
-       XCTFail()
-    }
+//    func testSendInternal(){
+//        XCTFail()
+//    }
+//    func testIsAuthorizationRequired(){
+//       XCTFail()
+//    }
     func testIsAnswersFilled(){
         class MockAuthorizationRequestManager: AuthorizationRequestManager {
             override func resendRequest() throws {

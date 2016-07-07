@@ -161,7 +161,7 @@ class MCAAuthorizationManagerTest: XCTestCase {
                 self.mockValue = PersistencePolicy.ALWAYS
                 super.init(prefName: "", defaultValue: PersistencePolicy.ALWAYS, idToken: nil, accessToken: nil)
             }
-            override func set(value: PersistencePolicy) {
+            override func set(value: PersistencePolicy, shouldUpdateTokens:Bool) {
                 self.mockValue = value
             }
             override func get() -> PersistencePolicy {
