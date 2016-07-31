@@ -27,16 +27,24 @@ class MCAAuthorizationManagerTest: XCTestCase {
     }
     
     func testIsAuthorizationRequired() {
-        let authHeader = "ThisIsBEARer unittest"
-        let noAuthHeader = "ThisIsBearr unittest"
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: authHeader))
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: authHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 400, httpResponseAuthorizationHeader: authHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: noAuthHeader))
+        let badauthHeader = "ThisIsBEARer"
+        let goodauthHeader = "Bearer"
+        let goodauthHeader2 = "bearer"
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: BMSSecurityConstants.AUTH_REALM + goodauthHeader))
+        
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader + "junk"
+            + BMSSecurityConstants.AUTH_REALM + "junk" ))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: ""))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 400, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
         let txt = "test"
-        let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer"]), isRedirect: false)
+        let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
         XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response1))
-        let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercaseString : "Bearer"]), isRedirect: false)
+        let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercaseString : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
         XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response2))
         let response3:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(), isRedirect: false)
         XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response3))

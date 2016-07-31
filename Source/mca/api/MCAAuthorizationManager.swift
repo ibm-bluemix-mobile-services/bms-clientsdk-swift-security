@@ -102,7 +102,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     /**
      A response is an OAuth error response only if,
      1. it's status is 401 or 403.
-     2. The value of the "WWW-Authenticate" header contains 'Bearer'.
+     2. The value of the "WWW-Authenticate" header starts with 'Bearer'.
+     3. The value of the "WWW-Authenticate" header contains "imfAuthentication"
      
      - Parameter httpResponse - Response to check the authorization conditions for.
      
@@ -131,7 +132,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(forStatusCode statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
         
-        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.hasPrefix(BMSSecurityConstants.BEARER.lowercaseString) &&
+            responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.AUTH_REALM.lowercaseString) {
             return true
         }
         
