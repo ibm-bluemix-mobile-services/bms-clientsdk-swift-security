@@ -64,7 +64,7 @@ public class AuthorizationRequestManager {
             var serverHost = MCAAuthorizationManager.defaultProtocol
                 + "://"
                 + BMSSecurityConstants.AUTH_SERVER_NAME
-                + BMSClient.sharedInstance.bluemixRegion!
+                + MCAAuthorizationManager.sharedInstance.bluemixRegion!
             
             if let overrideServerHost = AuthorizationRequestManager.overrideServerHost {
                 serverHost = overrideServerHost
@@ -75,7 +75,7 @@ public class AuthorizationRequestManager {
                 + BMSSecurityConstants.AUTH_SERVER_NAME
                 + "/"
                 + BMSSecurityConstants.AUTH_PATH
-                + BMSClient.sharedInstance.bluemixAppGUID!
+                + MCAAuthorizationManager.sharedInstance.tenantId!
         }
         try sendInternal(rootUrl, path: computedPath, options: options)
         

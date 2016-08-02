@@ -32,12 +32,28 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     private var challengeHandlers:[String:ChallengeHandler]
     
+    // Specifies the bluemix region of the MCA service instance
+    public private(set) var bluemixRegion: String?
+    
+    // Specifies the tenant id of the MCA service instance
+    public private(set) var tenantId: String?
+    
     /**
      - returns: The singelton instance
      */
     public static let sharedInstance = MCAAuthorizationManager()
     
     var processManager : AuthorizationProcessManager
+    /**
+     The intializer for the `MCAAuthorizationManager` class.
+     
+     - parameter tenantId:           The tenant id of the MCA service instance
+     - parameter bluemixRegion:      The region where your MCA service instance is hosted. Use one of the `BMSClient.REGION` constants.
+     */
+    public func initialize (tenantId tenantId: String? = nil, bluemixRegion: String? = nil) {
+        self.tenantId = tenantId != nil ? tenantId : BMSClient.sharedInstance.bluemixAppGUID
+        self.bluemixRegion = bluemixRegion != nil ? bluemixRegion: BMSClient.sharedInstance.bluemixRegion
+    }
     
     /**
      - returns: The locally stored authorization header or nil if the value does not exist.
@@ -97,6 +113,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
         if preferences.appIdentity.get() == nil {
             preferences.appIdentity.set(MCAAppIdentity().jsonData)
         }
+        self.tenantId = BMSClient.sharedInstance.bluemixAppGUID
+        self.bluemixRegion = BMSClient.sharedInstance.bluemixRegion
     }
     
     /**
