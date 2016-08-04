@@ -18,7 +18,7 @@ internal class Queue<Element> {
     internal init() {}
 
     //adds element to queue
-    internal func add(element:Element){
+    internal func add(_ element:Element){
         items.append(element)
     }
 

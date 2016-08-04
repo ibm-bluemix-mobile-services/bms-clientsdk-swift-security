@@ -36,10 +36,17 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertEqual(appId?[BaseAppIdentity.VERSION] as? String, Utils.getApplicationDetails().version)
         preferences.deviceIdentity.set(MCADeviceIdentity().jsonData)
         var deviceId = preferences.deviceIdentity.getAsMap()
+#if swift (>=3.0)
+        XCTAssertEqual(deviceId?[BaseDeviceIdentity.ID] as? String, UIDevice.current().identifierForVendor?.uuidString)
+        XCTAssertEqual(deviceId?[BaseDeviceIdentity.OS] as? String, UIDevice.current().systemName)
+        XCTAssertEqual(deviceId?[BaseDeviceIdentity.OS_VERSION] as? String, UIDevice.current().systemVersion)
+        XCTAssertEqual(deviceId?[BaseDeviceIdentity.MODEL] as? String, UIDevice.current().model)
+#else
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.ID] as? String, UIDevice.currentDevice().identifierForVendor?.UUIDString)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.OS] as? String, UIDevice.currentDevice().systemName)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.OS_VERSION] as? String, UIDevice.currentDevice().systemVersion)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.MODEL] as? String, UIDevice.currentDevice().model)
+#endif
         preferences.userIdentity.set(["item1" : "one" , "item2" : "two"])
         var userId = preferences.userIdentity.getAsMap()
         XCTAssertEqual(userId?["item1"] as? String, "one")
@@ -64,7 +71,7 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertNil(preferences.idToken.get())
     }
     
-    private func assertTokens(TokensShouldExistInKeyChain:Bool) {
+    private func assertTokens(_ TokensShouldExistInKeyChain:Bool) {
         XCTAssertEqual(preferences.accessToken.get(),accessToken)
         XCTAssertEqual(preferences.idToken.get(),idToken)
         if TokensShouldExistInKeyChain {

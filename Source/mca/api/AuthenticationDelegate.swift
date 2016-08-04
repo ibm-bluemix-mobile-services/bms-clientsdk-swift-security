@@ -24,20 +24,20 @@ public protocol AuthenticationDelegate{
         - Parameter challenge - Information about authentication challenge.
      */
     
-    func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject)
+    func onAuthenticationChallengeReceived(_ authContext : AuthenticationContext, challenge : AnyObject)
     
     /**
         Called when authentication succeeded.
         - Parameter info - Extended data describing the authentication success.
     */
     
-    func onAuthenticationSuccess(info : AnyObject?)
+    func onAuthenticationSuccess(_ info : AnyObject?)
     
     /**
         Called when authentication fails.
         - Parameter info - Extended data describing authentication failure.
     */
     
-    func onAuthenticationFailure(info : AnyObject?)
+    func onAuthenticationFailure(_ info : AnyObject?)
 
 }

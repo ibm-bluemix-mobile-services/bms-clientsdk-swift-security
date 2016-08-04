@@ -13,6 +13,41 @@
 
 import Foundation
 
+#if swift(>=3.0)
+    
+// MARK: - Errors (Swift 3)
+
+internal enum BMSSecurityError:ErrorProtocol {
+    case generalError
+}
+
+internal enum JsonUtilsErrors:ErrorProtocol {
+    case jsonIsMalformed
+    case couldNotParseDictionaryToJson
+    case couldNotExtractJsonFromResponse
+}
+
+internal enum AuthorizationProcessManagerError : ErrorProtocol {
+    case clientIdIsNil
+    case callBackFunctionIsNil
+    case couldNotExtractGrantCode
+    case couldNotExtractLocationHeader
+    case couldNotRetrieveUserIdentityFromToken
+    case failedToCreateTokenRequestHeaders
+    case failedToCreateRegistrationParams
+    case failedToSendAuthorizationRequest
+    case could_NOT_SAVE_TOKEN(String)
+    case certificateDoesNotIncludeClientId
+    case responseDoesNotIncludeCertificate
+
+}
+
+internal enum AuthorizationError : ErrorProtocol {
+    case cannot_ADD_CHALLANGE_HANDLER(String)
+}
+
+#else
+    
 internal enum BMSSecurityError:ErrorType {
     case generalError
 }
@@ -35,10 +70,11 @@ internal enum AuthorizationProcessManagerError : ErrorType {
     case COULD_NOT_SAVE_TOKEN(String)
     case CertificateDoesNotIncludeClientId
     case ResponseDoesNotIncludeCertificate
-
+    
 }
 
 internal enum AuthorizationError : ErrorType {
     case CANNOT_ADD_CHALLANGE_HANDLER(String)
 }
-
+    
+#endif

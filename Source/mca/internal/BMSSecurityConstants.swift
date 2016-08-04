@@ -92,7 +92,7 @@ internal class BMSSecurityConstants {
     internal static let BEARER = "Bearer"
     internal static let AUTHORIZATION_HEADER = "Authorization"
     internal static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
-    
+    internal static let AUTH_REALM = "\"imfAuthentication\""
     internal static let HTTP_LOCALHOST = "http://localhost"
     /**
      * Parts of the path to authorization endpoint.

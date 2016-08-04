@@ -14,6 +14,262 @@ import Foundation
 import BMSCore
 import BMSAnalyticsAPI
 
+#if swift (>=3.0)
+
+public class MCAAuthorizationManager : AuthorizationManager {
+    
+    /// Default scheme to use (default is https)
+    public static var defaultProtocol: String = HTTPS_SCHEME
+    public static let HTTP_SCHEME = "http"
+    public static let HTTPS_SCHEME = "https"
+    
+    public static let CONTENT_TYPE = "Content-Type"
+    
+    private static let logger =  Logger.logger(forName: Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
+    
+    internal var preferences:AuthorizationManagerPreferences
+    
+    //lock constant
+    private var lockQueue = DispatchQueue(label: "MCAAuthorizationManagerQueue", attributes: DispatchQueueAttributes.concurrent)
+    
+    private var challengeHandlers:[String:ChallengeHandler]
+    
+    /**
+     - returns: The singelton instance
+     */
+    public static let sharedInstance = MCAAuthorizationManager()
+    
+    var processManager : AuthorizationProcessManager
+    
+    /**
+     - returns: The locally stored authorization header or nil if the value does not exist.
+     */
+    public var cachedAuthorizationHeader:String? {
+        get{
+            var returnedValue:String? = nil
+            lockQueue.sync(flags: .barrier, execute: {
+                if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
+                    returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
+                }
+            })
+            return returnedValue
+        }
+    }
+    
+    /**
+     - returns: User identity
+     */
+    public var userIdentity:UserIdentity? {
+        get{
+            let userIdentityJson = preferences.userIdentity.getAsMap()
+            return MCAUserIdentity(map: userIdentityJson)
+        }
+    }
+    
+    /**
+     - returns: Device identity
+     */
+    public var deviceIdentity:DeviceIdentity {
+        get{
+            let deviceIdentityJson = preferences.deviceIdentity.getAsMap()
+            return MCADeviceIdentity(map: deviceIdentityJson)
+        }
+    }
+    
+    /**
+     - returns: Application identity
+     */
+    public var appIdentity:AppIdentity {
+        get{
+            let appIdentityJson = preferences.appIdentity.getAsMap()
+            return MCAAppIdentity(map: appIdentityJson)
+        }
+    }
+    
+    private init() {
+        self.preferences = AuthorizationManagerPreferences()
+        processManager = AuthorizationProcessManager(preferences: preferences)
+        self.challengeHandlers = [String:ChallengeHandler]()
+        
+        challengeHandlers = [String:ChallengeHandler]()
+        
+        if preferences.deviceIdentity.get() == nil {
+            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData)
+        }
+        if preferences.appIdentity.get() == nil {
+            preferences.appIdentity.set(MCAAppIdentity().jsonData)
+        }
+    }
+    
+    /**
+     A response is an OAuth error response only if,
+     1. it's status is 401 or 403.
+     2. The value of the "WWW-Authenticate" header contains 'Bearer'.
+     
+     - Parameter httpResponse - Response to check the authorization conditions for.
+     
+     - returns: True if the response satisfies both conditions
+     */
+    
+    
+    public func isAuthorizationRequired(forHttpResponse httpResponse: Response) -> Bool {
+        if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
+            guard let statusCode = httpResponse.statusCode else {
+                return false
+            }
+            return isAuthorizationRequired(forStatusCode: statusCode, httpResponseAuthorizationHeader: authHeader)
+        }
+        
+        return false
+    }
+ 
+    /**
+     Check if the params came from response that requires authorization
+     
+     - Parameter statusCode - Status code of the response
+     - Parameter responseAuthorizationHeader - Response header
+     
+     - returns: True if status is 401 or 403 and The value of the header contains 'Bearer'
+     */
+    
+ 
+    public func isAuthorizationRequired(forStatusCode statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
+        
+        if (statusCode == 401 || statusCode == 403) &&
+            responseAuthorizationHeader.lowercased().contains(BMSSecurityConstants.BEARER.lowercased()) &&
+            responseAuthorizationHeader.lowercased().contains(BMSSecurityConstants.AUTH_REALM.lowercased()) {
+            return true
+        }
+        
+        return false
+    }
+    
+    private func clearSessionCookie() {
+        let cookiesStorage = HTTPCookieStorage.shared
+        if let cookies = cookiesStorage.cookies {
+            let jSessionCookies = cookies.filter() {$0.name == "JSESSIONID"}
+            for cookie in jSessionCookies {
+                cookiesStorage.deleteCookie(cookie)
+            }
+        }
+    }
+    
+    /**
+     Clear the local stored authorization data
+     */
+    
+    public func clearAuthorizationData() {
+        preferences.userIdentity.clear()
+        preferences.idToken.clear()
+        preferences.accessToken.clear()
+        processManager.authorizationFailureCount = 0
+        clearSessionCookie()
+    }
+    
+    /**
+     Adds the cached authorization header to the given URL connection object.
+     If the cached authorization header is equal to nil then this operation has no effect.
+     - Parameter request - The request to add the header to.
+     */
+    
+    public func addCachedAuthorizationHeader(_ request: NSMutableURLRequest) {
+        addAuthorizationHeader(request, header: cachedAuthorizationHeader)
+    }
+    
+    private func addAuthorizationHeader(_ request: NSMutableURLRequest, header:String?) {
+        guard let unWrappedHeader = header else {
+            return
+        }
+        request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
+    }
+    
+ 
+    /**
+     Invoke process for obtaining authorization header.
+     */
+    
+    public func obtainAuthorization(completionHandler: BmsCompletionHandler?) {
+        (lockQueue).async(flags: .barrier, execute: {
+            self.processManager.startAuthorizationProcess(completionHandler)
+        })
+    }
+    
+    
+    /**
+     Registers a delegate that will handle authentication for the specified realm.
+     
+     - Parameter delegate - The delegate that will handle authentication challenges
+     - Parameter realm -  The realm name
+     */
+    public func registerAuthenticationDelegate(_ delegate: AuthenticationDelegate, realm: String) {
+        guard !realm.isEmpty else {
+            MCAAuthorizationManager.logger.error("The realm name can't be empty")
+            return;
+        }
+        
+        let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
+        challengeHandlers[realm] = handler
+    }
+ 
+    /**
+     Unregisters the authentication delegate for the specified realm.
+     - Parameter realm - The realm name
+     */
+    
+    public func unregisterAuthenticationDelegate(_ realm: String) {
+        guard !realm.isEmpty else {
+            return
+        }
+        
+        challengeHandlers.removeValue(forKey: realm)
+    }
+    
+    /**
+     Returns the current persistence policy
+     - returns: The current persistence policy
+     */
+    
+    public func authorizationPersistencePolicy() -> PersistencePolicy {
+        return preferences.persistencePolicy.get()
+    }
+    
+    /**
+     Sets a persistence policy
+     - parameter policy - The policy to be set
+     */
+    
+    public func setAuthorizationPersistencePolicy(_ policy: PersistencePolicy) {
+        
+        if preferences.persistencePolicy.get() != policy {
+            preferences.persistencePolicy.set(policy, shouldUpdateTokens: true);
+        }
+    }
+ 
+    /**
+     Returns a challenge handler for realm
+     - parameter realm - The realm for which a challenge handler is required.
+     
+     - returns: Challenge handler for the input's realm.
+     */
+    
+    public func challengeHandlerForRealm(_ realm:String) -> ChallengeHandler?{
+        return challengeHandlers[realm]
+    }
+    
+    /**
+     Logs out user from MCA
+     - parameter completionHandler - This is an optional parameter. A completion handler that the app is calling this function wants to be called.
+     */
+    
+    public func logout(_ completionHandler: BmsCompletionHandler?){
+        self.clearAuthorizationData()
+        processManager.logout(completionHandler)
+    }
+ 
+}
+
+#else
+   
 public class MCAAuthorizationManager : AuthorizationManager {
     
     /// Default scheme to use (default is https)
@@ -102,7 +358,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     /**
      A response is an OAuth error response only if,
      1. it's status is 401 or 403.
-     2. The value of the "WWW-Authenticate" header contains 'Bearer'.
+     2. The value of the "WWW-Authenticate" header starts with 'Bearer'.
+     3. The value of the "WWW-Authenticate" header contains "imfAuthentication"
      
      - Parameter httpResponse - Response to check the authorization conditions for.
      
@@ -131,7 +388,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func isAuthorizationRequired(forStatusCode statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
         
-        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString){
+        if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString) &&
+            responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.AUTH_REALM.lowercaseString) {
             return true
         }
         
@@ -262,3 +520,5 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     
 }
+
+#endif
