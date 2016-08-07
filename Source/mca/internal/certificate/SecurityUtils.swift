@@ -592,10 +592,10 @@ internal class SecurityUtils {
     
     private static func getPublicKeyMod(publicKeyBits: NSData) -> NSData? {
         var iterator : Int = 0
-        iterator++ // TYPE - bit stream - mod + exp
+        iterator+=1 // TYPE - bit stream - mod + exp
         derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
         
-        iterator++ // TYPE - bit stream mod
+        iterator+=1 // TYPE - bit stream mod
         let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         if(mod_size == -1) {
             return nil
@@ -606,14 +606,14 @@ internal class SecurityUtils {
     //Return public key exponent
     private static func getPublicKeyExp(publicKeyBits: NSData) -> NSData? {
         var iterator : Int = 0
-        iterator++ // TYPE - bit stream - mod + exp
+        iterator+=1 // TYPE - bit stream - mod + exp
         derEncodingGetSizeFrom(publicKeyBits, at:&iterator) // Total size
         
-        iterator++// TYPE - bit stream mod
+        iterator+=1// TYPE - bit stream mod
         let mod_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         iterator += mod_size
         
-        iterator++ // TYPE - bit stream exp
+        iterator+=1 // TYPE - bit stream exp
         let exp_size : Int = derEncodingGetSizeFrom(publicKeyBits, at:&iterator)
         //Ensure we got an exponent size
         if(exp_size == -1) {
@@ -637,10 +637,10 @@ internal class SecurityUtils {
         var ret : Int = 0
         if (data[itr] > 0x80) {
             num_bytes  = data[itr] - 0x80
-            itr++
+            itr += 1
         }
         
-        for var i = 0; i < Int(num_bytes); i++ {
+        for i in 0 ..< Int(num_bytes) {
             ret = (ret * 0x100) + Int(data[itr + i])
         }
         

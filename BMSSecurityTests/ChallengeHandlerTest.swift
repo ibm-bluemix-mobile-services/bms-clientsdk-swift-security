@@ -300,17 +300,16 @@ class ChallengeHandlerTest: XCTestCase {
         }
 #endif
     }
-    
-    
-    
-    
 }
+
+#if swift(>=3.0)
 class MockAuthorizationRequestManager : AuthorizationRequestManager {
     static var removeExpectedAnswerCount = 0
     static var submitAnswerCount = 0
     static var requestFailedCount = 0
     static var answer = ["a1" : "1"]
     static var failedInfo = ["a2" : "2"]
+    
     override func removeExpectedAnswer(_ realm: String) {
         XCTAssertEqual(realm, ChallengeHandlerTest.realm)
         MockAuthorizationRequestManager.removeExpectedAnswerCount += 1
@@ -326,27 +325,75 @@ class MockAuthorizationRequestManager : AuthorizationRequestManager {
     }
     
 }
-
-class MyAuthDelegate : AuthenticationDelegate {
-    static var received = false
-    static var success = false
-    static var failure = false
-    static let sucDictionary = ["a" : 1 , "b" : "2"]
-    static let failDictionary = ["c" : 1 , "d" : "2"]
-    static let challenge = ["realm1" : "q1"]
-    func onAuthenticationChallengeReceived(_ authContext: AuthenticationContext, challenge: AnyObject){
-        XCTAssertTrue(MyAuthDelegate.received)
+    
+    class MyAuthDelegate : AuthenticationDelegate {
+        static var received = false
+        static var success = false
+        static var failure = false
+        static let sucDictionary = ["a" : 1 , "b" : "2"]
+        static let failDictionary = ["c" : 1 , "d" : "2"]
+        static let challenge = ["realm1" : "q1"]
+        
+        func onAuthenticationChallengeReceived(_ authContext: AuthenticationContext, challenge: AnyObject){
+            XCTAssertTrue(MyAuthDelegate.received)
+        }
+        func onAuthenticationSuccess(_ info: AnyObject?) {
+            XCTAssertTrue(MyAuthDelegate.success)
+            XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
+        }
+        func onAuthenticationFailure(_ info: AnyObject?){
+            XCTAssertTrue(MyAuthDelegate.failure)
+            XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+        }
     }
-    func onAuthenticationSuccess(_ info: AnyObject?) {
-        XCTAssertTrue(MyAuthDelegate.success)
-        XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
-    }
-    func onAuthenticationFailure(_ info: AnyObject?){
-        XCTAssertTrue(MyAuthDelegate.failure)
-        XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+    
+#else
+    class MockAuthorizationRequestManager : AuthorizationRequestManager {
+        static var removeExpectedAnswerCount = 0
+        static var submitAnswerCount = 0
+        static var requestFailedCount = 0
+        static var answer = ["a1" : "1"]
+        static var failedInfo = ["a2" : "2"]
+        
+        override func removeExpectedAnswer(realm: String) {
+            XCTAssertEqual(realm, ChallengeHandlerTest.realm)
+            MockAuthorizationRequestManager.removeExpectedAnswerCount += 1
+        }
+        override func submitAnswer(answer: [String : AnyObject]?, realm: String) {
+            MockAuthorizationRequestManager.submitAnswerCount += 1
+            XCTAssertEqual(answer, MockAuthorizationRequestManager.answer as NSDictionary)
+            XCTAssertEqual(realm, ChallengeHandlerTest.realm)
+        }
+        override func requestFailed(info: [String : AnyObject]?) {
+            XCTAssertEqual(info, MockAuthorizationRequestManager.failedInfo as NSDictionary)
+            MockAuthorizationRequestManager.requestFailedCount += 1
+        }
         
     }
-}
+    class MyAuthDelegate : AuthenticationDelegate {
+        static var received = false
+        static var success = false
+        static var failure = false
+        static let sucDictionary = ["a" : 1 , "b" : "2"]
+        static let failDictionary = ["c" : 1 , "d" : "2"]
+        static let challenge = ["realm1" : "q1"]
+        
+        func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
+            XCTAssertTrue(MyAuthDelegate.received)
+        }
+        func onAuthenticationSuccess(info: AnyObject?) {
+            XCTAssertTrue(MyAuthDelegate.success)
+            XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
+        }
+        func onAuthenticationFailure(info: AnyObject?){
+            XCTAssertTrue(MyAuthDelegate.failure)
+            XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+            
+        }
+    }
+#endif
+
+
 
 
 

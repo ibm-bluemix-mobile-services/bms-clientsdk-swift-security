@@ -172,9 +172,9 @@ class MCAAuthorizationManagerTest: XCTestCase {
         XCTAssertEqual(request.valueForHTTPHeaderField(BMSSecurityConstants.AUTHORIZATION_HEADER), "\(BMSSecurityConstants.BEARER) testAccessToken testIdToken")
 #endif
     }
-    
+#if swift(>=3.0)
     func testRegisterAndUnregisterAuthenticationDelegate(){
-        
+
         class MyAuthDelegate : AuthenticationDelegate {
             func onAuthenticationChallengeReceived(_ authContext: AuthenticationContext, challenge: AnyObject){
             }
@@ -195,6 +195,31 @@ class MCAAuthorizationManagerTest: XCTestCase {
         mcaAuthManager.unregisterAuthenticationDelegate(realm)
         XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(realm))
     }
+#else
+    func testRegisterAndUnregisterAuthenticationDelegate(){
+        
+        class MyAuthDelegate : AuthenticationDelegate {
+            func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
+            }
+            func onAuthenticationSuccess(info: AnyObject?) {
+                
+            }
+            func onAuthenticationFailure(info: AnyObject?){
+                
+            }
+        }
+        
+        let delegate = MyAuthDelegate()
+        let realm = "testRealm"
+        mcaAuthManager.registerAuthenticationDelegate(delegate, realm: "")
+        XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(""))
+        mcaAuthManager.unregisterAuthenticationDelegate("")
+        XCTAssertNotNil(mcaAuthManager.registerAuthenticationDelegate(delegate, realm: realm))
+        XCTAssertNotNil(mcaAuthManager.challengeHandlerForRealm(realm))
+        mcaAuthManager.unregisterAuthenticationDelegate(realm)
+        XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(realm))
+    }
+#endif
     
     func testGetIdentities(){
         mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
@@ -231,22 +256,37 @@ class MCAAuthorizationManagerTest: XCTestCase {
                 self.mockValue = PersistencePolicy.ALWAYS
                 super.init(prefName: "", defaultValue: PersistencePolicy.ALWAYS, idToken: nil, accessToken: nil)
             }
+            
+#if swift(>=3.0)
             override func set(_ value: PersistencePolicy, shouldUpdateTokens:Bool) {
                 self.mockValue = value
             }
+#else
+            override func set(value: PersistencePolicy, shouldUpdateTokens:Bool) {
+                self.mockValue = value
+            }
+#endif
+            
             override func get() -> PersistencePolicy {
                 return self.mockValue
             }
         }
         class MockTokenPreference : TokenPreference {
             var mockValue:String? = nil
-            init()
-            {
+            init() {
                 super.init(prefName: "", persistencePolicy: MockPolicyPreference())
             }
+            
+#if swift(>=3.0)
             override func set(_ value: String) {
                 self.mockValue = value
             }
+#else
+            override func set(value: String) {
+                self.mockValue = value
+            }
+            
+#endif
             override func get() -> String? {
                 return self.mockValue
             }
@@ -260,9 +300,17 @@ class MCAAuthorizationManagerTest: XCTestCase {
             {
                 super.init(prefName: "", defaultValue: nil)
             }
+            
+#if swift(>=3.0)
             override func set(_ value: String?) {
                 self.mockValue = value
             }
+#else
+            override func set(value: String?) {
+                self.mockValue = value
+            }
+#endif
+            
             override func get() -> String? {
                 return self.mockValue
             }
@@ -276,9 +324,17 @@ class MCAAuthorizationManagerTest: XCTestCase {
             {
                 super.init(prefName: "")
             }
+            
+#if swift(>=3.0)
             override func set(_ value: String?) {
                 self.mockValue = value
             }
+#else
+            override func set(value: String?) {
+                self.mockValue = value
+            }
+#endif
+            
             override func get() -> String? {
                 return self.mockValue
             }

@@ -506,16 +506,19 @@ public class Utils {
             case 0:
                 result[j] = int8Current << 2
             case 1:
-                result[j++] |= int8Current >> 4
+                result[j] |= int8Current >> 4
+                j += 1
                 result[j] = (int8Current & 0x0f) << 4
             case 2:
-                result[j++] |= int8Current >> 2
+                result[j] |= int8Current >> 2
+                j += 1
                 result[j] = (int8Current & 0x03) << 6
             case 3:
-                result[j++] |= int8Current
+                result[j] |= int8Current
+                j += 1
             default:  break
             }
-            i++
+            i += 1
             
             if count == intLengthFixed {
                 break
@@ -531,7 +534,7 @@ public class Utils {
                 // Invalid state
                 return nil
             case 2:
-                k++
+                k += 1
                 result[k] = 0
             case 3:
                 result[k] = 0
@@ -548,7 +551,7 @@ public class Utils {
         var ctremaining:Int
         var input:[Int] = [Int](count: 3, repeatedValue: 0)
         var output:[Int] = [Int](count: 4, repeatedValue: 0)
-        var i:Int, charsonline:Int = 0, ctcopy:Int
+        var charsonline:Int = 0, ctcopy:Int
         guard data.length >= 1 else {
             return ""
         }
@@ -561,7 +564,8 @@ public class Utils {
             if ctremaining <= 0 {
                 break
             }
-            for i = 0; i < 3; i++ {
+            
+            for i in 0..<3 {
                 let ix:Int = ixtext + i
                 if ix < data.length {
                     input[i] = Int(raw[ix])
@@ -581,13 +585,15 @@ public class Utils {
                 ctcopy = 3
             default: break
             }
-            for i = 0; i < ctcopy; i++ {
+            
+            for i in 0..<ctcopy {
                 let toAppend = isSafeUrl ? BMSSecurityConstants.base64EncodingTableUrlSafe[output[i]]: BMSSecurityConstants.base64EncodingTable[output[i]]
                 result.append(toAppend)
             }
-            for i = ctcopy; i < 4; i++ {
+            for _ in ctcopy..<4 {
                 result += "="
             }
+            
             ixtext += 3
             charsonline += 4
             

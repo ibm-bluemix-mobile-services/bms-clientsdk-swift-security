@@ -113,12 +113,15 @@ internal class JSONPreference:StringPreference {
     internal init(prefName:String) {
         super.init(prefName: prefName, defaultValue: nil)
     }
-    
-    internal func set(_ json:[String:AnyObject])
-    {
+#if swift(>=3.0)
+    internal func set(_ json:[String:AnyObject]) {
         set(try? Utils.JSONStringify(json))
     }
-    
+#else
+    internal func set(json:[String:AnyObject]) {
+        set(try? Utils.JSONStringify(json))
+    }
+#endif
     internal func getAsMap() -> [String:AnyObject]?{
         do {
             if let json = get() {
@@ -172,7 +175,7 @@ internal class PolicyPreference {
     internal func get() -> PersistencePolicy {
         return self.value
     }
-    
+#if swift(>=3.0)
     internal func set(_ value:PersistencePolicy, shouldUpdateTokens:Bool) {
         self.value = value
         if(shouldUpdateTokens){
@@ -182,6 +185,17 @@ internal class PolicyPreference {
         AuthorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
         AuthorizationManagerPreferences.sharedPreferences.synchronize()
     }
+#else
+    internal func set(value:PersistencePolicy, shouldUpdateTokens:Bool) {
+        self.value = value
+        if(shouldUpdateTokens){
+            self.accessToken!.updateStateByPolicy()
+            self.idToken!.updateStateByPolicy()
+        }
+        AuthorizationManagerPreferences.sharedPreferences.setValue(value.rawValue, forKey: prefName)
+        AuthorizationManagerPreferences.sharedPreferences.synchronize()
+    }
+#endif
 }
 /**
  * Holds authorization manager Token preference
@@ -196,6 +210,7 @@ internal class TokenPreference {
         self.persistencePolicy = persistencePolicy
     }
     
+#if swift(>=3.0)
     internal func set(_ value:String) {
         runtimeValue = value
         if self.persistencePolicy.get() ==  PersistencePolicy.ALWAYS {
@@ -204,6 +219,16 @@ internal class TokenPreference {
             SecurityUtils.removeItemFromKeyChain(prefName)
         }
     }
+#else
+    internal func set(value:String) {
+        runtimeValue = value
+        if self.persistencePolicy.get() ==  PersistencePolicy.ALWAYS {
+            SecurityUtils.saveItemToKeyChain(value, label: prefName)
+        } else {
+            SecurityUtils.removeItemFromKeyChain(prefName)
+        }
+    }
+#endif
     
     internal func get() -> String?{
         if (self.runtimeValue == nil && self.persistencePolicy.get() == PersistencePolicy.ALWAYS) {
