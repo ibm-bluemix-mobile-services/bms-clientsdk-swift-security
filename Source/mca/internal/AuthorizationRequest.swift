@@ -73,7 +73,7 @@ internal class AuthorizationRequest : BaseRequest {
         var unchangedCharacters = ""
         let FORM_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#&!$(),~%"
         
-        for element: Int in 0x20...0x5f {
+        for element: Int in 0x20..<0x7f {
             if !FORM_ENCODE_SET.contains(String(UnicodeScalar(element))) {
                 unchangedCharacters += String(Character(UnicodeScalar(element)))
             }
