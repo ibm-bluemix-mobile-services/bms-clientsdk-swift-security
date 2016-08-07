@@ -12,8 +12,6 @@
  */
 
 import Foundation
-//import RNCryptor
-
 
 #if swift (>=3.0)
 
