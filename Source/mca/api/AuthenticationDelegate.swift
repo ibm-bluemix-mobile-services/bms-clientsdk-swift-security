@@ -14,6 +14,7 @@
 import Foundation
 import BMSCore
 
+#if swift(>=3.0)
 public protocol AuthenticationDelegate{
    
     /**
@@ -41,3 +42,32 @@ public protocol AuthenticationDelegate{
     func onAuthenticationFailure(_ info : AnyObject?)
 
 }
+#else
+    public protocol AuthenticationDelegate{
+        
+        /**
+         Called when authentication challenge was received. The implementor should handle the challenge and call AuthenticationContext:submitAuthenticationChallengeAnswer(answer:[String:AnyObject]?)}
+         with authentication challenge answer.
+         
+         - Parameter authContext  - Authentication context the answer should be sent to.
+         - Parameter challenge - Information about authentication challenge.
+         */
+        
+        func onAuthenticationChallengeReceived(authContext : AuthenticationContext, challenge : AnyObject)
+        
+        /**
+         Called when authentication succeeded.
+         - Parameter info - Extended data describing the authentication success.
+         */
+        
+        func onAuthenticationSuccess(info : AnyObject?)
+        
+        /**
+         Called when authentication fails.
+         - Parameter info - Extended data describing authentication failure.
+         */
+        
+        func onAuthenticationFailure(info : AnyObject?)
+        
+    }
+#endif

@@ -70,7 +70,7 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
         XCTAssertNil(preferences.accessToken.get())
         XCTAssertNil(preferences.idToken.get())
     }
-    
+#if swift(>=3.0)
     private func assertTokens(_ TokensShouldExistInKeyChain:Bool) {
         XCTAssertEqual(preferences.accessToken.get(),accessToken)
         XCTAssertEqual(preferences.idToken.get(),idToken)
@@ -82,4 +82,17 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
             XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
         }
     }
+#else
+    private func assertTokens(TokensShouldExistInKeyChain:Bool) {
+        XCTAssertEqual(preferences.accessToken.get(),accessToken)
+        XCTAssertEqual(preferences.idToken.get(),idToken)
+        if TokensShouldExistInKeyChain {
+            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName),idToken)
+            XCTAssertEqual(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName),accessToken)
+        } else {
+            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.idToken.prefName))
+            XCTAssertNil(SecurityUtils.getItemFromKeyChain(preferences.accessToken.prefName))
+        }
+    }
+#endif
 }

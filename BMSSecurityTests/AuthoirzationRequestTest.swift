@@ -52,13 +52,13 @@ class AuthoirzationRequestTest: XCTestCase {
     #else
     func testSend(){
         class AuthorizationRequestMock : AuthorizationRequest {
-            override func sendString(_ requestBody: String, completionHandler callback: BmsCompletionHandler?) {
+            override func sendString(requestBody: String, completionHandler callback: BmsCompletionHandler?) {
             let cond = (requestBody == "param2=value2&param%3F1=value%3A1" || requestBody == "param%3F1=value%3A1&param2=value2")
             XCTAssertTrue(cond)
             XCTAssertNotNil(callback)
             }
     
-            override func sendWithCompletionHandler(_ callback: BmsCompletionHandler?) {
+            override func sendWithCompletionHandler(callback: BmsCompletionHandler?) {
                 XCTAssertNotNil(callback)
             }
         }

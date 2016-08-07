@@ -48,7 +48,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         get{
             var returnedValue:String? = nil
             lockQueue.sync(flags: .barrier, execute: {
-                if let accessToken = self.preferences.accessToken.get(), idToken = self.preferences.idToken.get() {
+                if let accessToken = self.preferences.accessToken.get(), let idToken = self.preferences.idToken.get() {
                     returnedValue = "\(BMSSecurityConstants.BEARER) \(accessToken) \(idToken)"
                 }
             })
@@ -113,7 +113,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     
     public func isAuthorizationRequired(forHttpResponse httpResponse: Response) -> Bool {
-        if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
+        if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], let authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
                 return false
             }

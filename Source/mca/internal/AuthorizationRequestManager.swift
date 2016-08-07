@@ -86,9 +86,9 @@ public class AuthorizationRequestManager {
     }
     
     internal static func isAuthorizationRequired(_ response: Response?) -> Bool {
-        if let unwrappedResponse = response, unWrappedheaders = unwrappedResponse.headers,
-            authHeader = unWrappedheaders[caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER] as? String
-            where authHeader == BMSSecurityConstants.AUTHENTICATE_HEADER_VALUE {
+        if let unwrappedResponse = response, let unWrappedheaders = unwrappedResponse.headers,
+            let authHeader = unWrappedheaders[caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER] as? String,
+            authHeader == BMSSecurityConstants.AUTHENTICATE_HEADER_VALUE {
             return true
         }
         return false
@@ -162,7 +162,7 @@ public class AuthorizationRequestManager {
             }
         }
         
-        if let method = options?.requestMethod where method == HttpMethod.GET{
+        if let method = options?.requestMethod, method == HttpMethod.GET{
             request.queryParameters = options?.parameters
             request.send(callback)
         } else {
@@ -183,7 +183,7 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in failures {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleFailure(unWrappedChallenge)
             }
             else {
@@ -206,7 +206,7 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in successes {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject]{
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleSuccess(unWrappedChallenge)
             }
             else {
@@ -246,7 +246,7 @@ public class AuthorizationRequestManager {
         }
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in jsonChallenges {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), unWrappedChallenge = challenge as? [String : AnyObject] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleChallenge(self, challenge:  unWrappedChallenge)
             }
             else {
@@ -312,7 +312,7 @@ public class AuthorizationRequestManager {
         }
         
         for (_, value) in answers! {
-            if let sVal:String = value as? String where sVal == "" {
+            if let sVal:String = value as? String, sVal == "" {
                 return false
             }
         }
@@ -351,7 +351,7 @@ public class AuthorizationRequestManager {
         
         let query =  url.query
         
-        if let q = query where q.lowercased().contains(BMSSecurityConstants.WL_RESULT.lowercased()) {
+        if let q = query, q.lowercased().contains(BMSSecurityConstants.WL_RESULT.lowercased()) {
             if let result = Utils.getParameterValueFromQuery(query, paramName: BMSSecurityConstants.WL_RESULT, caseSensitive: false) {
                 let jsonResult = try Utils.parseJsonStringtoDictionary(result)
                 // process failures if any

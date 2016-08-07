@@ -254,7 +254,7 @@ public class Utils {
         var ctremaining:Int
         var input:[Int] = [Int](repeating: 0, count: 3)
         var output:[Int] = [Int](repeating: 0, count: 4)
-        var i:Int, charsonline:Int = 0, ctcopy:Int
+        var charsonline:Int = 0, ctcopy:Int
         guard data.count >= 1 else {
             return ""
         }
