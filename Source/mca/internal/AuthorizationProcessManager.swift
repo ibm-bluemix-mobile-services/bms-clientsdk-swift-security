@@ -325,7 +325,7 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    private func handleAuthorizationFailure(_ error: ErrorProtocol) {
+    private func handleAuthorizationFailure(_ error: Error) {
         self.handleAuthorizationFailure(nil, error: NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(error)"]))
     }
     

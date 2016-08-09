@@ -23,7 +23,7 @@ public class ChallengeHandler : AuthenticationContext{
     internal var activeRequest:AuthorizationRequestManager?
     
    
-    internal var lockQueue = DispatchQueue(label: "ChallengeHandlerQueue", attributes: DispatchQueueAttributes.concurrent)
+    internal var lockQueue = DispatchQueue(label: "ChallengeHandlerQueue", attributes: DispatchQueue.Attributes.concurrent)
 
     public init(realm:String , authenticationDelegate:AuthenticationDelegate) {
         self.realm = realm

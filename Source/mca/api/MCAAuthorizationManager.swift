@@ -30,7 +30,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     internal var preferences:AuthorizationManagerPreferences
     
     //lock constant
-    private var lockQueue = DispatchQueue(label: "MCAAuthorizationManagerQueue", attributes: DispatchQueueAttributes.concurrent)
+    private var lockQueue = DispatchQueue(label: "MCAAuthorizationManagerQueue", attributes: DispatchQueue.Attributes.concurrent)
     
     private var challengeHandlers:[String:ChallengeHandler]
     

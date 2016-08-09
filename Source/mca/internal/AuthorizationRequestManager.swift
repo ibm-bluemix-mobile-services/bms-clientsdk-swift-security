@@ -215,7 +215,7 @@ public class AuthorizationRequestManager {
         }
     }
     
-    enum ResponseError: ErrorProtocol {
+    enum ResponseError: Error {
         case noLocation(String)
         case challengeHandlerNotFound(String)
     }

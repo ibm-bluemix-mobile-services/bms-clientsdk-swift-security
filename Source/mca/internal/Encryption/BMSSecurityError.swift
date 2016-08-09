@@ -17,17 +17,17 @@ import Foundation
     
 // MARK: - Errors (Swift 3)
 
-internal enum BMSSecurityError:ErrorProtocol {
+internal enum BMSSecurityError:Error {
     case generalError
 }
 
-internal enum JsonUtilsErrors:ErrorProtocol {
+internal enum JsonUtilsErrors:Error {
     case jsonIsMalformed
     case couldNotParseDictionaryToJson
     case couldNotExtractJsonFromResponse
 }
 
-internal enum AuthorizationProcessManagerError : ErrorProtocol {
+internal enum AuthorizationProcessManagerError : Error {
     case clientIdIsNil
     case callBackFunctionIsNil
     case couldNotExtractGrantCode
@@ -42,7 +42,7 @@ internal enum AuthorizationProcessManagerError : ErrorProtocol {
 
 }
 
-internal enum AuthorizationError : ErrorProtocol {
+internal enum AuthorizationError : Error {
     case cannot_ADD_CHALLANGE_HANDLER(String)
 }
 

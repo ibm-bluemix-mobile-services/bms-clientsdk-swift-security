@@ -30,10 +30,10 @@ public class MCADeviceIdentity : BaseDeviceIdentity {
             ]
         #else
             dict = [
-                BaseDeviceIdentity.ID : (UIDevice.current().identifierForVendor?.uuidString)!,
-                BaseDeviceIdentity.OS :  UIDevice.current().systemName,
-                BaseDeviceIdentity.OS_VERSION : UIDevice.current().systemVersion,
-                BaseDeviceIdentity.MODEL :  UIDevice.current().model
+                BaseDeviceIdentity.ID : (UIDevice.current.identifierForVendor?.uuidString)!,
+                BaseDeviceIdentity.OS :  UIDevice.current.systemName,
+                BaseDeviceIdentity.OS_VERSION : UIDevice.current.systemVersion,
+                BaseDeviceIdentity.MODEL :  UIDevice.current.model
             ]
         #endif
         super.init(map: dict)
