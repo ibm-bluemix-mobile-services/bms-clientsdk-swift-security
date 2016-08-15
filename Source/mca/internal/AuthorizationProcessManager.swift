@@ -50,18 +50,18 @@ internal class AuthorizationProcessManager {
         if authorizationQueue.size == 1 {
             do {
                 if preferences.clientId.get() == nil {
-                    AuthorizationProcessManager.logger.info("starting registration process")
+                    AuthorizationProcessManager.logger.info(message: "starting registration process")
                     try invokeInstanceRegistrationRequest()
                 } else {
-                    AuthorizationProcessManager.logger.info("starting authorization process")
+                    AuthorizationProcessManager.logger.info(message: "starting authorization process")
                     invokeAuthorizationRequest()
                 }
             } catch {
                 self.handleAuthorizationFailure(error)
             }
         } else {
-            AuthorizationProcessManager.logger.info("authorization process already running, adding response listener to the queue");
-            AuthorizationProcessManager.logger.debug("authorization process currently handling \(authorizationQueue.size) requests")
+            AuthorizationProcessManager.logger.info(message: "authorization process already running, adding response listener to the queue");
+            AuthorizationProcessManager.logger.debug(message: "authorization process currently handling \(authorizationQueue.size) requests")
         }
     }
     
@@ -230,7 +230,7 @@ internal class AuthorizationProcessManager {
                     //save the tokens
                     preferences.idToken.set(idTokenFromResponse)
                     preferences.accessToken.set(accessTokenFromResponse)
-                    AuthorizationProcessManager.logger.debug("token successfully saved")
+                    AuthorizationProcessManager.logger.debug(message: "token successfully saved")
                     if let userIdentity = getUserIdentityFromToken(idTokenFromResponse)
                     {
                         preferences.userIdentity.set(userIdentity)
@@ -274,7 +274,7 @@ internal class AuthorizationProcessManager {
     
     private func extractLocationHeader(_ response:Response) throws -> String {
         if let location = response.headers?[caseInsensitive : BMSSecurityConstants.LOCATION_HEADER_NAME], let stringLocation = location as? String {
-            AuthorizationProcessManager.logger.debug("Location header extracted successfully")
+            AuthorizationProcessManager.logger.debug(message: "Location header extracted successfully")
             return stringLocation
         } else {
             throw AuthorizationProcessManagerError.couldNotExtractLocationHeader
@@ -285,7 +285,7 @@ internal class AuthorizationProcessManager {
     private func extractGrantCode(_ urlString:String) throws -> String{
         
         if let url:URL = URL(string: urlString), let code = Utils.getParameterValueFromQuery(url.query, paramName: BMSSecurityConstants.JSON_CODE_KEY, caseSensitive: false)  {
-            AuthorizationProcessManager.logger.debug("Grant code extracted successfully")
+            AuthorizationProcessManager.logger.debug(message: "Grant code extracted successfully")
             return code
         } else {
             throw AuthorizationProcessManagerError.couldNotExtractGrantCode
@@ -312,7 +312,7 @@ internal class AuthorizationProcessManager {
                 throw AuthorizationProcessManagerError.responseDoesNotIncludeCertificate
             }
         }
-        AuthorizationProcessManager.logger.debug("certificate successfully saved")
+        AuthorizationProcessManager.logger.debug(message: "certificate successfully saved")
     }
     private func addSessionIdHeader(_ headers:inout [String:String]) {
         headers[BMSSecurityConstants.X_WL_SESSION_HEADER_NAME] =  self.sessionId
@@ -331,9 +331,9 @@ internal class AuthorizationProcessManager {
     
     private func handleAuthorizationFailure(_ response: Response?,  error: NSError?)
     {
-        AuthorizationProcessManager.logger.error("Authorization process failed")
+        AuthorizationProcessManager.logger.error(message: "Authorization process failed")
         if let unwrappedError = error {
-            AuthorizationProcessManager.logger.error(unwrappedError.debugDescription)
+            AuthorizationProcessManager.logger.error(message: unwrappedError.debugDescription)
         }
         while !self.authorizationQueue.isEmpty() {
             if let next:BmsCompletionHandler = authorizationQueue.remove() {
@@ -346,7 +346,7 @@ internal class AuthorizationProcessManager {
         
         let options:RequestOptions  = RequestOptions()
         guard let clientId = preferences.clientId.get() else {
-            AuthorizationProcessManager.logger.info("Could not log out because client id is nil. Device is either not registered or client id has been deleted.")
+            AuthorizationProcessManager.logger.info(message: "Could not log out because client id is nil. Device is either not registered or client id has been deleted.")
             if let unWrappedCompletionHandler = completionHandler {
                 unWrappedCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"Could not log out because client id is nil. Device is either not registered or client id has been deleted."]))
             }
@@ -359,7 +359,7 @@ internal class AuthorizationProcessManager {
         do {
             try authorizationRequestSend("logout", options:options, completionHandler: completionHandler)
         } catch {
-            AuthorizationProcessManager.logger.info("Could not log out")
+            AuthorizationProcessManager.logger.info(message: "Could not log out")
             if let unWrappedCompletionHandler = completionHandler {
                 unWrappedCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"Could not log out."]))
             }

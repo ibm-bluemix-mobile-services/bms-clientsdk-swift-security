@@ -203,7 +203,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     public func registerAuthenticationDelegate(_ delegate: AuthenticationDelegate, realm: String) {
         guard !realm.isEmpty else {
-            MCAAuthorizationManager.logger.error("The realm name can't be empty")
+            MCAAuthorizationManager.logger.error(message: "The realm name can't be empty")
             return;
         }
         

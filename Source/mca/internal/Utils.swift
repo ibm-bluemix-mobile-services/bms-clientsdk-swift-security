@@ -128,11 +128,11 @@ public class Utils {
         var version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         var name = Bundle(for:object_getClass(self)).bundleIdentifier
         if name == nil {
-            AuthorizationProcessManager.logger.error("Could not retrieve application name. Application name is set to nil")
+            AuthorizationProcessManager.logger.error(message: "Could not retrieve application name. Application name is set to nil")
             name = "nil"
         }
         if version == nil {
-            AuthorizationProcessManager.logger.error("Could not retrieve application version. Application version is set to nil")
+            AuthorizationProcessManager.logger.error(message: "Could not retrieve application version. Application version is set to nil")
             version = "nil"
         }
         return (name!, version!)

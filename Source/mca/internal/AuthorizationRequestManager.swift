@@ -41,12 +41,12 @@ public class AuthorizationRequestManager {
             defaultCompletionHandler = handler
         } else {
             defaultCompletionHandler = {(response: Response?, error: NSError?) in
-                AuthorizationRequestManager.logger.debug("ResponseListener is not specified. Defaulting to empty listener.")
+                AuthorizationRequestManager.logger.debug(message: "ResponseListener is not specified. Defaulting to empty listener.")
             }
             
         }
         
-        AuthorizationRequestManager.logger.debug("AuthorizationRequestAgent is initialized.")
+        AuthorizationRequestManager.logger.debug(message: "AuthorizationRequestAgent is initialized.")
     }
     
     internal func send(_ path:String , options:RequestOptions) throws {
@@ -131,7 +131,7 @@ public class AuthorizationRequestManager {
                         try self.processRedirectResponse(response!)
                     } catch (let thrownError){
                         let nsError = NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(thrownError)"])
-                        AuthorizationRequestManager.logger.error(String(error))
+                        AuthorizationRequestManager.logger.error(message: String(error))
                         self.defaultCompletionHandler(response, nsError)
                     }
                 }
@@ -187,13 +187,13 @@ public class AuthorizationRequestManager {
                 handler.handleFailure(unWrappedChallenge)
             }
             else {
-                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found")
+                AuthorizationRequestManager.logger.error(message: "Challenge handler for realm: \(realm), is not found")
             }
         }
     }
     
     internal func requestFailed(_ info:[String:AnyObject]?) {
-        AuthorizationRequestManager.logger.error("BaseRequest failed with info: \(info == nil ? "info is nil" : String(info))")
+        AuthorizationRequestManager.logger.error(message: "BaseRequest failed with info: \(info == nil ? "info is nil" : String(info))")
         defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
     }
     
@@ -210,7 +210,7 @@ public class AuthorizationRequestManager {
                 handler.handleSuccess(unWrappedChallenge)
             }
             else {
-                AuthorizationRequestManager.logger.error("Challenge handler for realm: \(realm), is not found")
+                AuthorizationRequestManager.logger.error(message: "Challenge handler for realm: \(realm), is not found")
             }
         }
     }
@@ -274,7 +274,7 @@ public class AuthorizationRequestManager {
             do {
                 try resendRequest()
             } catch {
-                AuthorizationRequestManager.logger.error("removeExpectedAnswer failed with error : \(error)")
+                AuthorizationRequestManager.logger.error(message: "removeExpectedAnswer failed with error : \(error)")
             }
         }
         
@@ -288,7 +288,7 @@ public class AuthorizationRequestManager {
      */
     internal func submitAnswer(_ answer:[String:AnyObject]?, realm:String) {
         guard let unwrappedAnswer = answer else {
-            AuthorizationRequestManager.logger.error("Cannot submit nil answer for realm \(realm)")
+            AuthorizationRequestManager.logger.error(message: "Cannot submit nil answer for realm \(realm)")
             return
         }
         
@@ -301,7 +301,7 @@ public class AuthorizationRequestManager {
             do {
                 try resendRequest()
             } catch {
-                AuthorizationRequestManager.logger.error("submitAnswer failed with error : \(error)")
+                AuthorizationRequestManager.logger.error(message: "submitAnswer failed with error : \(error)")
             }
         }
     }
