@@ -75,7 +75,7 @@ class AuthorizationRequestManagerTest: XCTestCase {
             static var override = false
             static var fullPath = false
             override func sendInternal(rootUrl: String, path: String, options: RequestOptions?) throws {
-                 if !MockAuthorizationRequestManager.fullPath {
+                if !MockAuthorizationRequestManager.fullPath {
                     let prefix = MockAuthorizationRequestManager.override ? "override" : MCAAuthorizationManager.defaultProtocol
                         + "://"
                         + BMSSecurityConstants.AUTH_SERVER_NAME
@@ -95,6 +95,8 @@ class AuthorizationRequestManagerTest: XCTestCase {
             }
         }
         BMSClient.sharedInstance.initializeWithBluemixAppRoute("www.test.com", bluemixAppGUID: "12345", bluemixRegion: BMSClient.REGION_US_SOUTH)
+        MCAAuthorizationManager.sharedInstance.initialize(tenantId: nil,bluemixRegion: nil)
+
         let mockRequestManager = MockAuthorizationRequestManager(completionHandler: {(response: Response?, error: NSError?) in })
         let endPoint = "/someEndPoint"
         XCTAssertNotNil(try? mockRequestManager.send(endPoint, options: RequestOptions()))
