@@ -10,10 +10,8 @@
 		9258E1731CDA85C4005CE803 /* BMSSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */; };
 		9258E1771CDA89B3005CE803 /* BMSAnalyticsAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1741CDA89B3005CE803 /* BMSAnalyticsAPI.framework */; };
 		9258E1781CDA89B3005CE803 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1751CDA89B3005CE803 /* BMSCore.framework */; };
-		9258E1791CDA89B3005CE803 /* RNCryptor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1761CDA89B3005CE803 /* RNCryptor.framework */; };
 		9258E17A1CDA89C4005CE803 /* BMSAnalyticsAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1741CDA89B3005CE803 /* BMSAnalyticsAPI.framework */; };
 		9258E17B1CDA89C4005CE803 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1751CDA89B3005CE803 /* BMSCore.framework */; };
-		9258E17C1CDA89C4005CE803 /* RNCryptor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1761CDA89B3005CE803 /* RNCryptor.framework */; };
 		EFE85A3B1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */; };
 		EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */; };
 		EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */; };
@@ -56,7 +54,6 @@
 /* Begin PBXFileReference section */
 		9258E1741CDA89B3005CE803 /* BMSAnalyticsAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSAnalyticsAPI.framework; path = Carthage/Build/iOS/BMSAnalyticsAPI.framework; sourceTree = "<group>"; };
 		9258E1751CDA89B3005CE803 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = Carthage/Build/iOS/BMSCore.framework; sourceTree = "<group>"; };
-		9258E1761CDA89B3005CE803 /* RNCryptor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RNCryptor.framework; path = Carthage/Build/iOS/RNCryptor.framework; sourceTree = "<group>"; };
 		DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationProcessManagerTest.swift; path = BMSSecurityTests/AuthorizationProcessManagerTest.swift; sourceTree = SOURCE_ROOT; };
@@ -96,7 +93,6 @@
 			files = (
 				9258E1771CDA89B3005CE803 /* BMSAnalyticsAPI.framework in Frameworks */,
 				9258E1781CDA89B3005CE803 /* BMSCore.framework in Frameworks */,
-				9258E1791CDA89B3005CE803 /* RNCryptor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,7 +103,6 @@
 				9258E1731CDA85C4005CE803 /* BMSSecurity.framework in Frameworks */,
 				9258E17A1CDA89C4005CE803 /* BMSAnalyticsAPI.framework in Frameworks */,
 				9258E17B1CDA89C4005CE803 /* BMSCore.framework in Frameworks */,
-				9258E17C1CDA89C4005CE803 /* RNCryptor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +114,6 @@
 			children = (
 				9258E1741CDA89B3005CE803 /* BMSAnalyticsAPI.framework */,
 				9258E1751CDA89B3005CE803 /* BMSCore.framework */,
-				9258E1761CDA89B3005CE803 /* RNCryptor.framework */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -313,9 +307,11 @@
 				TargetAttributes = {
 					DB2BCF921C22FB2E0063A673 = {
 						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0800;
 					};
 					DB2BCF9C1C22FB2F0063A673 = {
 						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -536,6 +532,7 @@
 		DB2BCFA81C22FB2F0063A673 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -556,12 +553,14 @@
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		DB2BCFA91C22FB2F0063A673 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -582,6 +581,8 @@
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -598,6 +599,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.mobilefirstplatform.clientsdk.swift.BMSSecurityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -613,6 +615,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.mobilefirstplatform.clientsdk.swift.BMSSecurityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
