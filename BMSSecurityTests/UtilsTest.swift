@@ -53,11 +53,19 @@ class UtilsTest: XCTestCase {
         XCTAssertEqual(returnedDict!["second"] as? Int, 3)
         XCTAssertEqual((returnedDict!["third"] as? Array)!, ["item1","item2",["item3","item4"],"item5"])
     }
+#if swift (>=3.0)
+    private func stringToBase64Data(_ str:String) -> Data {
+        let utf8str = str.data(using: String.Encoding.utf8)
+        let base64EncodedStr = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        return Data(base64Encoded: base64EncodedStr!, options: NSData.Base64DecodingOptions(rawValue: 0))!
+    }
+#else
     private func stringToBase64Data(str:String) -> NSData {
         let utf8str = str.dataUsingEncoding(NSUTF8StringEncoding)
         let base64EncodedStr = utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
         return NSData(base64EncodedString: base64EncodedStr!, options: NSDataBase64DecodingOptions(rawValue: 0))!
     }
+#endif
     func testExtractSecureJson() {
         let json = "{\"challenges\":{\"customAuthRealm_1\":{\"message\":\"wrong_credentials\"}}}"
         let response1:Response = Response(responseData: stringToBase64Data(json), httpResponse: nil, isRedirect: false)
