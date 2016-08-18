@@ -110,7 +110,6 @@ class AuthorizationRequestManagerTest: XCTestCase {
         BMSClient.sharedInstance.initializeWithBluemixAppRoute("www.test.com", bluemixAppGUID: "12345", bluemixRegion: BMSClient.REGION_US_SOUTH)
 #endif
 
-        MCAAuthorizationManager.sharedInstance.initialize(tenantId: nil,bluemixRegion: nil)
 
         let mockRequestManager = MockAuthorizationRequestManager(completionHandler: {(response: Response?, error: NSError?) in })
         let endPoint = "/someEndPoint"
