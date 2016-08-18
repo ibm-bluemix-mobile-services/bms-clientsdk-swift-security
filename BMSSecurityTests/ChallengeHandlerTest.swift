@@ -37,31 +37,54 @@ class ChallengeHandlerTest: XCTestCase {
         MyAuthDelegate.received = false
         self.handler.activeRequest =  MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)
         self.handler.handleChallenge(MockAuthorizationRequestManager(completionHandler: {(response: Response?, error: NSError?) in }), challenge: ["realm1" : "q1"])
+        
+#if swift(>=3.0)
+        (self.handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(self.handler.waitingRequests.count, 1)
+            XCTAssertNotNil(self.handler.activeRequest)
+        })
+#else
         dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(self.handler.waitingRequests.count, 1)
             XCTAssertNotNil(self.handler.activeRequest)
         }
+#endif
         
         //no active request and with auth delegate
         self.handler.waitingRequests = [MockAuthorizationRequestManager]()
         self.handler.activeRequest = nil
         MyAuthDelegate.received = true
         self.handler.handleChallenge(MockAuthorizationRequestManager(completionHandler: {(response: Response?, error: NSError?) in }), challenge: MyAuthDelegate.challenge)
-        dispatch_barrier_sync(self.handler.lockQueue){
+        
+#if swift(>=3.0)
+        (self.handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertNotNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertNotNil(self.handler.activeRequest)
         }
-        
+#endif
         //with no active request and no auth delegate
         self.handler.waitingRequests = [MockAuthorizationRequestManager]()
         self.handler.authenticationDelegate = nil
         self.handler.activeRequest = nil
         MyAuthDelegate.received = false
         self.handler.handleChallenge(MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler), challenge: ["realm1" : "q1"])
-        dispatch_barrier_sync(self.handler.lockQueue){
+        
+#if swift(>=3.0)
+        (self.handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertNotNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertNotNil(self.handler.activeRequest)
         }
+#endif
     }
     
     func testHandleSuccess(){
@@ -72,20 +95,35 @@ class ChallengeHandlerTest: XCTestCase {
         MyAuthDelegate.success = true
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         handler.handleSuccess(MyAuthDelegate.sucDictionary)
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertNil(self.handler.activeRequest)
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertNil(self.handler.activeRequest)
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
         }
+#endif
         
         //no auth delegate
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         self.handler.authenticationDelegate = nil
         MyAuthDelegate.success = false
         self.handler.handleSuccess(MyAuthDelegate.sucDictionary)
-        dispatch_barrier_sync(handler.lockQueue){
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 0)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 0)
         }
+#endif
     }
     
     func testHandleFailure(){
@@ -97,12 +135,21 @@ class ChallengeHandlerTest: XCTestCase {
         MyAuthDelegate.failure = true
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         handler.handleFailure(MyAuthDelegate.failDictionary)
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertNil(self.handler.activeRequest)
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 0)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertNil(self.handler.activeRequest)
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 0)
         }
-        
+#endif
+    
         //no auth delegate
         MyAuthDelegate.failure = false
         self.handler.authenticationDelegate = nil
@@ -118,22 +165,41 @@ class ChallengeHandlerTest: XCTestCase {
         handler.waitingRequests = [MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler), MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)]
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         handler.submitAuthenticationFailure(MockAuthorizationRequestManager.failedInfo)
-        dispatch_barrier_sync(handler.lockQueue){
+
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertNil(self.handler.activeRequest)
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertNil(self.handler.activeRequest)
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
         }
+#endif
         
         //no active request
         self.handler.activeRequest = nil
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         self.handler.waitingRequests = [MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler), MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)]
         handler.submitAuthenticationFailure(MockAuthorizationRequestManager.failedInfo)
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
+            XCTAssertNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
             XCTAssertNil(self.handler.activeRequest)
         }
+#endif
+        
     }
     
     func testSubmitAuthenticationSuccess() {
@@ -144,22 +210,40 @@ class ChallengeHandlerTest: XCTestCase {
         handler.waitingRequests = [MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler), MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)]
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         handler.submitAuthenticationSuccess()
-        dispatch_barrier_sync(handler.lockQueue){
+
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertNil(self.handler.activeRequest)
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 3)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertNil(self.handler.activeRequest)
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 3)
         }
+#endif
         
         //no active request
         self.handler.activeRequest = nil
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         self.handler.waitingRequests = [MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler), MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)]
         handler.submitAuthenticationSuccess()
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(self.handler.waitingRequests.count, 0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
+            XCTAssertNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(self.handler.waitingRequests.count, 0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount, 2)
             XCTAssertNil(self.handler.activeRequest)
         }
+#endif
     }
     
     func testSubmitAuthenticationChallengeAnswer(){
@@ -168,77 +252,148 @@ class ChallengeHandlerTest: XCTestCase {
         handler.activeRequest = MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)
         handler.submitAuthenticationChallengeAnswer(MockAuthorizationRequestManager.answer)
         MockAuthorizationRequestManager.submitAnswerCount = 0
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(MockAuthorizationRequestManager.submitAnswerCount,1)
+            XCTAssertNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(MockAuthorizationRequestManager.submitAnswerCount,1)
             XCTAssertNil(self.handler.activeRequest)
         }
+#endif
         
         //with active request and nil answer
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         handler.activeRequest = MockAuthorizationRequestManager(completionHandler: self.defaultCompletionHandler)
         handler.submitAuthenticationChallengeAnswer(nil)
-        dispatch_barrier_sync(handler.lockQueue){
+     
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount,1)
+            XCTAssertNil(self.handler.activeRequest)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount,1)
             XCTAssertNil(self.handler.activeRequest)
         }
+#endif
         
         //no active request
         handler.activeRequest = nil
         handler.submitAuthenticationChallengeAnswer(nil)
         MockAuthorizationRequestManager.removeExpectedAnswerCount = 0
         MockAuthorizationRequestManager.submitAnswerCount = 0
-        dispatch_barrier_sync(handler.lockQueue){
+        
+#if swift(>=3.0)
+        (handler.lockQueue).sync(flags: .barrier, execute: {
+            XCTAssertEqual(MockAuthorizationRequestManager.submitAnswerCount,0)
+            XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount,0)
+        })
+#else
+        dispatch_barrier_sync(self.handler.lockQueue) {
             XCTAssertEqual(MockAuthorizationRequestManager.submitAnswerCount,0)
             XCTAssertEqual(MockAuthorizationRequestManager.removeExpectedAnswerCount,0)
         }
+#endif
     }
-    
-    
-    
-    
 }
+
+#if swift(>=3.0)
 class MockAuthorizationRequestManager : AuthorizationRequestManager {
     static var removeExpectedAnswerCount = 0
     static var submitAnswerCount = 0
     static var requestFailedCount = 0
     static var answer = ["a1" : "1"]
     static var failedInfo = ["a2" : "2"]
-    override func removeExpectedAnswer(realm: String) {
+    
+    override func removeExpectedAnswer(_ realm: String) {
         XCTAssertEqual(realm, ChallengeHandlerTest.realm)
-        MockAuthorizationRequestManager.removeExpectedAnswerCount++
+        MockAuthorizationRequestManager.removeExpectedAnswerCount += 1
     }
-    override func submitAnswer(answer: [String : AnyObject]?, realm: String) {
-        MockAuthorizationRequestManager.submitAnswerCount++
+    override func submitAnswer(_ answer: [String : AnyObject]?, realm: String) {
+        MockAuthorizationRequestManager.submitAnswerCount += 1
         XCTAssertEqual(answer, MockAuthorizationRequestManager.answer as NSDictionary)
         XCTAssertEqual(realm, ChallengeHandlerTest.realm)
     }
-    override func requestFailed(info: [String : AnyObject]?) {
+    override func requestFailed(_ info: [String : AnyObject]?) {
         XCTAssertEqual(info, MockAuthorizationRequestManager.failedInfo as NSDictionary)
-        MockAuthorizationRequestManager.requestFailedCount++
+        MockAuthorizationRequestManager.requestFailedCount += 1
     }
     
 }
-
-class MyAuthDelegate : AuthenticationDelegate {
-    static var received = false
-    static var success = false
-    static var failure = false
-    static let sucDictionary = ["a" : 1 , "b" : "2"]
-    static let failDictionary = ["c" : 1 , "d" : "2"]
-    static let challenge = ["realm1" : "q1"]
-    func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
-        XCTAssertTrue(MyAuthDelegate.received)
+    
+    class MyAuthDelegate : AuthenticationDelegate {
+        static var received = false
+        static var success = false
+        static var failure = false
+        static let sucDictionary = ["a" : 1 , "b" : "2"]
+        static let failDictionary = ["c" : 1 , "d" : "2"]
+        static let challenge = ["realm1" : "q1"]
+        
+        func onAuthenticationChallengeReceived(_ authContext: AuthenticationContext, challenge: AnyObject){
+            XCTAssertTrue(MyAuthDelegate.received)
+        }
+        func onAuthenticationSuccess(_ info: AnyObject?) {
+            XCTAssertTrue(MyAuthDelegate.success)
+            XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
+        }
+        func onAuthenticationFailure(_ info: AnyObject?){
+            XCTAssertTrue(MyAuthDelegate.failure)
+            XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+        }
     }
-    func onAuthenticationSuccess(info: AnyObject?) {
-        XCTAssertTrue(MyAuthDelegate.success)
-        XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
-    }
-    func onAuthenticationFailure(info: AnyObject?){
-        XCTAssertTrue(MyAuthDelegate.failure)
-        XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+    
+#else
+    class MockAuthorizationRequestManager : AuthorizationRequestManager {
+        static var removeExpectedAnswerCount = 0
+        static var submitAnswerCount = 0
+        static var requestFailedCount = 0
+        static var answer = ["a1" : "1"]
+        static var failedInfo = ["a2" : "2"]
+        
+        override func removeExpectedAnswer(realm: String) {
+            XCTAssertEqual(realm, ChallengeHandlerTest.realm)
+            MockAuthorizationRequestManager.removeExpectedAnswerCount += 1
+        }
+        override func submitAnswer(answer: [String : AnyObject]?, realm: String) {
+            MockAuthorizationRequestManager.submitAnswerCount += 1
+            XCTAssertEqual(answer, MockAuthorizationRequestManager.answer as NSDictionary)
+            XCTAssertEqual(realm, ChallengeHandlerTest.realm)
+        }
+        override func requestFailed(info: [String : AnyObject]?) {
+            XCTAssertEqual(info, MockAuthorizationRequestManager.failedInfo as NSDictionary)
+            MockAuthorizationRequestManager.requestFailedCount += 1
+        }
         
     }
-}
+    class MyAuthDelegate : AuthenticationDelegate {
+        static var received = false
+        static var success = false
+        static var failure = false
+        static let sucDictionary = ["a" : 1 , "b" : "2"]
+        static let failDictionary = ["c" : 1 , "d" : "2"]
+        static let challenge = ["realm1" : "q1"]
+        
+        func onAuthenticationChallengeReceived(authContext: AuthenticationContext, challenge: AnyObject){
+            XCTAssertTrue(MyAuthDelegate.received)
+        }
+        func onAuthenticationSuccess(info: AnyObject?) {
+            XCTAssertTrue(MyAuthDelegate.success)
+            XCTAssertEqual(MyAuthDelegate.sucDictionary, info as? NSDictionary)
+        }
+        func onAuthenticationFailure(info: AnyObject?){
+            XCTAssertTrue(MyAuthDelegate.failure)
+            XCTAssertEqual(MyAuthDelegate.failDictionary, info as? NSDictionary)
+            
+        }
+    }
+#endif
+
+
 
 
 

@@ -18,11 +18,20 @@ class AuthorizationRequestManagerTest: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
+#if swift (>=3.0)
+    private func stringToBase64Data(_ str:String) -> Data {
+        let utf8str = str.data(using: String.Encoding.utf8)
+        let base64EncodedStr = utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        return Data(base64Encoded: base64EncodedStr!, options: NSData.Base64DecodingOptions(rawValue: 0))!
+    }
+#else
     private func stringToBase64Data(str:String) -> NSData {
         let utf8str = str.dataUsingEncoding(NSUTF8StringEncoding)
         let base64EncodedStr = utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
         return NSData(base64EncodedString: base64EncodedStr!, options: NSDataBase64DecodingOptions(rawValue: 0))!
     }
+#endif
+    
 //    func testSendInternal(){
 //        XCTFail()
 //    }
@@ -74,8 +83,9 @@ class AuthorizationRequestManagerTest: XCTestCase {
         class MockAuthorizationRequestManager: AuthorizationRequestManager {
             static var override = false
             static var fullPath = false
-            override func sendInternal(rootUrl: String, path: String, options: RequestOptions?) throws {
-                if !MockAuthorizationRequestManager.fullPath {
+
+            override func sendInternal(_ rootUrl: String, path: String, options: RequestOptions?) throws {
+                 if !MockAuthorizationRequestManager.fullPath {
                     let prefix = MockAuthorizationRequestManager.override ? "override" : MCAAuthorizationManager.defaultProtocol
                         + "://"
                         + BMSSecurityConstants.AUTH_SERVER_NAME
@@ -94,7 +104,12 @@ class AuthorizationRequestManagerTest: XCTestCase {
                 }
             }
         }
+#if swift (>=3.0)
         BMSClient.sharedInstance.initializeWithBluemixAppRoute("www.test.com", bluemixAppGUID: "12345", bluemixRegion: BMSClient.REGION_US_SOUTH)
+#else
+        BMSClient.sharedInstance.initializeWithBluemixAppRoute("www.test.com", bluemixAppGUID: "12345", bluemixRegion: BMSClient.REGION_US_SOUTH)
+#endif
+
         MCAAuthorizationManager.sharedInstance.initialize(tenantId: nil,bluemixRegion: nil)
 
         let mockRequestManager = MockAuthorizationRequestManager(completionHandler: {(response: Response?, error: NSError?) in })

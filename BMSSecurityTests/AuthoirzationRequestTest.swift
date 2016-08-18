@@ -32,6 +32,7 @@ class AuthoirzationRequestTest: XCTestCase {
         XCTAssertEqual(request.headers["header6"], "item6")
     }
     
+    #if swift(>=3.0)
     func testSend(){
          class AuthorizationRequestMock : AuthorizationRequest {
             override func sendString(requestBody: String, completionHandler callback: BmsCompletionHandler?) {
@@ -39,7 +40,7 @@ class AuthoirzationRequestTest: XCTestCase {
                 XCTAssertTrue(cond)
                 XCTAssertNotNil(callback)
             }
-            override func sendWithCompletionHandler(callback: BmsCompletionHandler?) {
+            override func send(_ callback: BmsCompletionHandler?) {
                XCTAssertNotNil(callback)
             }
         }
@@ -48,5 +49,23 @@ class AuthoirzationRequestTest: XCTestCase {
         mock.sendWithCompletionHandler(["param?1" : "value:1", "param\n2" : "value\r2"], callback: callback)
         mock.send(callback)
     }
-
+    #else
+    func testSend(){
+        class AuthorizationRequestMock : AuthorizationRequest {
+            override func sendString(requestBody: String, completionHandler callback: BmsCompletionHandler?) {
+            let cond = (requestBody == "param2=value2&param%3F1=value%3A1" || requestBody == "param%3F1=value%3A1&param2=value2")
+            XCTAssertTrue(cond)
+            XCTAssertNotNil(callback)
+            }
+    
+            override func sendWithCompletionHandler(callback: BmsCompletionHandler?) {
+                XCTAssertNotNil(callback)
+            }
+        }
+        let callback = {(response: Response?, error: NSError?) in }
+        let mock = AuthorizationRequestMock(url: "www.test.com", method: HttpMethod.POST)
+        mock.sendWithCompletionHandler(["param?1" : "value:1", "param\n2" : "value\r2"], callback: callback)
+        mock.send(callback)
+    }
+    #endif
 }
