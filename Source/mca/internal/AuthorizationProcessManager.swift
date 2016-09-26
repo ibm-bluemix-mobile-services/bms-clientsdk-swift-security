@@ -19,24 +19,24 @@ import BMSAnalyticsAPI
 // MARK: - AuthorizationProcessManager (Swift 3)
 
 internal class AuthorizationProcessManager {
-    private var authorizationQueue:Queue<BmsCompletionHandler> = Queue<BmsCompletionHandler>()
+    private var authorizationQueue:Queue<BMSCompletionHandler> = Queue<BMSCompletionHandler>()
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
-    var completionHandler: BmsCompletionHandler?
+    var completionHandler: BMSCompletionHandler?
     internal var authorizationFailureCount = 0
-    internal static let logger = Logger.logger(forName: BMSSecurityConstants.authorizationProcessManagerLoggerName)
+    internal static let logger = Logger.logger(name: BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
     
     internal init(preferences:AuthorizationManagerPreferences)
     {
-        self.authorizationQueue = Queue<BmsCompletionHandler>()
+        self.authorizationQueue = Queue<BMSCompletionHandler>()
         self.preferences = preferences
-        self.preferences.persistencePolicy.set(PersistencePolicy.NEVER, shouldUpdateTokens: false);
+        self.preferences.persistencePolicy.set(PersistencePolicy.never, shouldUpdateTokens: false);
         //generate new random session id
         sessionId = UUID().uuidString
     }
     
-    internal func startAuthorizationProcess(_ callback:BmsCompletionHandler?) {
+    internal func startAuthorizationProcess(_ callback:BMSCompletionHandler?) {
         
         guard let unWrappedCallBack = callback else {
             self.handleAuthorizationFailure(AuthorizationProcessManagerError.callBackFunctionIsNil)
@@ -73,7 +73,7 @@ internal class AuthorizationProcessManager {
         options.headers = createRegistrationHeaders()
         options.requestMethod = HttpMethod.POST
         
-        let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:BMSCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
                 if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                     do {
@@ -89,7 +89,7 @@ internal class AuthorizationProcessManager {
             } else {
                 self.handleAuthorizationFailure(response, error: error)
             }
-        }
+        } as! BMSCompletionHandler
         do {
             try authorizationRequestSend(BMSSecurityConstants.clientsInstanceEndPoint, options: options, completionHandler: callBack)
         } catch {
@@ -102,7 +102,7 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         payload[BMSSecurityConstants.JSON_CODE_KEY] = grantCode
         do {
-            let jws:String = try SecurityUtils.signCsr(payload, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
+            let jws:String = try SecurityUtils.signCsr(payload as [String : AnyObject], keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
             headers = [String:String]()
             headers[BMSSecurityConstants.X_WL_AUTHENTICATE_HEADER_NAME] =  jws
             return headers
@@ -146,7 +146,7 @@ internal class AuthorizationProcessManager {
             options.headers = [String:String]()
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.GET
-            let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
+            let callBack:BMSCompletionHandler = {(response: Response?, error: NSError?) in
                 guard response?.statusCode != 400 else {
                     self.authorizationFailureCount+=1
                     if self.authorizationFailureCount < 2 {
@@ -172,7 +172,7 @@ internal class AuthorizationProcessManager {
                 } else {
                     self.handleAuthorizationFailure(response, error: error)
                 }
-            }
+            } as! BMSCompletionHandler
             try authorizationRequestSend(BMSSecurityConstants.authorizationEndPoint, options: options,completionHandler: callBack)
             
         } catch {
@@ -189,7 +189,7 @@ internal class AuthorizationProcessManager {
             options.headers = try createTokenRequestHeaders(grantCode)
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.POST
-            let callback:BmsCompletionHandler = {(response: Response?, error: NSError?) in
+            let callback:BMSCompletionHandler = {(response: Response?, error: NSError?) in
                 if error == nil {
                     if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                         do {
@@ -205,14 +205,14 @@ internal class AuthorizationProcessManager {
                 } else {
                     self.handleAuthorizationFailure(response, error: error)
                 }
-            }
+            } as! BMSCompletionHandler
             try authorizationRequestSend(BMSSecurityConstants.tokenEndPoint, options: options, completionHandler: callback)
         } catch {
             self.handleAuthorizationFailure(error)
         }
     }
     
-    private func authorizationRequestSend(_ path:String, options:RequestOptions, completionHandler: BmsCompletionHandler?)  throws {
+    private func authorizationRequestSend(_ path:String, options:RequestOptions, completionHandler: BMSCompletionHandler?)  throws {
         
         do {
             let authorizationRequestManager:AuthorizationRequestManager = AuthorizationRequestManager(completionHandler: completionHandler)
@@ -319,7 +319,7 @@ internal class AuthorizationProcessManager {
     }
     private func handleAuthorizationSuccess(_ response: Response, error: NSError?) {
         while !self.authorizationQueue.isEmpty() {
-            if let next:BmsCompletionHandler = authorizationQueue.remove() {
+            if let next:BMSCompletionHandler = authorizationQueue.remove() {
                 next(response, error)
             }
         }
@@ -336,13 +336,13 @@ internal class AuthorizationProcessManager {
             AuthorizationProcessManager.logger.error(message: unwrappedError.debugDescription)
         }
         while !self.authorizationQueue.isEmpty() {
-            if let next:BmsCompletionHandler = authorizationQueue.remove() {
+            if let next:BMSCompletionHandler = authorizationQueue.remove() {
                 next(response, error)
             }
         }
         
     }
-    internal func logout(_ completionHandler: BmsCompletionHandler?) {
+    internal func logout(_ completionHandler: BMSCompletionHandler?) {
         
         let options:RequestOptions  = RequestOptions()
         guard let clientId = preferences.clientId.get() else {
@@ -374,7 +374,7 @@ internal class AuthorizationProcessManager {
     private var authorizationQueue:Queue<BmsCompletionHandler> = Queue<BmsCompletionHandler>()
     private var sessionId:String = ""
     private var preferences:AuthorizationManagerPreferences
-    var completionHandler: BmsCompletionHandler?
+    var completionHandler: BMSCompletionHandler?
     internal var authorizationFailureCount = 0
     internal static let logger = Logger.logger(forName: BMSSecurityConstants.authorizationProcessManagerLoggerName)
     
@@ -388,7 +388,7 @@ internal class AuthorizationProcessManager {
         sessionId = NSUUID().UUIDString
     }
     
-    internal func startAuthorizationProcess(callback:BmsCompletionHandler?) {
+    internal func startAuthorizationProcess(callback:BMSCompletionHandler?) {
         
         guard let unWrappedCallBack = callback else {
             self.handleAuthorizationFailure(AuthorizationProcessManagerError.CallBackFunctionIsNil)
@@ -425,7 +425,7 @@ internal class AuthorizationProcessManager {
         options.headers = createRegistrationHeaders()
         options.requestMethod = HttpMethod.POST
         
-        let callBack:BmsCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:BMSCompletionHandler = {(response: Response?, error: NSError?) in
             if error == nil {
                 if let unWrappedResponse = response where unWrappedResponse.isSuccessful {
                     do {

@@ -31,18 +31,18 @@ public class AuthorizationRequestManager {
     
     public static var overrideServerHost: String?     
     
-    private static let logger = Logger.logger(forName: BMSSecurityConstants.authorizationRequestManagerLoggerName)
+    private static let logger = Logger.logger(name: BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
-    internal var defaultCompletionHandler : BmsCompletionHandler
+    internal var defaultCompletionHandler : BMSCompletionHandler
     
-    internal init(completionHandler: BmsCompletionHandler?) {
+    internal init(completionHandler: BMSCompletionHandler?) {
         
         if let handler = completionHandler {
             defaultCompletionHandler = handler
         } else {
             defaultCompletionHandler = {(response: Response?, error: NSError?) in
                 AuthorizationRequestManager.logger.debug(message: "ResponseListener is not specified. Defaulting to empty listener.")
-            }
+            } as! BMSCompletionHandler
             
         }
         
@@ -112,7 +112,7 @@ public class AuthorizationRequestManager {
         
         var request = AuthorizationRequest(url:requestPath!, method:self.requestOptions!.requestMethod)
         
-        request.timeout = requestOptions!.timeout != 0 ? requestOptions!.timeout : BMSClient.sharedInstance.defaultRequestTimeout
+        request.timeout = requestOptions!.timeout != 0 ? requestOptions!.timeout : BMSClient.sharedInstance.requestTimeout
         
         
         if let unwrappedHeaders = options?.headers {
@@ -120,12 +120,12 @@ public class AuthorizationRequestManager {
         }
         
         if let unwrappedAnswers = answers {
-            let ans = try Utils.JSONStringify(unwrappedAnswers)
+            let ans = try Utils.JSONStringify(unwrappedAnswers as AnyObject)
             let authorizationHeaderValue = "\(BMSSecurityConstants.BEARER) \(ans)"
             request.addHeader(BMSSecurityConstants.AUTHORIZATION_HEADER, val: authorizationHeaderValue)
         }
         
-        let callback: BmsCompletionHandler = { (response: Response?, error: NSError?) in
+        let callback: BMSCompletionHandler = { (response: Response?, error: NSError?) in
             
             func isRedirect(_ response: Response?) -> Bool{
                 return 300..<399 ~= (response?.statusCode)!
@@ -141,7 +141,7 @@ public class AuthorizationRequestManager {
                         try self.processRedirectResponse(response!)
                     } catch (let thrownError){
                         let nsError = NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(thrownError)"])
-                        AuthorizationRequestManager.logger.error(message: String(error))
+                        AuthorizationRequestManager.logger.error(message: String(describing: error))
                         self.defaultCompletionHandler(response, nsError)
                     }
                 }
@@ -170,7 +170,7 @@ public class AuthorizationRequestManager {
                     return
                 }
             }
-        }
+        } as! BMSCompletionHandler
         
         if let method = options?.requestMethod, method == HttpMethod.GET{
             request.queryParameters = options?.parameters
@@ -203,7 +203,7 @@ public class AuthorizationRequestManager {
     }
     
     internal func requestFailed(_ info:[String:AnyObject]?) {
-        AuthorizationRequestManager.logger.error(message: "BaseRequest failed with info: \(info == nil ? "info is nil" : String(info))")
+        AuthorizationRequestManager.logger.error(message: "BaseRequest failed with info: \(info == nil ? "info is nil" : String(describing: info))")
         defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
     }
     
@@ -271,7 +271,7 @@ public class AuthorizationRequestManager {
         }
         
         for realm in realms {
-            answers![realm] = ""
+            answers![realm] = "" as AnyObject?
         }
     }
     
@@ -306,7 +306,7 @@ public class AuthorizationRequestManager {
             answers = [String:AnyObject]()
         }
         
-        answers![realm] = unwrappedAnswer
+        answers![realm] = unwrappedAnswer as AnyObject?
         if isAnswersFilled() {
             do {
                 try resendRequest()
@@ -350,12 +350,12 @@ public class AuthorizationRequestManager {
             return nil
         }
         
-        guard let location = getLocationString(response.headers?[caseInsensitive : BMSSecurityConstants.LOCATION_HEADER_NAME]) else {
+        guard let location = getLocationString(response.headers?[caseInsensitive : BMSSecurityConstants.LOCATION_HEADER_NAME] as AnyObject?) else {
             throw ResponseError.noLocation("Redirect response does not contain 'Location' header.")
         }
         
         // the redirect location url should contain "wl_result" value in query parameters.
-        guard let url:URL = URL(string: location)! else {
+        guard let url:URL = URL(string: location) else {
             throw ResponseError.noLocation("Could not create URL from 'Location' header.")
         }
         

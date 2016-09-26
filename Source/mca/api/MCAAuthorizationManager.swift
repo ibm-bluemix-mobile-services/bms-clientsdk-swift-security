@@ -25,7 +25,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public static let CONTENT_TYPE = "Content-Type"
     
-    private static let logger =  Logger.logger(forName: Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
+    private static let logger =  Logger.logger(name: Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
     
     internal var preferences:AuthorizationManagerPreferences
     
@@ -52,7 +52,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter tenantId:           The tenant id of the MCA service instance
      - parameter bluemixRegion:      The region where your MCA service instance is hosted. Use one of the `BMSClient.REGION` constants.
      */
-    public func initialize (tenantId tenantId: String? = nil, bluemixRegion: String? = nil) {
+    public func initialize (tenantId: String? = nil, bluemixRegion: String? = nil) {
         self.tenantId = tenantId != nil ? tenantId : BMSClient.sharedInstance.bluemixAppGUID
         self.bluemixRegion = bluemixRegion != nil ? bluemixRegion: BMSClient.sharedInstance.bluemixRegion
     }
@@ -110,10 +110,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
-            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData)
+            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData as [String: AnyObject])
         }
         if preferences.appIdentity.get() == nil {
-            preferences.appIdentity.set(MCAAppIdentity().jsonData)
+            preferences.appIdentity.set(MCAAppIdentity().jsonData as [String: AnyObject])
         }
         self.tenantId = BMSClient.sharedInstance.bluemixAppGUID
         self.bluemixRegion = BMSClient.sharedInstance.bluemixRegion
@@ -130,12 +130,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     
     
-    public func isAuthorizationRequired(forHttpResponse httpResponse: Response) -> Bool {
+    public func isAuthorizationRequired(for httpResponse: Response) -> Bool {
         if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], let authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
                 return false
             }
-            return isAuthorizationRequired(forStatusCode: statusCode, httpResponseAuthorizationHeader: authHeader)
+            return isAuthorizationRequired(for: statusCode, httpResponseAuthorizationHeader: authHeader)
         }
         
         return false
@@ -151,7 +151,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     
  
-    public func isAuthorizationRequired(forStatusCode statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
+    public func isAuthorizationRequired(for statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
         
         if (statusCode == 401 || statusCode == 403) &&
             responseAuthorizationHeader.lowercased().contains(BMSSecurityConstants.BEARER.lowercased()) &&
@@ -206,7 +206,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      Invoke process for obtaining authorization header.
      */
     
-    public func obtainAuthorization(completionHandler: BmsCompletionHandler?) {
+    public func obtainAuthorization(completionHandler: BMSCompletionHandler?) {
         (lockQueue).async(flags: .barrier, execute: {
             self.processManager.startAuthorizationProcess(completionHandler)
         })
@@ -279,7 +279,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter completionHandler - This is an optional parameter. A completion handler that the app is calling this function wants to be called.
      */
     
-    public func logout(_ completionHandler: BmsCompletionHandler?){
+    public func logout(_ completionHandler: BMSCompletionHandler?){
         self.clearAuthorizationData()
         processManager.logout(completionHandler)
     }
