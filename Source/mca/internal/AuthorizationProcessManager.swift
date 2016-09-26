@@ -84,10 +84,10 @@ internal class AuthorizationProcessManager {
                     }
                 }
                 else {
-                    self.handleAuthorizationFailure(response, error: error)
+                    self.handleAuthorizationFailure(response, error: error as NSError?)
                 }
             } else {
-                self.handleAuthorizationFailure(response, error: error)
+                self.handleAuthorizationFailure(response, error: error as NSError?)
             }
         }
         do {
@@ -167,10 +167,10 @@ internal class AuthorizationProcessManager {
                         }
                     }
                     else {
-                        self.handleAuthorizationFailure(response, error: error)
+                        self.handleAuthorizationFailure(response, error: error as NSError?)
                     }
                 } else {
-                    self.handleAuthorizationFailure(response, error: error)
+                    self.handleAuthorizationFailure(response, error: error as NSError?)
                 }
             }
             try authorizationRequestSend(BMSSecurityConstants.authorizationEndPoint, options: options,completionHandler: callBack)
@@ -194,16 +194,16 @@ internal class AuthorizationProcessManager {
                     if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                         do {
                             try self.saveTokenFromResponse(unWrappedResponse)
-                            self.handleAuthorizationSuccess(unWrappedResponse, error: error)
+                            self.handleAuthorizationSuccess(unWrappedResponse, error: error as NSError?)
                         } catch(let thrownError) {
                             self.handleAuthorizationFailure(thrownError)
                         }
                     }
                     else {
-                        self.handleAuthorizationFailure(response, error: error)
+                        self.handleAuthorizationFailure(response, error: error as NSError?)
                     }
                 } else {
-                    self.handleAuthorizationFailure(response, error: error)
+                    self.handleAuthorizationFailure(response, error: error as NSError?)
                 }
             }
             try authorizationRequestSend(BMSSecurityConstants.tokenEndPoint, options: options, completionHandler: callback)
