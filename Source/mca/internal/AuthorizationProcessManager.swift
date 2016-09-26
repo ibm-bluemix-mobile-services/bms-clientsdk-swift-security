@@ -73,7 +73,7 @@ internal class AuthorizationProcessManager {
         options.headers = createRegistrationHeaders()
         options.requestMethod = HttpMethod.POST
         
-        let callBack:BMSCompletionHandler = {(response: Response?, error: NSError?) in
+        let callBack:BMSCompletionHandler = {(response: Response?, error: Error?) in
             if error == nil {
                 if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                     do {
@@ -89,7 +89,7 @@ internal class AuthorizationProcessManager {
             } else {
                 self.handleAuthorizationFailure(response, error: error)
             }
-        } as! BMSCompletionHandler
+        }
         do {
             try authorizationRequestSend(BMSSecurityConstants.clientsInstanceEndPoint, options: options, completionHandler: callBack)
         } catch {
@@ -146,7 +146,7 @@ internal class AuthorizationProcessManager {
             options.headers = [String:String]()
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.GET
-            let callBack:BMSCompletionHandler = {(response: Response?, error: NSError?) in
+            let callBack:BMSCompletionHandler = {(response: Response?, error: Error?) in
                 guard response?.statusCode != 400 else {
                     self.authorizationFailureCount+=1
                     if self.authorizationFailureCount < 2 {
@@ -172,7 +172,7 @@ internal class AuthorizationProcessManager {
                 } else {
                     self.handleAuthorizationFailure(response, error: error)
                 }
-            } as! BMSCompletionHandler
+            }
             try authorizationRequestSend(BMSSecurityConstants.authorizationEndPoint, options: options,completionHandler: callBack)
             
         } catch {
@@ -189,7 +189,7 @@ internal class AuthorizationProcessManager {
             options.headers = try createTokenRequestHeaders(grantCode)
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.POST
-            let callback:BMSCompletionHandler = {(response: Response?, error: NSError?) in
+            let callback:BMSCompletionHandler = {(response: Response?, error: Error?) in
                 if error == nil {
                     if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                         do {
@@ -205,7 +205,7 @@ internal class AuthorizationProcessManager {
                 } else {
                     self.handleAuthorizationFailure(response, error: error)
                 }
-            } as! BMSCompletionHandler
+            }
             try authorizationRequestSend(BMSSecurityConstants.tokenEndPoint, options: options, completionHandler: callback)
         } catch {
             self.handleAuthorizationFailure(error)

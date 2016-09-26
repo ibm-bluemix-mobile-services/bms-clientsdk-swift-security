@@ -40,9 +40,9 @@ public class AuthorizationRequestManager {
         if let handler = completionHandler {
             defaultCompletionHandler = handler
         } else {
-            defaultCompletionHandler = {(response: Response?, error: NSError?) in
+            defaultCompletionHandler = {(response: Response?, error: Error?) in
                 AuthorizationRequestManager.logger.debug(message: "ResponseListener is not specified. Defaulting to empty listener.")
-            } as! BMSCompletionHandler
+            }
             
         }
         
@@ -125,7 +125,7 @@ public class AuthorizationRequestManager {
             request.addHeader(BMSSecurityConstants.AUTHORIZATION_HEADER, val: authorizationHeaderValue)
         }
         
-        let callback: BMSCompletionHandler = { (response: Response?, error: NSError?) in
+        let callback: BMSCompletionHandler = { (response: Response?, error: Error?) in
             
             func isRedirect(_ response: Response?) -> Bool{
                 return 300..<399 ~= (response?.statusCode)!
@@ -170,7 +170,7 @@ public class AuthorizationRequestManager {
                     return
                 }
             }
-        } as! BMSCompletionHandler
+        }
         
         if let method = options?.requestMethod, method == HttpMethod.GET{
             request.queryParameters = options?.parameters
