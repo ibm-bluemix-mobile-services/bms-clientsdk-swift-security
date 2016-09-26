@@ -222,7 +222,7 @@ internal class TokenPreference {
 #else
     internal func set(value:String) {
         runtimeValue = value
-        if self.persistencePolicy.get() ==  PersistencePolicy.ALWAYS {
+        if self.persistencePolicy.get() ==  PersistencePolicy.always {
             SecurityUtils.saveItemToKeyChain(value, label: prefName)
         } else {
             SecurityUtils.removeItemFromKeyChain(prefName)

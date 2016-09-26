@@ -431,11 +431,11 @@ public class Utils {
         var version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
         var name = NSBundle(forClass:object_getClass(self)).bundleIdentifier
         if name == nil {
-            AuthorizationProcessManager.logger.error("Could not retrieve application name. Application name is set to nil")
+            AuthorizationProcessManager.logger.error(message: "Could not retrieve application name. Application name is set to nil")
             name = "nil"
         }
         if version == nil {
-            AuthorizationProcessManager.logger.error("Could not retrieve application version. Application version is set to nil")
+            AuthorizationProcessManager.logger.error(message: "Could not retrieve application version. Application version is set to nil")
             version = "nil"
         }
         return (name!, version!)
@@ -446,10 +446,10 @@ public class Utils {
         let deviceIdentity = MCADeviceIdentity()
         let appIdentity = MCAAppIdentity()
         var device = [String : AnyObject]()
-        device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.id
+        device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.ID
         device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.model
         device[BMSSecurityConstants.JSON_OS_KEY] = deviceIdentity.OS
-        device[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] =  appIdentity.id
+        device[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] =  appIdentity.ID
         device[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] =  appIdentity.version
         device[BMSSecurityConstants.JSON_ENVIRONMENT_KEY] =  BMSSecurityConstants.JSON_IOS_ENVIRONMENT_VALUE
         

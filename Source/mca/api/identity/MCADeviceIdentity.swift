@@ -60,7 +60,7 @@ public class MCADeviceIdentity : BaseDeviceIdentity {
                 dict = [
                     BaseDeviceIdentity.Key.ID : (UIDevice.currentDevice().identifierForVendor?.UUIDString)!,
                     BaseDeviceIdentity.Key.OS :  UIDevice.currentDevice().systemName,
-                    BBaseDeviceIdentity.Key.OSVersion : UIDevice.currentDevice().systemVersion,
+                    BaseDeviceIdentity.Key.OSVersion : UIDevice.currentDevice().systemVersion,
                     BaseDeviceIdentity.Key.model :  UIDevice.currentDevice().model
                 ]
             #endif

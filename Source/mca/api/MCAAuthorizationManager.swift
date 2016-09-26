@@ -297,7 +297,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public static let CONTENT_TYPE = "Content-Type"
     
-    private static let logger =  Logger.logger(forName: Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
+    private static let logger =  Logger.logger(name: Logger.bmsLoggerPrefix + "MCAAuthorizationManager")
     
     internal var preferences:AuthorizationManagerPreferences
     
@@ -402,12 +402,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: True if the response satisfies both conditions
      */
     
-    public func isAuthorizationRequired(forHttpResponse httpResponse: Response) -> Bool {
+    public func isAuthorizationRequired(for httpResponse: Response) -> Bool {
         if let header = httpResponse.headers![caseInsensitive : BMSSecurityConstants.WWW_AUTHENTICATE_HEADER], authHeader : String = header as? String {
             guard let statusCode = httpResponse.statusCode else {
                 return false
             }
-            return isAuthorizationRequired(forStatusCode: statusCode, httpResponseAuthorizationHeader: authHeader)
+            return isAuthorizationRequired(for: statusCode, httpResponseAuthorizationHeader: authHeader)
         }
         
         return false
@@ -422,9 +422,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: True if status is 401 or 403 and The value of the header contains 'Bearer'
      */
     
-    public func isAuthorizationRequired(forStatusCode statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
-        
-
+    public func isAuthorizationRequired(for statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
         if (statusCode == 401 || statusCode == 403) && responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.BEARER.lowercaseString) &&
             responseAuthorizationHeader.lowercaseString.containsString(BMSSecurityConstants.AUTH_REALM.lowercaseString) {
             return true
@@ -477,7 +475,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      Invoke process for obtaining authorization header.
      */
     
-    public func obtainAuthorization(completionHandler completionHandler: BmsCompletionHandler?) {
+    public func obtainAuthorization(completionHandler completionHandler: BMSCompletionHandler?) {
         dispatch_barrier_async(lockQueue){
             self.processManager.startAuthorizationProcess(completionHandler)
         }
@@ -492,7 +490,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      */
     public func registerAuthenticationDelegate(delegate: AuthenticationDelegate, realm: String) {
         guard !realm.isEmpty else {
-            MCAAuthorizationManager.logger.error("The realm name can't be empty")
+            MCAAuthorizationManager.logger.error(message: "The realm name can't be empty")
             return;
         }
         
@@ -550,7 +548,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - parameter completionHandler - This is an optional parameter. A completion handler that the app is calling this function wants to be called.
      */
     
-    public func logout(completionHandler: BmsCompletionHandler?){
+    public func logout(completionHandler: BMSCompletionHandler?){
         self.clearAuthorizationData()
         processManager.logout(completionHandler)
     }

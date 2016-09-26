@@ -97,8 +97,8 @@ internal class AuthorizationRequest : BaseRequest {
 
 internal class AuthorizationRequest : BaseRequest {
     
-    internal func send(completionHandler: BmsCompletionHandler?) {
-        sendWithCompletionHandler(completionHandler)
+    internal func send(completionHandler: BMSCompletionHandler?) {
+        super.send(requestBody: nil, completionHandler: completionHandler)
     }
     
     //Add new header
@@ -129,8 +129,8 @@ internal class AuthorizationRequest : BaseRequest {
      * @param formParameters The parameters to put in the request body
      * @param listener       The listener whose onSuccess or onFailure methods will be called when this request finishes.
      */
-    internal func sendWithCompletionHandler(formParamaters : [String : String], callback: BmsCompletionHandler?) {
-        headers[BaseRequest.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+    internal func sendWithCompletionHandler(formParamaters : [String : String], callback: BMSCompletionHandler?) {
+        headers[BaseRequest.contentType] = "application/x-www-form-urlencoded"
         var body = ""
         var i = 0
         //creating body params
@@ -141,7 +141,8 @@ internal class AuthorizationRequest : BaseRequest {
             }
             i+=1
         }
-        sendString(body, completionHandler: callback)
+        
+        send(requestBody: body.dataUsingEncoding(NSUTF8StringEncoding), completionHandler: callback)
     }
     private func urlEncode(str:String) -> String{
         var encodedString = ""
