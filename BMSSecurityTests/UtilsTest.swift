@@ -58,7 +58,7 @@ class UtilsTest: XCTestCase {
         
 //        var json = try! JSONSerialization.jsonObject(with: jsonString.data(using: String.Encoding.utf8)!, options: JSONSerialization.ReadingOptions()) as! [AnyObject]
 
-        let returnedDict:[String:AnyObject]? = try? Utils.parseJsonStringtoDictionary(jsonString)
+        let returnedDict:[String:Any]? = try? Utils.parseJsonStringtoDictionary(jsonString)
         XCTAssertNotNil(returnedDict)
         XCTAssertEqual(returnedDict!["first"] as? Bool, true)
         XCTAssertEqual(returnedDict!["second"] as? Int, 3)

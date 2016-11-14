@@ -100,16 +100,16 @@ public class Utils {
         return ""
     }
     
-    public static func parseJsonStringtoDictionary(_ jsonString:String) throws ->[String:AnyObject] {
+    public static func parseJsonStringtoDictionary(_ jsonString:String) throws ->[String:Any] {
         do {
-            guard let data = jsonString.data(using: String.Encoding.utf8), let responseJson =  try JSONSerialization.jsonObject(with: data, options: []) as? [String:AnyObject] else {
+            guard let data = jsonString.data(using: String.Encoding.utf8), let responseJson =  try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else {
                 throw JsonUtilsErrors.jsonIsMalformed
             }
-            return responseJson as [String:AnyObject]
+            return responseJson as [String:Any]
         }
     }
     
-    internal static func extractSecureJson(_ response: Response?) throws -> [String:AnyObject?] {
+    internal static func extractSecureJson(_ response: Response?) throws -> [String:Any?] {
         
         guard let responseText:String = response?.responseText, (responseText.hasPrefix(BMSSecurityConstants.SECURE_PATTERN_START) && responseText.hasSuffix(BMSSecurityConstants.SECURE_PATTERN_END)) else {
             throw JsonUtilsErrors.couldNotExtractJsonFromResponse
@@ -139,10 +139,10 @@ public class Utils {
         
     }
     
-    internal static func getDeviceDictionary() -> [String : AnyObject] {
+    internal static func getDeviceDictionary() -> [String : Any] {
         let deviceIdentity = MCADeviceIdentity()
         let appIdentity = MCAAppIdentity()
-        var device = [String : AnyObject]()
+        var device = [String : Any]()
         device[BMSSecurityConstants.JSON_DEVICE_ID_KEY] = deviceIdentity.ID as AnyObject?
         device[BMSSecurityConstants.JSON_MODEL_KEY] =  deviceIdentity.model as AnyObject?
         device[BMSSecurityConstants.JSON_OS_KEY] = deviceIdentity.OS as AnyObject?

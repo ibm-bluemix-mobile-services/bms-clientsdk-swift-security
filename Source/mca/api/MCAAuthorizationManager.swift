@@ -110,10 +110,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
         challengeHandlers = [String:ChallengeHandler]()
         
         if preferences.deviceIdentity.get() == nil {
-            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData as [String: AnyObject])
+            preferences.deviceIdentity.set(MCADeviceIdentity().jsonData as [String:Any])
         }
         if preferences.appIdentity.get() == nil {
-            preferences.appIdentity.set(MCAAppIdentity().jsonData as [String: AnyObject])
+            preferences.appIdentity.set(MCAAppIdentity().jsonData as [String:Any])
         }
         self.tenantId = BMSClient.sharedInstance.bluemixAppGUID
         self.bluemixRegion = BMSClient.sharedInstance.bluemixRegion

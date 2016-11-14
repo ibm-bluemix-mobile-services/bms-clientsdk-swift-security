@@ -35,17 +35,17 @@ class AuthorizationManagerPreferencesTest: XCTestCase {
     
     func testIdentityPreferences() {
 #if swift (>=3.0)
-    preferences.appIdentity.set(MCAAppIdentity().jsonData as [String:AnyObject])
+    preferences.appIdentity.set(MCAAppIdentity().jsonData as [String:Any])
         var appId = preferences.appIdentity.getAsMap()
         XCTAssertEqual(appId?[BaseAppIdentity.Key.ID] as? String, Utils.getApplicationDetails().name)
         XCTAssertEqual(appId?[BaseAppIdentity.Key.version] as? String, Utils.getApplicationDetails().version)
-    preferences.deviceIdentity.set(MCADeviceIdentity().jsonData as [String:AnyObject])
+    preferences.deviceIdentity.set(MCADeviceIdentity().jsonData as [String:Any])
         var deviceId = preferences.deviceIdentity.getAsMap()
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.Key.ID] as? String, UIDevice.current.identifierForVendor?.uuidString)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.Key.OS] as? String, UIDevice.current.systemName)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.Key.OSVersion] as? String, UIDevice.current.systemVersion)
         XCTAssertEqual(deviceId?[BaseDeviceIdentity.Key.model] as? String, UIDevice.current.model)
-    preferences.userIdentity.set(["item1" : "one" as AnyObject , "item2" : "two" as AnyObject] as [String:AnyObject])
+    preferences.userIdentity.set(["item1" : "one" as AnyObject , "item2" : "two" as AnyObject] as [String:Any])
 
 #else
         preferences.appIdentity.set(MCAAppIdentity().jsonData)
