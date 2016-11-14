@@ -57,7 +57,12 @@ class SecurityUtilsTest: XCTestCase {
     
     func testSignCsr(){
         XCTAssertNotNil(try? SecurityUtils.saveCertificateToKeyChain(try! SecurityUtils.getCertificateFromString(certificateString), certificateLabel: certificateLabel))
+#if swift(>=3.0)
+        XCTAssertEqual(try? SecurityUtils.signCsr(["code": grantCode  as AnyObject], keyIds: (publicKeyTag, privateKeyTag), keySize: keySize), jws)
+#else
         XCTAssertEqual(try? SecurityUtils.signCsr(["code": grantCode], keyIds: (publicKeyTag, privateKeyTag), keySize: keySize), jws)
+
+#endif
     }
     func testDeleteCertificateFromKeyChain(){
         SecurityUtils.deleteCertificateFromKeyChain(certificateLabel)
@@ -77,26 +82,26 @@ class SecurityUtilsTest: XCTestCase {
 #if swift(>=3.0)
     private func savePublicKeyDataToKeyChain(_ key:Data,tag:String) {
         let publicKeyAttr : [NSString:AnyObject] = [
-            kSecValueData: key,
+            kSecValueData: key as AnyObject,
             kSecClass : kSecClassKey,
-            kSecAttrApplicationTag: tag,
+            kSecAttrApplicationTag: tag as AnyObject,
             kSecAttrKeyType : kSecAttrKeyTypeRSA,
             kSecAttrKeyClass : kSecAttrKeyClassPublic
             
         ]
-        SecItemAdd(publicKeyAttr, nil)
+        SecItemAdd(publicKeyAttr as CFDictionary, nil)
     }
     
     private func savePrivateKeyDataToKeyChain(_ key:Data,tag:String) {
         let publicKeyAttr : [NSString:AnyObject] = [
-            kSecValueData: key,
+            kSecValueData: key as AnyObject,
             kSecClass : kSecClassKey,
-            kSecAttrApplicationTag: tag,
+            kSecAttrApplicationTag: tag as AnyObject,
             kSecAttrKeyType : kSecAttrKeyTypeRSA,
             kSecAttrKeyClass : kSecAttrKeyClassPrivate
             
         ]
-        SecItemAdd(publicKeyAttr, nil)
+        SecItemAdd(publicKeyAttr as CFDictionary, nil)
     }
 #else
     private func savePublicKeyDataToKeyChain(key:NSData,tag:String) {

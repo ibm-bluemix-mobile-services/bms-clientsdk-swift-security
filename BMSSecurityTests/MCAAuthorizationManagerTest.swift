@@ -33,24 +33,24 @@ class MCAAuthorizationManagerTest: XCTestCase {
         let badauthHeader = "ThisIsBEARer"
         let goodauthHeader = "Bearer"
         let goodauthHeader2 = "bearer"
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: goodauthHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: goodauthHeader))
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 403, httpResponseAuthorizationHeader: BMSSecurityConstants.AUTH_REALM + goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 401, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 403, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 401, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 403, httpResponseAuthorizationHeader: goodauthHeader))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(for: 401, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(for: 403, httpResponseAuthorizationHeader: BMSSecurityConstants.AUTH_REALM + goodauthHeader))
         
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: goodauthHeader + "junk"
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(for: 401, httpResponseAuthorizationHeader: goodauthHeader + "junk"
             + BMSSecurityConstants.AUTH_REALM + "junk" ))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 401, httpResponseAuthorizationHeader: ""))
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forStatusCode: 400, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 401, httpResponseAuthorizationHeader: ""))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for: 400, httpResponseAuthorizationHeader: goodauthHeader + BMSSecurityConstants.AUTH_REALM))
         let txt = "test"
-        let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response1))
-        let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: NSHTTPURLResponse(URL: NSURL(), statusCode: 401, HTTPVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercaseString : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
-        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response2))
+        let response1:Response = Response(responseData: stringToBase64Data(txt), httpResponse: HTTPURLResponse(url: NSURL() as URL, statusCode: 401, httpVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(for:response1))
+        let response2:Response = Response(responseData: stringToBase64Data(txt), httpResponse: HTTPURLResponse(url: NSURL() as URL, statusCode: 401, httpVersion: nil, headerFields: [BMSSecurityConstants.WWW_AUTHENTICATE_HEADER.lowercased() : "Bearer" + BMSSecurityConstants.AUTH_REALM]), isRedirect: false)
+        XCTAssertTrue(mcaAuthManager.isAuthorizationRequired(for:response2))
         let response3:Response = Response(responseData: stringToBase64Data(txt), httpResponse: HTTPURLResponse(), isRedirect: false)
-        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(forHttpResponse:response3))
+        XCTAssertFalse(mcaAuthManager.isAuthorizationRequired(for:response3))
     }
 #else
     private func stringToBase64Data(str:String) -> NSData {
@@ -96,12 +96,12 @@ class MCAAuthorizationManagerTest: XCTestCase {
         let cookiesStorage = HTTPCookieStorage.shared
         cookiesStorage.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
         let cookieProperties:[HTTPCookiePropertyKey : AnyObject] = [
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.name.rawValue) : "JSESSIONID",
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.value.rawValue) : "value",
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.domain.rawValue) : "www.test.com",
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.originURL.rawValue) : "www.test.com",
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.path.rawValue) : "/",
-            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.version.rawValue) : "0"
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.name.rawValue) : "JSESSIONID" as AnyObject,
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.value.rawValue) : "value" as AnyObject,
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.domain.rawValue) : "www.test.com" as AnyObject,
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.originURL.rawValue) : "www.test.com" as AnyObject,
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.path.rawValue) : "/" as AnyObject,
+            HTTPCookiePropertyKey(rawValue: HTTPCookiePropertyKey.version.rawValue) : "0" as AnyObject
         ]
         cookiesStorage.setCookie(HTTPCookie(properties: cookieProperties)!)
         XCTAssertEqual(numberOfCookiesForName("JSESSIONID"), 1)
@@ -124,6 +124,13 @@ class MCAAuthorizationManagerTest: XCTestCase {
         }
         return count
     }
+    func testPersistencePolicy(){
+        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.always)
+        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.always)
+        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.never)
+        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.never)
+    }
+
 #else
     func testClearAuthorizationData(){
         mcaAuthManager.preferences.accessToken.set("testAccessToken")
@@ -160,14 +167,15 @@ class MCAAuthorizationManagerTest: XCTestCase {
         }
         return count
     }
+    func testPersistencePolicy(){
+    mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.ALWAYS)
+    XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.ALWAYS)
+    mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.NEVER)
+    XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.NEVER)
+    }
+
 #endif
     
-    func testPersistencePolicy(){
-        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.ALWAYS)
-        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.ALWAYS)
-        mcaAuthManager.setAuthorizationPersistencePolicy(PersistencePolicy.NEVER)
-        XCTAssertEqual(mcaAuthManager.authorizationPersistencePolicy(),PersistencePolicy.NEVER)
-    }
     
     func testGetCachedAuthorizationHeader(){
         XCTAssertNil(mcaAuthManager.cachedAuthorizationHeader)
@@ -214,6 +222,21 @@ class MCAAuthorizationManagerTest: XCTestCase {
         mcaAuthManager.unregisterAuthenticationDelegate(realm)
         XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(realm))
     }
+    func testGetIdentities(){
+        mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" as AnyObject , "item2app" : "two" as AnyObject])
+        var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.jsonData
+        XCTAssertEqual(appId?["item1app"], "one")
+        XCTAssertEqual(appId?["item2app"], "two")
+        mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" as AnyObject , "item2device" : "two" as AnyObject])
+        var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.jsonData
+        XCTAssertEqual(deviceId?["item1device"], "one")
+        XCTAssertEqual(deviceId?["item2device"], "two")
+        mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" as AnyObject , "item2user" : "two" as AnyObject])
+        var userId = (mcaAuthManager.userIdentity as? MCAUserIdentity)?.jsonData
+        XCTAssertEqual(userId?["item1user"], "one")
+        XCTAssertEqual(userId?["item2user"], "two")
+    }
+
 #else
     func testRegisterAndUnregisterAuthenticationDelegate(){
         
@@ -238,22 +261,23 @@ class MCAAuthorizationManagerTest: XCTestCase {
         mcaAuthManager.unregisterAuthenticationDelegate(realm)
         XCTAssertNil(mcaAuthManager.challengeHandlerForRealm(realm))
     }
+    func testGetIdentities(){
+    mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
+    var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.jsonData
+    XCTAssertEqual(appId?["item1app"], "one")
+    XCTAssertEqual(appId?["item2app"], "two")
+    mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" , "item2device" : "two"])
+    var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.jsonData
+    XCTAssertEqual(deviceId?["item1device"], "one")
+    XCTAssertEqual(deviceId?["item2device"], "two")
+    mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" , "item2user" : "two"])
+    var userId = (mcaAuthManager.userIdentity as? MCAUserIdentity)?.jsonData
+    XCTAssertEqual(userId?["item1user"], "one")
+    XCTAssertEqual(userId?["item2user"], "two")
+    }
+
 #endif
     
-    func testGetIdentities(){
-        mcaAuthManager.preferences.appIdentity.set(["item1app" : "one" , "item2app" : "two"])
-        var appId =  (mcaAuthManager.appIdentity as? MCAAppIdentity)?.jsonData
-        XCTAssertEqual(appId?["item1app"], "one")
-        XCTAssertEqual(appId?["item2app"], "two")
-        mcaAuthManager.preferences.deviceIdentity.set(["item1device" : "one" , "item2device" : "two"])
-        var deviceId = (mcaAuthManager.deviceIdentity as? MCADeviceIdentity)?.jsonData
-        XCTAssertEqual(deviceId?["item1device"], "one")
-        XCTAssertEqual(deviceId?["item2device"], "two")
-        mcaAuthManager.preferences.userIdentity.set(["item1user" : "one" , "item2user" : "two"])
-        var userId = (mcaAuthManager.userIdentity as? MCAUserIdentity)?.jsonData
-        XCTAssertEqual(userId?["item1user"], "one")
-        XCTAssertEqual(userId?["item2user"], "two")
-    }
     
     class MockAuthorizationManagerPreference: AuthorizationManagerPreferences {
         
@@ -271,16 +295,21 @@ class MCAAuthorizationManagerTest: XCTestCase {
         }
         class MockPolicyPreference : PolicyPreference{
             var mockValue:PersistencePolicy
-            init() {
-                self.mockValue = PersistencePolicy.ALWAYS
-                super.init(prefName: "", defaultValue: PersistencePolicy.ALWAYS, idToken: nil, accessToken: nil)
-            }
+            
             
 #if swift(>=3.0)
+            init() {
+                self.mockValue = PersistencePolicy.always
+                super.init(prefName: "", defaultValue: PersistencePolicy.always, idToken: nil, accessToken: nil)
+            }
             override func set(_ value: PersistencePolicy, shouldUpdateTokens:Bool) {
                 self.mockValue = value
             }
 #else
+            init() {
+            self.mockValue = PersistencePolicy.ALWAYS
+            super.init(prefName: "", defaultValue: PersistencePolicy.ALWAYS, idToken: nil, accessToken: nil)
+            }
             override func set(value: PersistencePolicy, shouldUpdateTokens:Bool) {
                 self.mockValue = value
             }
