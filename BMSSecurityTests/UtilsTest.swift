@@ -33,25 +33,44 @@ class UtilsTest: XCTestCase {
     }
     
     func testJSONStringify() {
-        let dict:[String:AnyObject] = ["first":true,"second":3, "third" : ["item1","item2",["item3","item4"],"item5"]]
+#if swift (>=3.0)
+        let dict:[String:Any] = ["first":true,"second":3, "third" : ["item1","item2",["item3","item4"],"item5"]]
+        let json = try? Utils.JSONStringify(dict as AnyObject)
+
+    #else
+    let dict:[String:AnyObject] = ["first":true,"second":3, "third" : ["item1","item2",["item3","item4"],"item5"]]
+    let json = try? Utils.JSONStringify(dict)
+
+
+    #endif
         let jsonStringOption1 = "{\"first\":true,\"second\":3,\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"]}"
         let jsonStringOption2 = "{\"first\":true,\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"],\"second\":3}"
         let jsonStringOption3 = "{\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"],\"first\":true,\"second\":3}"
         let jsonStringOption4 = "{\"second\":3,\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"],\"first\":true}"
         let jsonStringOption5 = "{\"second\":3,\"first\":true,\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"]}"
         let jsonStringOption6 = "{\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"],\"second\":3,\"first\":true}"
-        let json = try? Utils.JSONStringify(dict)
         let cond = (jsonStringOption1 == json || jsonStringOption2 == json || jsonStringOption3 == json || jsonStringOption4 == json || jsonStringOption5 == json || jsonStringOption6 == json)
         XCTAssertTrue(cond)
     }
     
     func testParseJsonStringtoDictionary() {
         let jsonString = "{\"first\":true,\"second\":3,\"third\":[\"item1\",\"item2\",[\"item3\",\"item4\"],\"item5\"]}"
-        let returnedDict:[String:AnyObject]? = try? Utils.parseJsonStringtoDictionary(jsonString)
+        
+//        var json = try! JSONSerialization.jsonObject(with: jsonString.data(using: String.Encoding.utf8)!, options: JSONSerialization.ReadingOptions()) as! [AnyObject]
+
+        let returnedDict:[String:Any]? = try? Utils.parseJsonStringtoDictionary(jsonString)
         XCTAssertNotNil(returnedDict)
         XCTAssertEqual(returnedDict!["first"] as? Bool, true)
         XCTAssertEqual(returnedDict!["second"] as? Int, 3)
-        XCTAssertEqual((returnedDict!["third"] as? Array)!, ["item1","item2",["item3","item4"],"item5"])
+        #if swift (>=3.0)
+            XCTAssertEqual((returnedDict!["third"] as? [AnyObject])?[0] as? String, "item1")
+            XCTAssertEqual((returnedDict!["third"] as? [AnyObject])?[1] as? String, "item2")
+            XCTAssertEqual(((returnedDict!["third"] as? [AnyObject])?[2] as? [String])!, ["item3","item4"])
+            XCTAssertEqual((returnedDict!["third"] as? [AnyObject])?[3] as? String, "item5")
+        #else
+            XCTAssertEqual((returnedDict!["third"] as? Array)!, ["item1","item2",["item3","item4"],"item5"])
+        #endif
+
     }
 #if swift (>=3.0)
     private func stringToBase64Data(_ str:String) -> Data {
@@ -89,10 +108,10 @@ class UtilsTest: XCTestCase {
         let deviceIdentity = MCADeviceIdentity()
         let appIdentity = MCAAppIdentity()
         var dictionary = Utils.getDeviceDictionary()
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_DEVICE_ID_KEY] as? String, deviceIdentity.id)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_DEVICE_ID_KEY] as? String, deviceIdentity.ID)
         XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_MODEL_KEY] as? String, deviceIdentity.model)
         XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_OS_KEY] as? String, deviceIdentity.OS)
-        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] as? String, appIdentity.id)
+        XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_ID_KEY] as? String, appIdentity.ID)
         XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_APPLICATION_VERSION_KEY] as? String, appIdentity.version)
         XCTAssertEqual(dictionary[BMSSecurityConstants.JSON_ENVIRONMENT_KEY] as? String, BMSSecurityConstants.JSON_IOS_ENVIRONMENT_VALUE)
     }

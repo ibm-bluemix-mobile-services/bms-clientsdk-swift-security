@@ -24,7 +24,7 @@ public protocol AuthenticationContext {
      - Parameter answer - Dictionary with challenge responses
      */
     
-    func submitAuthenticationChallengeAnswer(_ answer:[String:AnyObject]?)
+    func submitAuthenticationChallengeAnswer(_ answer:[String:Any]?)
     
     /**
      Informs client about successful authentication.
@@ -37,7 +37,7 @@ public protocol AuthenticationContext {
      - Parameter info - Dictionary with extended information about failure
      */
     
-    func submitAuthenticationFailure (_ info:[String:AnyObject]?)
+    func submitAuthenticationFailure (_ info:[String:Any]?)
 }
 
 #else
