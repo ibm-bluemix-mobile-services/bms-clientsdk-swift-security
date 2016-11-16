@@ -364,12 +364,12 @@ class MockAuthorizationRequestManager : AuthorizationRequestManager {
         XCTAssertEqual(realm, ChallengeHandlerTest.realm)
         MockAuthorizationRequestManager.removeExpectedAnswerCount += 1
     }
-    override func submitAnswer(_ answer: [String : Any]?, realm: String) {
+    override func submitAnswer(_ answer: [String : AnyObject]?, realm: String) {
         MockAuthorizationRequestManager.submitAnswerCount += 1
         XCTAssertEqual(answer! as NSDictionary, MockAuthorizationRequestManager.answer as NSDictionary)
         XCTAssertEqual(realm, ChallengeHandlerTest.realm)
     }
-    override func requestFailed(_ info: [String : Any]?) {
+    override func requestFailed(_ info: [String : AnyObject]?) {
         XCTAssertEqual(info! as NSDictionary, MockAuthorizationRequestManager.failedInfo as NSDictionary)
         MockAuthorizationRequestManager.requestFailedCount += 1
     }

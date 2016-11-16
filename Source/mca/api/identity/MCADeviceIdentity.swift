@@ -37,10 +37,10 @@ public class MCADeviceIdentity : BaseDeviceIdentity {
                 BaseDeviceIdentity.Key.model :  UIDevice.current.model
             ]
         #endif
-        super.init(map: dict as [String : Any]?)
+        super.init(map: dict as [String : AnyObject]?)
     }
     
-    public override init(map: [String : Any]?) {
+    public override init(map: [String : AnyObject]?) {
         super.init(map: map)
     }
 }

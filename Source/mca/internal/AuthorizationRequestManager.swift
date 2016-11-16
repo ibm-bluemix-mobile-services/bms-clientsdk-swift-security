@@ -27,7 +27,7 @@ public class AuthorizationRequestManager {
     var requestPath : String?
     var requestOptions : RequestOptions?
     
-    var answers: [String : Any]?
+    var answers: [String : AnyObject]?
     
     public static var overrideServerHost: String?     
     
@@ -185,7 +185,7 @@ public class AuthorizationRequestManager {
      
      - parameter jsonFailures: Collection of authentication failures
      */
-    internal func processFailures(_ jsonFailures: [String:Any]?) {
+    internal func processFailures(_ jsonFailures: [String:AnyObject]?) {
         
         guard let failures = jsonFailures else {
             return
@@ -193,7 +193,7 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in failures {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : Any] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleFailure(unWrappedChallenge)
             }
             else {
@@ -202,13 +202,13 @@ public class AuthorizationRequestManager {
         }
     }
     
-    internal func requestFailed(_ info:[String:Any]?) {
+    internal func requestFailed(_ info:[String:AnyObject]?) {
         AuthorizationRequestManager.logger.error(message: "BaseRequest failed with info: \(info == nil ? "info is nil" : String(describing: info))")
         defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
     }
     
     
-    internal func processSuccesses(_ jsonSuccesses: [String:Any]?) {
+    internal func processSuccesses(_ jsonSuccesses: [String:AnyObject]?) {
         
         guard let successes = jsonSuccesses else {
             return
@@ -216,7 +216,7 @@ public class AuthorizationRequestManager {
         
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in successes {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : Any] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleSuccess(unWrappedChallenge)
             }
             else {
@@ -234,7 +234,7 @@ public class AuthorizationRequestManager {
         // at this point a server response should contain a secure JSON with challenges
         do {
             let responseJson = try Utils.extractSecureJson(response)
-            if let challenges = responseJson[caseInsensitive : BMSSecurityConstants.CHALLENGES_VALUE_NAME] as? [String:Any]{
+            if let challenges = responseJson[caseInsensitive : BMSSecurityConstants.CHALLENGES_VALUE_NAME] as? [String: AnyObject]{
                 try startHandleChallenges(challenges, response: response!)
             } else {
                 defaultCompletionHandler(response, nil)
@@ -248,7 +248,7 @@ public class AuthorizationRequestManager {
         }
     }
     
-    internal func startHandleChallenges(_ jsonChallenges: [String:Any], response: Response) throws {
+    internal func startHandleChallenges(_ jsonChallenges: [String: AnyObject], response: Response) throws {
         let challenges = Array(jsonChallenges.keys)
         
         if (AuthorizationRequestManager.isAuthorizationRequired(response)) {
@@ -256,7 +256,7 @@ public class AuthorizationRequestManager {
         }
         let mcaAuthManager = MCAAuthorizationManager.sharedInstance
         for (realm, challenge) in jsonChallenges {
-            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : Any] {
+            if let handler = mcaAuthManager.challengeHandlerForRealm(realm), let unWrappedChallenge = challenge as? [String : AnyObject] {
                 handler.handleChallenge(self, challenge:  unWrappedChallenge)
             }
             else {
@@ -296,14 +296,14 @@ public class AuthorizationRequestManager {
      - parameter answer: Answer to add.
      - parameter realm:  Authentication realm for the answer.
      */
-    internal func submitAnswer(_ answer:[String:Any]?, realm:String) {
+    internal func submitAnswer(_ answer:[String:AnyObject]?, realm:String) {
         guard let unwrappedAnswer = answer else {
             AuthorizationRequestManager.logger.error(message: "Cannot submit nil answer for realm \(realm)")
             return
         }
         
         if answers == nil {
-            answers = [String:Any]()
+            answers = [String:AnyObject]()
         }
         
         answers![realm] = unwrappedAnswer as AnyObject?
@@ -367,11 +367,11 @@ public class AuthorizationRequestManager {
                 // process failures if any
                 
                 if let jsonFailures = jsonResult[caseInsensitive : BMSSecurityConstants.AUTH_FAILURE_VALUE_NAME] {
-                    processFailures(jsonFailures as? [String : Any])
+                    processFailures(jsonFailures as? [String : AnyObject])
                 }
                 
                 if let jsonSuccesses = jsonResult[caseInsensitive : BMSSecurityConstants.AUTH_SUCCESS_VALUE_NAME] {
-                    processSuccesses(jsonSuccesses as? [String:Any])
+                    processSuccesses(jsonSuccesses as? [String: AnyObject])
                 }
             }
         }
