@@ -40,6 +40,10 @@ public class MCADeviceIdentity : BaseDeviceIdentity {
         super.init(map: dict as [String : Any]?)
     }
     
+    public convenience init(map: [String:AnyObject]?) {
+        self.init(map: map as [String:Any]?)
+    }
+    
     public override init(map: [String : Any]?) {
         super.init(map: map)
     }

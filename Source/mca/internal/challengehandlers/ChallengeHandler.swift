@@ -32,6 +32,13 @@ public class ChallengeHandler : AuthenticationContext{
         self.waitingRequests = [AuthorizationRequestManager]()
     }
     
+    
+    public func submitAuthenticationChallengeAnswer(_ answer:[String:AnyObject]?) {
+        self.submitAuthenticationChallengeAnswer(answer as [String:Any]?)
+    }
+
+    
+    
     public func submitAuthenticationChallengeAnswer(_ answer:[String:Any]?) {
         lockQueue.async(flags: .barrier, execute: {
             guard let aRequest = self.activeRequest else {
@@ -57,6 +64,11 @@ public class ChallengeHandler : AuthenticationContext{
             self.releaseWaitingList()
         })
     }
+    
+    public func submitAuthenticationFailure (_ info:[String:AnyObject]?) {
+        self.submitAuthenticationFailure(info as [String:Any]?)
+    }
+
     
     public func submitAuthenticationFailure (_ info:[String:Any]?) {
         lockQueue.async(flags: .barrier, execute: {
