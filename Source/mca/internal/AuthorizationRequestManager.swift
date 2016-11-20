@@ -202,9 +202,16 @@ public class AuthorizationRequestManager {
         }
     }
     
+    
     internal func requestFailed(_ info:[String:Any]?) {
         AuthorizationRequestManager.logger.error(message: "BaseRequest failed with info: \(info == nil ? "info is nil" : String(describing: info))")
-        defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"\(info)"]))
+        let json = try? Utils.JSONStringify(info as AnyObject)
+        if (json != nil) {
+            defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: json]))
+        } else {
+            defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1))
+        }
+
     }
     
     
