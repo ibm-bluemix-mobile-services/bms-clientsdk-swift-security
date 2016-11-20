@@ -162,10 +162,10 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return false
     }
     
-    private func clearSessionCookie() {
+    private func clearCookie(cookieName name : String) {
         let cookiesStorage = HTTPCookieStorage.shared
         if let cookies = cookiesStorage.cookies {
-            let jSessionCookies = cookies.filter() {$0.name == "JSESSIONID"}
+            let jSessionCookies = cookies.filter() {$0.name == name}
             for cookie in jSessionCookies {
                 cookiesStorage.deleteCookie(cookie)
             }
@@ -181,7 +181,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
         preferences.idToken.clear()
         preferences.accessToken.clear()
         processManager.authorizationFailureCount = 0
-        clearSessionCookie()
+        clearCookie(cookieName: "JSESSIONID")
+        clearCookie(cookieName: "LtpaToken2")
     }
     
     /**
@@ -431,10 +432,13 @@ public class MCAAuthorizationManager : AuthorizationManager {
         return false
     }
     
-    private func clearSessionCookie() {
+    
+    
+    
+    private func clearCookie(cookieName name : String) {
         let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = cookiesStorage.cookies {
-            let jSessionCookies = cookies.filter() {$0.name == "JSESSIONID"}
+            let jSessionCookies = cookies.filter() {$0.name == name}
             for cookie in jSessionCookies {
                 cookiesStorage.deleteCookie(cookie)
             }
@@ -450,7 +454,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
         preferences.idToken.clear()
         preferences.accessToken.clear()
         processManager.authorizationFailureCount = 0
-        clearSessionCookie()
+        clearCookie(cookieName: "JSESSIONID")
+        clearCookie(cookieName: "LtpaToken2")
     }
     
     /**
