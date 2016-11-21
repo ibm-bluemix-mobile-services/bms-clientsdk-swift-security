@@ -165,8 +165,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     private func clearCookie(cookieName name : String) {
         let cookiesStorage = HTTPCookieStorage.shared
         if let cookies = cookiesStorage.cookies {
-            let jSessionCookies = cookies.filter() {$0.name == name}
-            for cookie in jSessionCookies {
+            let filteredCookies = cookies.filter() {$0.name == name}
+            for cookie in filteredCookies {
                 cookiesStorage.deleteCookie(cookie)
             }
         }
@@ -438,8 +438,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     private func clearCookie(cookieName name : String) {
         let cookiesStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = cookiesStorage.cookies {
-            let jSessionCookies = cookies.filter() {$0.name == name}
-            for cookie in jSessionCookies {
+            let filteredCookies = cookies.filter() {$0.name == name}
+            for cookie in filteredCookies {
                 cookiesStorage.deleteCookie(cookie)
             }
         }
