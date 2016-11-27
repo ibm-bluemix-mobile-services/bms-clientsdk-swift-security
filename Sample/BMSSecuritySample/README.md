@@ -19,6 +19,9 @@ Before you start, make sure you have:
 2. Enter your app's region as a parameter for BMSClient.sharedInstance.initializeWithBluemixAppRoute
 3. Enter the answer to the challenge expected to be recieved from the backend.
 
+#### Enable Keychain Sharing
+When using Xcode 8.x, in order to use BMSSecurity you need to enable Keychain Sharing in your app. You can enable this feature in the Capabilities tab of your target.
+
 ### Run the iOS app
 Now you can run the iOS application in your iOS emulator or on a physical device.
 

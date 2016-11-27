@@ -57,6 +57,9 @@ In order to logout the current logged in user, you can use the following code:
 mcaAuthManager.logout(<callBack>)
 ```
 
+### Enable Keychain Sharing
+When using Xcode 8.x, in order to use BMSSecurity you need to enable Keychain Sharing in your app. You can enable this feature in the Capabilities tab of your target.
+
 ## Sample app
 You can use 'pod try BMSSecurity' to get a sample application. A readme file with details on how to run the sample application is available in the app's folder.
 
