@@ -29,7 +29,7 @@ public class AuthorizationRequestManager {
     
     var answers: [String : Any]?
     
-    public static var overrideServerHost: String?     
+    public static var overrideServerHost: String?
     
     private static let logger = Logger.logger(name: BMSSecurityConstants.authorizationRequestManagerLoggerName)
     
@@ -68,31 +68,31 @@ public class AuthorizationRequestManager {
             if(bluemixRegion == nil) {
                 bluemixRegion = BMSClient.sharedInstance.bluemixRegion
             }
-    
+            
             var MCATenantId = MCAAuthorizationManager.sharedInstance.tenantId
             if(MCATenantId == nil) {
                 MCATenantId = BMSClient.sharedInstance.bluemixAppGUID
             }
-    
+            
             //path is relative
             var serverHost = MCAAuthorizationManager.defaultProtocol
-            + "://"
-            + BMSSecurityConstants.AUTH_SERVER_NAME
-            + bluemixRegion!
-    
+                + "://"
+                + BMSSecurityConstants.AUTH_SERVER_NAME
+                + bluemixRegion!
+            
             if let overrideServerHost = AuthorizationRequestManager.overrideServerHost {
                 serverHost = overrideServerHost
             }
-    
+            
             rootUrl = serverHost
-            + "/"
-            + BMSSecurityConstants.AUTH_SERVER_NAME
-            + "/"
-            + BMSSecurityConstants.AUTH_PATH
-            + MCATenantId!
+                //+ "/"
+                //+ BMSSecurityConstants.AUTH_SERVER_NAME
+                // + "/"
+                + BMSSecurityConstants.WEB_AUTH_PATH
+            //     + MCATenantId!
         }
         try sendInternal(rootUrl, path: computedPath, options: options)
-    
+        
     }
     
     internal static func isAuthorizationRequired(_ response: Response?) -> Bool {
@@ -103,7 +103,7 @@ public class AuthorizationRequestManager {
         }
         return false
     }
-
+    
     
     internal func sendInternal(_ rootUrl:String, path:String, options:RequestOptions?) throws {
         self.requestOptions = options != nil ? options : RequestOptions()
@@ -209,11 +209,11 @@ public class AuthorizationRequestManager {
         if (json != nil) {
             defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: json!]))
         } else if (info != nil){
-           defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: info!]))
+            defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: info!]))
         } else {
             defaultCompletionHandler(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1))
         }
-
+        
     }
     
     
@@ -349,13 +349,13 @@ public class AuthorizationRequestManager {
             guard locationHeader != nil else {
                 return nil
             }
-			
-			if let locationHeader = locationHeader as? [String]{
-				return locationHeader[0]
-			} else if let locationHeader = locationHeader as? String{
-				return locationHeader
-			}
-			
+            
+            if let locationHeader = locationHeader as? [String]{
+                return locationHeader[0]
+            } else if let locationHeader = locationHeader as? String{
+                return locationHeader
+            }
+            
             return nil
         }
         
@@ -390,7 +390,7 @@ public class AuthorizationRequestManager {
 }
 
 #else
-    
+
 public class AuthorizationRequestManager {
     
     //MARK constants

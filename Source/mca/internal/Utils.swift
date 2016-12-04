@@ -16,6 +16,7 @@ import BMSCore
 
 #if swift (>=3.0)
 
+    
 extension Dictionary where Key : Any {
     subscript(caseInsensitive key : Key) -> Value? {
         get {
@@ -313,8 +314,47 @@ public class Utils {
         let length = data.count
         return base64StringFromData(data, length: length, isSafeUrl: isSafeUrl)
     }
-}
     
+    internal static func urlEncode(_ str:String) -> String{
+        var encodedString = ""
+        var unchangedCharacters = ""
+        let FORM_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#&!$(),~%"
+        
+        for element: Int in 0x20..<0x7f {
+            if !FORM_ENCODE_SET.contains(String(describing: UnicodeScalar(element))) {
+                unchangedCharacters += String(Character(UnicodeScalar(element)!))
+            }
+        }
+        
+        encodedString = str.trimmingCharacters(in: CharacterSet(charactersIn: "\n\r\t"))
+        let charactersToRemove = ["\n", "\r", "\t"]
+        for char in charactersToRemove {
+            encodedString = encodedString.replacingOccurrences(of: char, with: "")
+        }
+        if let encodedString = encodedString.addingPercentEncoding(withAllowedCharacters: CharacterSet(charactersIn: unchangedCharacters)) {
+            return encodedString
+        }
+        else {
+            return "nil"
+        }
+    }
+    
+    internal static func getQueryString(params: [String : String]) -> String {
+        var ans:String = "?"
+        var i = 0
+        for (key, val) in params {
+            ans += "\(Utils.urlEncode(key))=\(Utils.urlEncode(val))"
+            if i < params.count - 1 {
+                ans += "&"
+            }
+            i+=1
+        }
+        return ans
+        
+    }
+    
+}
+
 #else
 
 extension Dictionary where Key : Any {

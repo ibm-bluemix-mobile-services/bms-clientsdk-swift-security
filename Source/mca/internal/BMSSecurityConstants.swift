@@ -91,6 +91,7 @@ internal class BMSSecurityConstants {
     
     internal static let BEARER = "Bearer"
     internal static let AUTHORIZATION_HEADER = "Authorization"
+    internal static let BASIC_AUTHORIZATION_STRING = "Basic"
     internal static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
     internal static let AUTH_REALM = "\"imfAuthentication\""
     internal static let HTTP_LOCALHOST = "http://localhost"
@@ -98,7 +99,9 @@ internal class BMSSecurityConstants {
      * Parts of the path to authorization endpoint.
      */
     internal static let AUTH_SERVER_NAME = "imf-authserver"
+    internal static let WEB_AUTH_SERVER_NAME = "mobileclientaccess"
     internal static let AUTH_PATH = "authorization/v1/apps/"
+    internal static let WEB_AUTH_PATH = "/oauth/v2/"
     
     /**
      * The name of "result" parameter returned from authorization endpoint.

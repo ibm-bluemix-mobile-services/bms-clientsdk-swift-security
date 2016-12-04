@@ -12,6 +12,7 @@
 		9258E1781CDA89B3005CE803 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1751CDA89B3005CE803 /* BMSCore.framework */; };
 		9258E17A1CDA89C4005CE803 /* BMSAnalyticsAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1741CDA89B3005CE803 /* BMSAnalyticsAPI.framework */; };
 		9258E17B1CDA89C4005CE803 /* BMSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9258E1751CDA89B3005CE803 /* BMSCore.framework */; };
+		EF67C85F1DEF0AA400DE8F17 /* view.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67C85E1DEF0AA400DE8F17 /* view.swift */; };
 		EFE85A3B1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */; };
 		EFEA0CA51C67323F0092A5A5 /* AuthorizationManagerPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */; };
 		EFEB70561C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */; };
@@ -56,6 +57,7 @@
 		9258E1751CDA89B3005CE803 /* BMSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BMSCore.framework; path = Carthage/Build/iOS/BMSCore.framework; sourceTree = "<group>"; };
 		DB2BCF931C22FB2E0063A673 /* BMSSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BMSSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2BCF9D1C22FB2F0063A673 /* BMSSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BMSSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF67C85E1DEF0AA400DE8F17 /* view.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = view.swift; sourceTree = "<group>"; };
 		EFE85A3A1C857AD0000F65BA /* AuthorizationProcessManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationProcessManagerTest.swift; path = BMSSecurityTests/AuthorizationProcessManagerTest.swift; sourceTree = SOURCE_ROOT; };
 		EFEA0CA41C67323F0092A5A5 /* AuthorizationManagerPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationManagerPreferences.swift; sourceTree = "<group>"; };
 		EFEB70511C841FDF00A00372 /* AuthorizationManagerPreferencesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AuthorizationManagerPreferencesTest.swift; path = BMSSecurityTests/AuthorizationManagerPreferencesTest.swift; sourceTree = SOURCE_ROOT; };
@@ -161,9 +163,18 @@
 			name = UnitTests;
 			sourceTree = "<group>";
 		};
+		EF67C85B1DEF0A2800DE8F17 /* webView */ = {
+			isa = PBXGroup;
+			children = (
+				EF67C85E1DEF0AA400DE8F17 /* view.swift */,
+			);
+			name = webView;
+			sourceTree = "<group>";
+		};
 		FDF76FCB1C635683002FC6A2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				EF67C85B1DEF0A2800DE8F17 /* webView */,
 				FDF76FCD1C635683002FC6A2 /* mca */,
 				FDF76FE71C635683002FC6A2 /* Resources */,
 			);
@@ -265,7 +276,7 @@
 				DB2BCF901C22FB2E0063A673 /* Headers */,
 				DB2BCF8F1C22FB2E0063A673 /* Frameworks */,
 				DB2BCF911C22FB2E0063A673 /* Resources */,
-				9258E17D1CDA8A26005CE803 /* Run Script */,
+                9258E17D1CDA8A26005CE803 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -283,7 +294,7 @@
 				DB2BCF991C22FB2F0063A673 /* Sources */,
 				DB2BCF9A1C22FB2F0063A673 /* Frameworks */,
 				DB2BCF9B1C22FB2F0063A673 /* Resources */,
-				9258E17E1CDA8A4F005CE803 /* ShellScript */,
+                9258E17E1CDA8A4F005CE803 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -351,39 +362,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9258E17D1CDA8A26005CE803 /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
-			);
-			name = "Run Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-		9258E17E1CDA8A4F005CE803 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
+        9258E17D1CDA8A26005CE803 /* Run Script */ = {
+            isa = PBXShellScriptBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            inputPaths = (
+                "$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
+                "$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
+                "$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
+            );
+            name = "Run Script";
+            outputPaths = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+            shellPath = /bin/sh;
+            shellScript = "/usr/local/bin/carthage copy-frameworks";
+        };
+        9258E17E1CDA8A4F005CE803 /* ShellScript */ = {
+            isa = PBXShellScriptBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            inputPaths = (
+                "$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
+                "$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
+                "$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
+            );
+            outputPaths = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+            shellPath = /bin/sh;
+            shellScript = "/usr/local/bin/carthage copy-frameworks";
+        };
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -407,6 +418,7 @@
 				FDF76FEA1C635683002FC6A2 /* AuthenticationContext.swift in Sources */,
 				FDF76FF41C635683002FC6A2 /* BMSSecurityConstants.swift in Sources */,
 				FDF76FFA1C635683002FC6A2 /* RequestOptions.swift in Sources */,
+				EF67C85F1DEF0AA400DE8F17 /* view.swift in Sources */,
 				FDF76FF51C635683002FC6A2 /* SecurityUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

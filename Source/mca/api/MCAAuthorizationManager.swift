@@ -140,7 +140,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         
         return false
     }
- 
+    
     /**
      Check if the params came from response that requires authorization
      
@@ -150,7 +150,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
      - returns: True if status is 401 or 403 and The value of the header contains 'Bearer'
      */
     
- 
+    
     public func isAuthorizationRequired(for statusCode: Int, httpResponseAuthorizationHeader responseAuthorizationHeader: String) -> Bool {
         
         if (statusCode == 401 || statusCode == 403) &&
@@ -202,7 +202,56 @@ public class MCAAuthorizationManager : AuthorizationManager {
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
- 
+    public func login(userView : UIViewController, completionHandler : BMSCompletionHandler?, secret:String) {
+        var serverUrl = ""
+        func  showLoginWebView() -> () {
+            if let unwrappedTenant = tenantId {
+                //somehow pass client id
+                let params = [
+                    BMSSecurityConstants.JSON_RESPONSE_TYPE_KEY : BMSSecurityConstants.JSON_CODE_KEY,
+                    "client_id" : unwrappedTenant,
+                    BMSSecurityConstants.JSON_REDIRECT_URI_KEY : BMSSecurityConstants.HTTP_LOCALHOST + "/code",
+                    "scope" : "openid",
+                    "use_login_widget" : "true"
+                    
+                ]
+                let url = serverUrl + BMSSecurityConstants.WEB_AUTH_PATH + "authorization" + Utils.getQueryString(params: params)
+                let v = view();
+                v.setUrl(url: url)
+                var completion = { (code: String) -> Void in
+                    self.processManager.invokeWebTokenRequest(code, tenantId: unwrappedTenant, secret: secret)
+                }
+                v.setCompletionHandle (completionHandler: completion)
+                userView.present(v, animated: true, completion: nil)
+            } else {
+                completionHandler?(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"Tenant id not defined"]))
+            }
+        }
+        
+        serverUrl = AuthorizationRequestManager.overrideServerHost != nil ?
+            AuthorizationRequestManager.overrideServerHost! :(MCAAuthorizationManager.defaultProtocol
+                + "://"
+                + BMSSecurityConstants.WEB_AUTH_SERVER_NAME
+                + bluemixRegion!)
+        showLoginWebView()
+        //            if (preferences.clientId.get() == nil) {
+        //                do {
+        //                    try processManager.invokeInstanceRegistrationRequestWithNoAuthorization(callback: {(response: Response?, error: Error?) in
+        //                        if error == nil {
+        //                            showLoginWebView()
+        //                        } else {
+        //                            completionHandler?(response, error)
+        //                        }
+        //                    })
+        //                } catch (let err){
+        //                    completionHandler?(nil, err)
+        //                }
+        //
+        //            } else {
+        //                showLoginWebView()
+        //            }
+    }
+    
     /**
      Invoke process for obtaining authorization header.
      */
@@ -229,7 +278,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
         let handler = ChallengeHandler(realm: realm, authenticationDelegate: delegate)
         challengeHandlers[realm] = handler
     }
- 
+    
     /**
      Unregisters the authentication delegate for the specified realm.
      - Parameter realm - The realm name
@@ -263,7 +312,7 @@ public class MCAAuthorizationManager : AuthorizationManager {
             preferences.persistencePolicy.set(policy, shouldUpdateTokens: true);
         }
     }
- 
+    
     /**
      Returns a challenge handler for realm
      - parameter realm - The realm for which a challenge handler is required.
@@ -284,11 +333,12 @@ public class MCAAuthorizationManager : AuthorizationManager {
         self.clearAuthorizationData()
         processManager.logout(completionHandler)
     }
- 
+    
 }
 
+
 #else
-   
+
 public class MCAAuthorizationManager : AuthorizationManager {
     
     /// Default scheme to use (default is https)

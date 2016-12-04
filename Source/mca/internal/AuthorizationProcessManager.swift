@@ -64,7 +64,38 @@ internal class AuthorizationProcessManager {
             AuthorizationProcessManager.logger.debug(message: "authorization process currently handling \(authorizationQueue.size) requests")
         }
     }
-    
+    internal func invokeInstanceRegistrationRequestWithNoAuthorization(callback :@escaping BMSCompletionHandler) throws {
+        preferences.clientId.clear()
+        SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier)
+        let options:RequestOptions = RequestOptions()
+        options.parameters = try createRegistrationParams()
+        options.headers = createRegistrationHeaders()
+        options.requestMethod = HttpMethod.POST
+        
+        let internalCallBack:BMSCompletionHandler = {(response: Response?, error: Error?) in
+            if error == nil {
+                if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
+                    do {
+                        try self.saveCertificateFromResponse(response)
+                        callback(response, error);
+                    } catch(let thrownError) {
+                        self.handleAuthorizationFailure(thrownError)
+                    }
+                }
+                else {
+                    callback(response, error);
+                }
+            } else {
+                callback(response, error);
+            }
+        }
+        do {
+            try authorizationRequestSend(BMSSecurityConstants.clientsInstanceEndPoint, options: options, completionHandler: internalCallBack)
+        } catch {
+            callback(nil, error);
+        }
+        
+    }
     private func invokeInstanceRegistrationRequest() throws {
         preferences.clientId.clear()
         SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier)
@@ -112,6 +143,21 @@ internal class AuthorizationProcessManager {
         
     }
     
+    private func createWebTokenRequestHeaders(tenantId:String, secret:String)  -> [String:String]{
+        var headers = [String:String]()
+        headers[BMSSecurityConstants.AUTHORIZATION_HEADER] = BMSSecurityConstants.BASIC_AUTHORIZATION_STRING + " " + (tenantId + ":" + secret).data(using: .utf8)!.base64EncodedString()
+        return headers
+    }
+    
+    private func createWebTokenRequestParams(_ grantCode:String, tenantId : String) -> [String : String]{
+        let params : [String : String] = [
+            BMSSecurityConstants.JSON_CODE_KEY : grantCode,
+            BMSSecurityConstants.client_id_String :  tenantId,
+            BMSSecurityConstants.JSON_GRANT_TYPE_KEY : BMSSecurityConstants.authorization_code_String,
+            BMSSecurityConstants.JSON_REDIRECT_URI_KEY :BMSSecurityConstants.HTTP_LOCALHOST + "/code"
+        ]
+        return params;
+    }
     private func createTokenRequestParams(_ grantCode:String) throws -> [String:String] {
         guard let clientId = preferences.clientId.get() else {
             throw AuthorizationProcessManagerError.clientIdIsNil
@@ -180,9 +226,38 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    private func invokeTokenRequest(_ grantCode:String) {
+    public func invokeWebTokenRequest(_ grantCode:String, tenantId : String, secret: String){
+        let options:RequestOptions  = RequestOptions()
+        do {
+            options.parameters = createWebTokenRequestParams(grantCode, tenantId: tenantId)
+            options.headers =  createWebTokenRequestHeaders(tenantId: tenantId, secret: secret)
+            addSessionIdHeader(&options.headers)
+            options.requestMethod = HttpMethod.POST
+            let callback:BMSCompletionHandler = {(response: Response?, error: Error?) in
+                if error == nil {
+                    if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
+                        do {
+                            try self.saveTokenFromResponse(unWrappedResponse)
+                            self.handleAuthorizationSuccess(unWrappedResponse, error: error as NSError?)
+                        } catch(let thrownError) {
+                            self.handleAuthorizationFailure(thrownError)
+                        }
+                    }
+                    else {
+                        self.handleAuthorizationFailure(response, error: error as NSError?)
+                    }
+                } else {
+                    self.handleAuthorizationFailure(response, error: error as NSError?)
+                }
+            }
+            try authorizationRequestSend(BMSSecurityConstants.tokenEndPoint, options: options, completionHandler: callback)
+        } catch {
+            self.handleAuthorizationFailure(error)
+        }
         
-        
+    }
+    
+    public func invokeTokenRequest(_ grantCode:String) {
         let options:RequestOptions  = RequestOptions()
         do {
             options.parameters = try createTokenRequestParams(grantCode)
@@ -369,7 +444,6 @@ internal class AuthorizationProcessManager {
 }
 
 #else
-    
 internal class AuthorizationProcessManager {
     private var authorizationQueue:Queue<BMSCompletionHandler> = Queue<BMSCompletionHandler>()
     private var sessionId:String = ""
