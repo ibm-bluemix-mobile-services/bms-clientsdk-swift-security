@@ -146,8 +146,7 @@ internal class AuthorizationProcessManager {
     private func createWebTokenRequestHeaders(tenantId:String, clientId:String)  -> [String:String]{
         var headers = [String:String]()
         let username = tenantId + "-" + clientId
-        let signed:String? = ""
-//        let signed = try? SecurityUtils.signString(username, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
+        let signed = try? SecurityUtils.signString(username, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
         
         headers[BMSSecurityConstants.AUTHORIZATION_HEADER] = BMSSecurityConstants.BASIC_AUTHORIZATION_STRING + " " + (username + ":" + signed!).data(using: .utf8)!.base64EncodedString()
         return headers

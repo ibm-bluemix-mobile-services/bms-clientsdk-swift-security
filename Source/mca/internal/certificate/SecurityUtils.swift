@@ -258,11 +258,37 @@ internal class SecurityUtils {
         return ret
     }
     
+    internal static func signString(_ payloadString:String, keyIds ids:(publicKey: String, privateKey: String), keySize: Int) throws -> String {
+        do {
+            let keys = try getKeyPairBitsFromKeyChain(ids.publicKey, privateTag: ids.privateKey)
+            let privateKeySec = try getKeyPairRefFromKeyChain(ids.publicKey, privateTag: ids.privateKey).privateKey
+            
+            guard let payloadData : Data = payloadString.data(using: String.Encoding.utf8) else {
+                throw BMSSecurityError.generalError
+            }
+            let signedData = try signData(payloadData, privateKey:privateKeySec)
+            
+            return signedData.base64EncodedString()
+        }
+        catch {
+            throw BMSSecurityError.generalError
+        }
+    }
+
+    
     private static func signData(_ payload:String, privateKey:SecKey) throws -> Data {
         guard let data:Data = payload.data(using: String.Encoding.utf8) else {
             throw BMSSecurityError.generalError
         }
-        
+        do {
+            return try SecurityUtils.signData(data, privateKey: privateKey)
+        } catch (let error) {
+            throw error
+        }
+    }
+
+    
+    private static func signData(_ data:Data, privateKey:SecKey) throws -> Data {
         func doSha256(_ dataIn:Data) throws -> Data {
             var hash = [UInt8](repeating: 0,  count: Int(CC_SHA256_DIGEST_LENGTH))
             dataIn.withUnsafeBytes {
