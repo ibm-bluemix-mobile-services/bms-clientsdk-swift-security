@@ -204,7 +204,8 @@ public class MCAAuthorizationManager : AuthorizationManager {
     
     public func login(userView : UIViewController, completionHandler : BMSCompletionHandler?, secret:String) {
         var serverUrl = ""
-        func  showLoginWebView() -> () {
+        
+        func  showLoginWebView() -> Void {
             if let unwrappedTenant = tenantId {
                 //somehow pass client id
                 let params = [
@@ -212,17 +213,23 @@ public class MCAAuthorizationManager : AuthorizationManager {
                     "client_id" : unwrappedTenant,
                     BMSSecurityConstants.JSON_REDIRECT_URI_KEY : BMSSecurityConstants.HTTP_LOCALHOST + "/code",
                     "scope" : "openid",
-                    "use_login_widget" : "true"
+                    "use_login_widget" : "true",
+                    "state" : UUID().uuidString
                     
                 ]
                 let url = serverUrl + BMSSecurityConstants.WEB_AUTH_PATH + "authorization" + Utils.getQueryString(params: params)
                 let v = view();
                 v.setUrl(url: url)
                 var completion = { (code: String) -> Void in
-                    self.processManager.invokeWebTokenRequest(code, tenantId: unwrappedTenant, secret: secret)
+                    self.processManager.invokeWebTokenRequest(code, tenantId: unwrappedTenant, clientId: self.preferences.clientId.get()!)
+                }
+                var loadLoginWidget = { () -> Void in
+                    userView.present(v, animated: true, completion: nil)
                 }
                 v.setCompletionHandle (completionHandler: completion)
-                userView.present(v, animated: true, completion: nil)
+                DispatchQueue.main.async {
+                    loadLoginWidget()
+                };
             } else {
                 completionHandler?(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"Tenant id not defined"]))
             }
@@ -233,23 +240,22 @@ public class MCAAuthorizationManager : AuthorizationManager {
                 + "://"
                 + BMSSecurityConstants.WEB_AUTH_SERVER_NAME
                 + bluemixRegion!)
-        showLoginWebView()
-        //            if (preferences.clientId.get() == nil) {
-        //                do {
-        //                    try processManager.invokeInstanceRegistrationRequestWithNoAuthorization(callback: {(response: Response?, error: Error?) in
-        //                        if error == nil {
-        //                            showLoginWebView()
-        //                        } else {
-        //                            completionHandler?(response, error)
-        //                        }
-        //                    })
-        //                } catch (let err){
-        //                    completionHandler?(nil, err)
-        //                }
-        //
-        //            } else {
-        //                showLoginWebView()
-        //            }
+        if (preferences.clientId.get() == nil) {
+            do {
+                try processManager.invokeInstanceRegistrationRequestWithNoAuthorization(callback: {(response: Response?, error: Error?) in
+                    if error == nil {
+                        showLoginWebView()
+                    } else {
+                        completionHandler?(response, error)
+                    }
+                })
+            } catch (let err){
+                completionHandler?(nil, err)
+            }
+            
+        } else {
+            showLoginWebView()
+        }
     }
     
     /**

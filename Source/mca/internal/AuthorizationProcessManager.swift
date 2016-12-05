@@ -143,9 +143,13 @@ internal class AuthorizationProcessManager {
         
     }
     
-    private func createWebTokenRequestHeaders(tenantId:String, secret:String)  -> [String:String]{
+    private func createWebTokenRequestHeaders(tenantId:String, clientId:String)  -> [String:String]{
         var headers = [String:String]()
-        headers[BMSSecurityConstants.AUTHORIZATION_HEADER] = BMSSecurityConstants.BASIC_AUTHORIZATION_STRING + " " + (tenantId + ":" + secret).data(using: .utf8)!.base64EncodedString()
+        let username = tenantId + "-" + clientId
+        let signed:String? = ""
+//        let signed = try? SecurityUtils.signString(username, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
+        
+        headers[BMSSecurityConstants.AUTHORIZATION_HEADER] = BMSSecurityConstants.BASIC_AUTHORIZATION_STRING + " " + (username + ":" + signed!).data(using: .utf8)!.base64EncodedString()
         return headers
     }
     
@@ -158,6 +162,8 @@ internal class AuthorizationProcessManager {
         ]
         return params;
     }
+
+    
     private func createTokenRequestParams(_ grantCode:String) throws -> [String:String] {
         guard let clientId = preferences.clientId.get() else {
             throw AuthorizationProcessManagerError.clientIdIsNil
@@ -226,11 +232,11 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    public func invokeWebTokenRequest(_ grantCode:String, tenantId : String, secret: String){
+    public func invokeWebTokenRequest(_ grantCode:String, tenantId : String, clientId: String){
         let options:RequestOptions  = RequestOptions()
         do {
             options.parameters = createWebTokenRequestParams(grantCode, tenantId: tenantId)
-            options.headers =  createWebTokenRequestHeaders(tenantId: tenantId, secret: secret)
+            options.headers =  createWebTokenRequestHeaders(tenantId: tenantId, clientId: clientId)
             addSessionIdHeader(&options.headers)
             options.requestMethod = HttpMethod.POST
             let callback:BMSCompletionHandler = {(response: Response?, error: Error?) in

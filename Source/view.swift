@@ -8,18 +8,6 @@
 
 import UIKit
 
-//var requestCount = 0
-//class RequestInterceptor : URLProtocol {
-//    init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
-//        super.init(task: task, cachedResponse: cachedResponse, client: client)
-////    override public class func canInit(with request: URLRequest) -> Bool {
-//        print("Request #\(requestCount): URL = \(request.url)")
-//        requestCount += 1
-//    }
-//
-//
-//
-//}
 
 class view: UIViewController, UIWebViewDelegate {
     var url:String = ""
@@ -60,6 +48,7 @@ class view: UIViewController, UIWebViewDelegate {
                 self.dismiss(animated: true, completion: {
                     self.completion(a.components(separatedBy: "#_=_")[0])
                 })
+                return false
             }
         }
         return true
