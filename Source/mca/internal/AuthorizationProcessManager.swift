@@ -243,7 +243,6 @@ internal class AuthorizationProcessManager {
                     if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                         do {
                             try self.saveTokenFromResponse(unWrappedResponse)
-                            Utils.decodeBase64WithString((self.preferences.idToken.get()?.components(separatedBy: ".")[1])!)
                             completion?(self.preferences.accessToken.get()! + self.preferences.idToken.get()!, nil)
                         } catch(let thrownError) {
                             self.handleAuthorizationFailure(thrownError)
@@ -325,7 +324,7 @@ internal class AuthorizationProcessManager {
     private func getUserIdentityFromToken(_ idToken:String) -> [String:Any]?
     {
         do {
-            if let decodedIdTokenData = Utils.decodeBase64WithString(idToken.components(separatedBy: ".")[1]), let _ = String(data: decodedIdTokenData, encoding: String.Encoding.utf8), let decodedIdTokenString = String(data: decodedIdTokenData, encoding: String.Encoding.utf8), let userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)[caseInsensitive : BMSSecurityConstants.JSON_IMF_USER_KEY] as? [String:Any] {
+            if let decodedIdTokenData = Utils.decodeBase64WithString(idToken.components(separatedBy: ".")[1], isSafeUrl: true), let _ = String(data: decodedIdTokenData, encoding: String.Encoding.utf8), let decodedIdTokenString = String(data: decodedIdTokenData, encoding: String.Encoding.utf8), let userIdentity = try Utils.parseJsonStringtoDictionary(decodedIdTokenString)[caseInsensitive : BMSSecurityConstants.JSON_IMF_USER_KEY] as? [String:Any] {
                 return userIdentity
             }
         } catch {

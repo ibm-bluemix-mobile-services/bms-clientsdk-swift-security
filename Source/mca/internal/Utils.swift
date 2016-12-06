@@ -162,7 +162,7 @@ public class Utils {
      - returns: return decoded String
      */
     
-    internal static func decodeBase64WithString(_ strBase64:String) -> Data? {
+    internal static func decodeBase64WithString(_ strBase64:String, isSafeUrl:Bool) -> Data? {
         
         guard let objPointerHelper = strBase64.cString(using: String.Encoding.ascii), let objPointer = String(validatingUTF8: objPointerHelper) else {
             return nil
@@ -193,7 +193,7 @@ public class Utils {
             let stringCurrent = String(current)
             let singleValueArrayCurrent: [UInt8] = Array(stringCurrent.utf8)
             let intCurrent:Int = Int(singleValueArrayCurrent[0])
-            let int8Current = BMSSecurityConstants.base64DecodingTable[intCurrent]
+            let int8Current = isSafeUrl ?  BMSSecurityConstants.base64DecodingTableUrlSafe[intCurrent] :BMSSecurityConstants.base64DecodingTable[intCurrent]
             
             if int8Current == -1 {
                 current = objPointer[objPointer.characters.index(objPointer.startIndex, offsetBy: count)]
@@ -249,7 +249,7 @@ public class Utils {
         // Setup the return NSData
         return Data(bytes: UnsafeRawPointer(result), count: j)
     }
-    
+
     internal static func base64StringFromData(_ data:Data, length:Int, isSafeUrl:Bool) -> String {
         var ixtext:Int = 0
         var ctremaining:Int
@@ -586,6 +586,7 @@ public class Utils {
         // Setup the return NSData
         return NSData(bytes: result, length: j)
     }
+    
     internal static func base64StringFromData(data:NSData, length:Int, isSafeUrl:Bool) -> String {
         var ixtext:Int = 0
         var ctremaining:Int
