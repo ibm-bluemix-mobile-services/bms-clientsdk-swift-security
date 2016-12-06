@@ -147,7 +147,6 @@ internal class AuthorizationProcessManager {
         var headers = [String:String]()
         let username = tenantId + "-" + clientId
         let signed = try? SecurityUtils.signString(username, keyIds: (BMSSecurityConstants.publicKeyIdentifier, BMSSecurityConstants.privateKeyIdentifier), keySize: 512)
-        
         headers[BMSSecurityConstants.AUTHORIZATION_HEADER] = BMSSecurityConstants.BASIC_AUTHORIZATION_STRING + " " + (username + ":" + signed!).data(using: .utf8)!.base64EncodedString()
         return headers
     }
@@ -161,6 +160,7 @@ internal class AuthorizationProcessManager {
         ]
         return params;
     }
+
 
     
     private func createTokenRequestParams(_ grantCode:String) throws -> [String:String] {
@@ -231,7 +231,7 @@ internal class AuthorizationProcessManager {
         }
     }
     
-    public func invokeWebTokenRequest(_ grantCode:String, tenantId : String, clientId: String){
+    public func invokeWebTokenRequest(_ grantCode:String, tenantId : String, clientId: String, completion: ((String?,String?) -> Void)?){
         let options:RequestOptions  = RequestOptions()
         do {
             options.parameters = createWebTokenRequestParams(grantCode, tenantId: tenantId)
@@ -243,7 +243,8 @@ internal class AuthorizationProcessManager {
                     if let unWrappedResponse = response, unWrappedResponse.isSuccessful {
                         do {
                             try self.saveTokenFromResponse(unWrappedResponse)
-                            self.handleAuthorizationSuccess(unWrappedResponse, error: error as NSError?)
+                            Utils.decodeBase64WithString((self.preferences.idToken.get()?.components(separatedBy: ".")[1])!)
+                            completion?(self.preferences.accessToken.get()! + self.preferences.idToken.get()!, nil)
                         } catch(let thrownError) {
                             self.handleAuthorizationFailure(thrownError)
                         }

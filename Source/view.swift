@@ -10,17 +10,18 @@ import UIKit
 
 
 class view: UIViewController, UIWebViewDelegate {
+    
     var url:String = ""
-    var previousView:UIViewController!
-    var myWebView:UIWebView!
-    var completion: ((String) -> Void)!
+    var completion: ((String?) -> Void)!
+    
     func setUrl(url: String) {
         self.url = url
     }
     
-    func setCompletionHandle(completionHandler : @escaping (String) -> Void) {
+    func setCompletionHandle(completionHandler : @escaping (String?) -> Void) {
         self.completion = completionHandler
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let myWebView:UIWebView = UIWebView(frame: CGRect(x:0, y:0, width: UIScreen.main.bounds.width, height:UIScreen.main.bounds.height))
@@ -29,24 +30,21 @@ class view: UIViewController, UIWebViewDelegate {
         let myURL = URL(string: url)
         var myURLRequest:URLRequest = URLRequest(url: myURL!)
         myURLRequest.httpMethod = "GET"
-        //        URLProtocol.RE
-        //        URLProtocol.registerClass(RequestInterceptor)
         myWebView.loadRequest(myURLRequest)
         
         
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         if let url = request.url?.absoluteString  {
             if url.hasPrefix("http://localhost/code") == true {
-                let a = url.components(separatedBy: "http://localhost/code?code=")[1]
                 self.dismiss(animated: true, completion: {
-                    self.completion(a.components(separatedBy: "#_=_")[0])
+                    //gets the query, then sepertes it to params, then filters the one the is "code" then takes its value
+                    guard let code = request.url?.query?.components(separatedBy: "&").filter({(item) in item.hasPrefix("code")}).first?.components(separatedBy: "=")[1] else{
+                        self.completion(nil)
+                        return
+                    }
+                    self.completion(code)
                 })
                 return false
             }

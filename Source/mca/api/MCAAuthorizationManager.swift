@@ -202,12 +202,11 @@ public class MCAAuthorizationManager : AuthorizationManager {
         request.setValue(unWrappedHeader, forHTTPHeaderField: BMSSecurityConstants.AUTHORIZATION_HEADER)
     }
     
-    public func login(userView : UIViewController, completionHandler : BMSCompletionHandler?, secret:String) {
+    public func login(userView : UIViewController, onTokenCompletion : ((_ token:String?,_ err:String?) -> Void)?) {
         var serverUrl = ""
         
         func  showLoginWebView() -> Void {
             if let unwrappedTenant = tenantId {
-                //somehow pass client id
                 let params = [
                     BMSSecurityConstants.JSON_RESPONSE_TYPE_KEY : BMSSecurityConstants.JSON_CODE_KEY,
                     "client_id" : unwrappedTenant,
@@ -218,20 +217,28 @@ public class MCAAuthorizationManager : AuthorizationManager {
                     
                 ]
                 let url = serverUrl + BMSSecurityConstants.WEB_AUTH_PATH + "authorization" + Utils.getQueryString(params: params)
+                
                 let v = view();
-                v.setUrl(url: url)
-                var completion = { (code: String) -> Void in
-                    self.processManager.invokeWebTokenRequest(code, tenantId: unwrappedTenant, clientId: self.preferences.clientId.get()!)
+                var completion = { (code: String?) -> Void in
+                    guard let unWrappedCode = code else {
+                        onTokenCompletion?(nil, "Failed to get grant code")
+                        return
+                    }
+                    self.processManager.invokeWebTokenRequest(unWrappedCode, tenantId: unwrappedTenant, clientId: self.preferences.clientId.get()!, completion : onTokenCompletion)
                 }
+                v.setUrl(url: url)
+                v.setCompletionHandle (completionHandler: completion)
+                
+                
                 var loadLoginWidget = { () -> Void in
                     userView.present(v, animated: true, completion: nil)
                 }
-                v.setCompletionHandle (completionHandler: completion)
+                
                 DispatchQueue.main.async {
                     loadLoginWidget()
                 };
             } else {
-                completionHandler?(nil, NSError(domain: BMSSecurityConstants.BMSSecurityErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey:"Tenant id not defined"]))
+                onTokenCompletion?(nil, "Tenant Id is not defined")
             }
         }
         
@@ -246,17 +253,18 @@ public class MCAAuthorizationManager : AuthorizationManager {
                     if error == nil {
                         showLoginWebView()
                     } else {
-                        completionHandler?(response, error)
+                        onTokenCompletion?(nil, error?.localizedDescription)
                     }
                 })
             } catch (let err){
-                completionHandler?(nil, err)
+                onTokenCompletion?(nil, err.localizedDescription)
             }
             
         } else {
             showLoginWebView()
         }
     }
+    
     
     /**
      Invoke process for obtaining authorization header.
