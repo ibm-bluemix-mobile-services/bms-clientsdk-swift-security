@@ -84,12 +84,23 @@ public class AuthorizationRequestManager {
                 serverHost = overrideServerHost
             }
             
-            rootUrl = serverHost
-                //+ "/"
-                //+ BMSSecurityConstants.AUTH_SERVER_NAME
-                // + "/"
-                + BMSSecurityConstants.WEB_AUTH_PATH
-            //     + MCATenantId!
+            if(path == BMSSecurityConstants.clientsInstanceEndPoint){
+                
+                rootUrl = serverHost
+                    + "/"
+                    + BMSSecurityConstants.AUTH_SERVER_NAME
+                    + "/"
+                    + BMSSecurityConstants.AUTH_PATH
+                    + MCATenantId!
+            } else {
+                
+                rootUrl = serverHost
+                    //+ "/"
+                    //+ BMSSecurityConstants.AUTH_SERVER_NAME
+                    // + "/"
+                    + BMSSecurityConstants.WEB_AUTH_PATH
+                //     + MCATenantId!
+            }
         }
         try sendInternal(rootUrl, path: computedPath, options: options)
         
