@@ -127,12 +127,19 @@ class AuthorizationRequestManagerTest: XCTestCase {
                         + BMSSecurityConstants.AUTH_SERVER_NAME
                         + BMSClient.sharedInstance.bluemixRegion!
                     
+                    
+                        
+                if(path == BMSSecurityConstants.clientsInstanceEndPoint){
                     XCTAssertEqual(rootUrl, prefix
                         + "/"
                         + BMSSecurityConstants.AUTH_SERVER_NAME
                         + "/"
                         + BMSSecurityConstants.AUTH_PATH
                         + BMSClient.sharedInstance.bluemixAppGUID!)
+                    } else {
+                        XCTAssertEqual(rootUrl, prefix + BMSSecurityConstants.WEB_AUTH_PATH)
+                    }
+                
                     XCTAssertEqual(path, "/someEndPoint")
                 } else {
                     XCTAssertEqual(rootUrl, MCAAuthorizationManager.HTTP_SCHEME + "://www.test.com")

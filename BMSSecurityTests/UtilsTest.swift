@@ -118,12 +118,18 @@ class UtilsTest: XCTestCase {
     func testDecodeBase64WithString(){
         let str = "VGhpcyBpcyBhIFV0aWxzIHVuaXRUZXN0IHR+c/Q="
         let strSafe = "VGhpcyBpcyBhIFV0aWxzIHVuaXRUZXN0IHR-c_Q="
-        guard let data = Utils.decodeBase64WithString(str) else {
+        guard let data = Utils.decodeBase64WithString(str, isSafeUrl: false) else {
+            XCTFail("failed to decode a base64 string")
+            return
+        }
+        guard let data2 = Utils.decodeBase64WithString(strSafe, isSafeUrl: true) else {
             XCTFail("failed to decode a base64 string")
             return
         }
         XCTAssertEqual(Utils.base64StringFromData(data, isSafeUrl: false),str)
         XCTAssertEqual(Utils.base64StringFromData(data, isSafeUrl: true),strSafe)
+        XCTAssertEqual(Utils.base64StringFromData(data2, isSafeUrl: false),str)
+        XCTAssertEqual(Utils.base64StringFromData(data2, isSafeUrl: true),strSafe)
     }
     
 }
