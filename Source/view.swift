@@ -12,7 +12,7 @@ import UIKit
 class view: UIViewController, UIWebViewDelegate {
     
     var url:String = ""
-    var completion: ((String?) -> Void)!
+    var completion: ((String?) -> Void)? = nil
     
     func setUrl(url: String) {
         self.url = url
@@ -41,10 +41,10 @@ class view: UIViewController, UIWebViewDelegate {
                 self.dismiss(animated: true, completion: {
                     //gets the query, then sepertes it to params, then filters the one the is "code" then takes its value
                     guard let code = request.url?.query?.components(separatedBy: "&").filter({(item) in item.hasPrefix("code")}).first?.components(separatedBy: "=")[1] else{
-                        self.completion(nil)
+                        self.completion?(nil)
                         return
                     }
-                    self.completion(code)
+                    self.completion?(code)
                 })
                 return false
             }
