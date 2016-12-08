@@ -116,6 +116,7 @@ internal class BMSSecurityConstants {
     internal static let WWW_AUTHENTICATE_HEADER = "WWW-Authenticate"
     internal static let AUTH_REALM = "\"imfAuthentication\""
     internal static let HTTP_LOCALHOST = "http://localhost"
+    internal static let HTTP_LOCALHOST_CODE = "http://localhost/code"
     /**
      * Parts of the path to authorization endpoint.
      */
@@ -129,29 +130,17 @@ internal class BMSSecurityConstants {
      */
     internal static let WL_RESULT = "wl_result";
     
-    /**
-     * Name of location header.
-     */
-    internal static let LOCATION_HEADER_NAME = "Location"
     
     /**
      * Name of the standard "www-authenticate" header.
      */
     internal static let AUTHENTICATE_HEADER_NAME = "WWW-Authenticate"
     
-    /**
-     * Name of "www-authenticate" header value.
-     */
-    internal static let AUTHENTICATE_HEADER_VALUE = "WL-Composite-Challenge"
     
-    /**
-     * Names of JSON values returned from the server.
-     */
-    internal static let AUTH_FAILURE_VALUE_NAME = "WL-Authentication-Failure"
-    internal static let AUTH_SUCCESS_VALUE_NAME = "WL-Authentication-Success"
-    internal static let CHALLENGES_VALUE_NAME = "challenges"
     
-    //JSON keys
+    
+    
+    //JSON keys and values
     internal static let JSON_CERTIFICATE_KEY = "certificate"
     internal static let JSON_CLIENT_ID_KEY = "clientId"
     internal static let JSON_DEVICE_ID_KEY = "deviceId"
@@ -163,6 +152,11 @@ internal class BMSSecurityConstants {
     internal static let JSON_IOS_ENVIRONMENT_VALUE = "iOSnative"
     internal static let JSON_ACCESS_TOKEN_KEY = "access_token"
     internal static let JSON_ID_TOKEN_KEY = "id_token"
+    internal static var JSON_SCOPE_KEY = "scope"
+    internal static var JSON_USE_LOGIN_WIDGET = "use_login_widget"
+    internal static var JSON_STATE_KEY = "state"
+    internal static var OPEN_ID_VALUE = "openid"
+    internal static var TRUE_VALUE = "true"
     
     //label names
     internal static let KEY_CHAIN_PREFIX = "com.ibm.mobilefirstplatform.clientsdk.swift.bmssecurity"
