@@ -359,7 +359,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
 			);
 			name = "Run Script";
 			outputPaths = (
@@ -376,7 +375,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/BMSCore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/BMSAnalyticsAPI.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RNCryptor.framework",
 			);
 			outputPaths = (
 			);

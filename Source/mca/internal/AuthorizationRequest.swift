@@ -44,7 +44,8 @@ internal class AuthorizationRequest : BaseRequest {
         
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = timeout
-        networkSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        urlSession = BMSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        urlSession.isBMSAuthorizationRequest = true
     }
     
     /**
@@ -119,7 +120,8 @@ internal class AuthorizationRequest : BaseRequest {
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.timeoutIntervalForRequest = timeout
-        networkSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        urlSession = BMSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        urlSession.isBMSAuthorizationRequest = true
     }
     
     /**
