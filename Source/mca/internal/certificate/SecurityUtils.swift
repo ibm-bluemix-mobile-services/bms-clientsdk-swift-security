@@ -331,10 +331,11 @@ internal class SecurityUtils {
         throw BMSSecurityError.generalError
     }
     
-    internal static func deleteCertificateFromKeyChain(_ certificateLabel:String) -> Bool{
+    internal static func deleteCertificateFromKeyChain(_ certificateLabel:String, uuid:String) -> Bool{
         let delQuery : [NSString:AnyObject] = [
             kSecClass: kSecClassCertificate,
-            kSecAttrLabel: certificateLabel as AnyObject
+            kSecAttrLabel: certificateLabel as AnyObject,
+            kSecAttrSerialNumber : uuid as AnyObject
         ]
         let delStatus:OSStatus = SecItemDelete(delQuery as CFDictionary)
         
@@ -352,13 +353,14 @@ internal class SecurityUtils {
     }
     
     
-    internal static func saveCertificateToKeyChain(_ certificate:SecCertificate, certificateLabel:String) throws {
+    internal static func saveCertificateToKeyChain(_ certificate:SecCertificate, certificateLabel:String, uuid:String) throws {
         //make sure certificate is deleted
-        deleteCertificateFromKeyChain(certificateLabel)
+        deleteCertificateFromKeyChain(certificateLabel, uuid:uuid)
         //set certificate in key chain
         let setQuery: [NSString: AnyObject] = [
             kSecClass: kSecClassCertificate,
             kSecValueRef: certificate,
+            kSecAttrSerialNumber : uuid as AnyObject,
             kSecAttrLabel: certificateLabel as AnyObject,
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
             ]
@@ -391,10 +393,10 @@ internal class SecurityUtils {
         throw BMSSecurityError.generalError
     }
     
-    internal static func clearDictValuesFromKeyChain(_ dict : [String : NSString])  {
+    internal static func clearDictValuesFromKeyChain(_ dict : [String : NSString], uuid:String)  {
         for (tag, kSecClassName) in dict {
             if kSecClassName == kSecClassCertificate {
-                deleteCertificateFromKeyChain(tag)
+                deleteCertificateFromKeyChain(tag, uuid: uuid)
             } else if kSecClassName == kSecClassKey {
                 deleteKeyFromKeyChain(tag)
             } else if kSecClassName == kSecClassGenericPassword {
@@ -724,10 +726,12 @@ internal class SecurityUtils {
         throw BMSSecurityError.generalError
     }
     
-    internal static func deleteCertificateFromKeyChain(certificateLabel:String) -> Bool{
+    internal static func deleteCertificateFromKeyChain(_ certificateLabel:String, uuid:String) -> Bool{
+
         let delQuery : [NSString:AnyObject] = [
             kSecClass: kSecClassCertificate,
-            kSecAttrLabel: certificateLabel
+            kSecAttrLabel: certificateLabel,
+            kSecAttrSerialNumber : uuid as AnyObject
         ]
         let delStatus:OSStatus = SecItemDelete(delQuery)
         
@@ -745,13 +749,14 @@ internal class SecurityUtils {
     }
     
     
-    internal static func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String) throws {
+    internal static func saveCertificateToKeyChain(certificate:SecCertificate, certificateLabel:String, uuid:String) throws {
         //make sure certificate is deleted
-        deleteCertificateFromKeyChain(certificateLabel)
+        deleteCertificateFromKeyChain(certificateLabel, uuid:uuid)
         //set certificate in key chain
         let setQuery: [NSString: AnyObject] = [
             kSecClass: kSecClassCertificate,
             kSecValueRef: certificate,
+            kSecAttrSerialNumber : uuid as AnyObject,
             kSecAttrLabel: certificateLabel,
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
             ]
@@ -784,10 +789,10 @@ internal class SecurityUtils {
         throw BMSSecurityError.generalError
     }
     
-    internal static func clearDictValuesFromKeyChain(dict : [String : NSString])  {
+    internal static func clearDictValuesFromKeyChain(_ dict : [String : NSString], uuid:String) {
         for (tag, kSecClassName) in dict {
             if kSecClassName == kSecClassCertificate {
-                deleteCertificateFromKeyChain(tag)
+                deleteCertificateFromKeyChain(tag, uuid: uuid)
             } else if kSecClassName == kSecClassKey {
                 deleteKeyFromKeyChain(tag)
             } else if kSecClassName == kSecClassGenericPassword {

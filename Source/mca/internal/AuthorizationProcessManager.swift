@@ -67,7 +67,7 @@ internal class AuthorizationProcessManager {
     
     private func invokeInstanceRegistrationRequest() throws {
         preferences.clientId.clear()
-        SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier)
+        SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier, uuid: sessionId)
         let options:RequestOptions = RequestOptions()
         options.parameters = try createRegistrationParams()
         options.headers = createRegistrationHeaders()
@@ -150,7 +150,7 @@ internal class AuthorizationProcessManager {
                 guard response?.statusCode != 400 else {
                     self.authorizationFailureCount+=1
                     if self.authorizationFailureCount < 2 {
-                        SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary)
+                        SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary, uuid: self.sessionId)
                         self.preferences.clientId.clear()
                         self.startAuthorizationProcess(self.authorizationQueue.remove())
                     }
@@ -301,7 +301,7 @@ internal class AuthorizationProcessManager {
                 //handle certificate
                 let certificate =  try SecurityUtils.getCertificateFromString(certificateString)
                 try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKeyTag: BMSSecurityConstants.publicKeyIdentifier)
-                try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: BMSSecurityConstants.certificateIdentifier)
+                try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: BMSSecurityConstants.certificateIdentifier, uuid: sessionId)
                 
                 //save the clientId separately
                 if let id = jsonResponse[caseInsensitive : BMSSecurityConstants.JSON_CLIENT_ID_KEY] as? String? {
@@ -419,7 +419,7 @@ internal class AuthorizationProcessManager {
     
     private func invokeInstanceRegistrationRequest() throws {
         preferences.clientId.clear()
-        SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier)
+        SecurityUtils.deleteCertificateFromKeyChain(BMSSecurityConstants.certificateIdentifier, uuid: sessionId)
         let options:RequestOptions = RequestOptions()
         options.parameters = try createRegistrationParams()
         options.headers = createRegistrationHeaders()
@@ -502,7 +502,7 @@ internal class AuthorizationProcessManager {
                 guard response?.statusCode != 400 else {
                     self.authorizationFailureCount+=1
                     if self.authorizationFailureCount < 2 {
-                        SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary)
+                        SecurityUtils.clearDictValuesFromKeyChain(BMSSecurityConstants.AuthorizationKeyChainTagsDictionary, uuid: self.sessionId)
                         self.preferences.clientId.clear()
                         self.startAuthorizationProcess(self.authorizationQueue.remove())
                     }
@@ -653,7 +653,7 @@ internal class AuthorizationProcessManager {
                 //handle certificate
                 let certificate =  try SecurityUtils.getCertificateFromString(certificateString)
                 try  SecurityUtils.checkCertificatePublicKeyValidity(certificate, publicKeyTag: BMSSecurityConstants.publicKeyIdentifier)
-                try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: BMSSecurityConstants.certificateIdentifier)
+                try SecurityUtils.saveCertificateToKeyChain(certificate, certificateLabel: BMSSecurityConstants.certificateIdentifier, uuid: sessionId)
                 
                 //save the clientId separately
                 if let id = jsonResponse[caseInsensitive : BMSSecurityConstants.JSON_CLIENT_ID_KEY] as? String? {
